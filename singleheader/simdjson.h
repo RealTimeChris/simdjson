@@ -380,7 +380,7 @@ constexpr size_t DEFAULT_MAX_DEPTH = 1024;
 
 #if SIMDJSON_REGULAR_VISUAL_STUDIO
 
-  #define simdjson_really_inline __forceinline
+  #define simdjson_really_inline inline
   #define simdjson_never_inline __declspec(noinline)
 
   #define simdjson_unused
