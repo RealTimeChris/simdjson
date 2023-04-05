@@ -1,9 +1,20 @@
+
 Hacking simdjson
 ================
 
 Here is wisdom about how to build, test and run simdjson from within the repository. This is mostly useful for people who plan to contribute simdjson, or maybe study the design.
 
 If you plan to contribute to simdjson, please read our [CONTRIBUTING](https://github.com/simdjson/simdjson/blob/master/CONTRIBUTING.md) guide.
+
+
+  - [Design notes](#design-notes)
+  - [Developer mode](#developer-mode)
+  - [Directory Structure and Source](#directory-structure-and-source)
+  - [Runtime Dispatching](#runtime-dispatching)
+  - [Regenerating Single-Header Files](#regenerating-single-header-files)
+  - [Usage (CMake on 64-bit platforms like Linux, FreeBSD or macOS)](#usage-cmake-on-64-bit-platforms-like-linux-freebsd-or-macos)
+  - [Usage (CMake on 64-bit Windows using Visual Studio 2019)](#usage-cmake-on-64-bit-windows-using-visual-studio-2019)
+  - [Various References](#various-references)
 
 
 Design notes
@@ -193,7 +204,7 @@ point it gets included (but only once per header). singleheader/simdjson.cpp is 
 src/simdjson.cpp the same way, except files under generic/ may be included and copy/pasted multiple
 times.
 
-### Usage (CMake on 64-bit platforms like Linux, FreeBSD or macOS)
+## Usage (CMake on 64-bit platforms like Linux, FreeBSD or macOS)
 
 Requirements: In addition to git, we require a recent version of CMake as well as bash.
 
@@ -256,7 +267,9 @@ Note that the name of directory (`build`) is arbitrary, you can name it as you w
 
 
 
-### Usage (CMake on 64-bit Windows using Visual Studio 2019)
+## Usage (CMake on 64-bit Windows using Visual Studio 2019 or better)
+
+Recent versions of Visual Studio support CMake natively, [please refer to the Visual Studio documentation](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170).
 
 We assume you have a common 64-bit Windows PC with at least Visual Studio 2019.
 
@@ -285,7 +298,7 @@ Furthermore, if you have installed LLVM clang on Windows, for example as a compo
 - `cmake --build . -config Release`
 
 
-### Various References
+## Various References
 
 - [How to implement atoi using SIMD?](https://stackoverflow.com/questions/35127060/how-to-implement-atoi-using-simd)
 - [Parsing JSON is a Minefield 💣](http://seriot.ch/parsing_json.php)

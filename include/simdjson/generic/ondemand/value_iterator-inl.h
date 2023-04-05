@@ -34,12 +34,17 @@ simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::start
   return true;
 }
 
-simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::started_root_object() noexcept {
+simdjson_warn_unused simdjson_inline error_code value_iterator::check_root_object() noexcept {
   // When in streaming mode, we cannot expect peek_last() to be the last structural element of the
   // current document. It only works in the normal mode where we have indexed a single document.
   // Note that adding a check for 'streaming' is not expensive since we only have at most
   // one root element.
   if ( ! _json_iter->streaming() ) {
+    // The following lines do not fully protect against garbage content within the
+    // object: e.g., `{"a":2} foo }`. Users concerned with garbage content should
+    // call `at_end()` on the document instance at the end of the processing to
+    // ensure that the processing has finished at the end.
+    //
     if (*_json_iter->peek_last() != '}') {
       _json_iter->abandon();
       return report_error(INCOMPLETE_ARRAY_OR_OBJECT, "missing } at end");
@@ -56,6 +61,12 @@ simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::start
       return report_error(INCOMPLETE_ARRAY_OR_OBJECT, "the document is unbalanced");
     }
   }
+  return SUCCESS;
+}
+
+simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::started_root_object() noexcept {
+  auto error = check_root_object();
+  if(error) { return error; }
   return started_object();
 }
 
@@ -419,12 +430,17 @@ simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::start
   return true;
 }
 
-simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::started_root_array() noexcept {
+simdjson_warn_unused simdjson_inline error_code value_iterator::check_root_array() noexcept {
   // When in streaming mode, we cannot expect peek_last() to be the last structural element of the
   // current document. It only works in the normal mode where we have indexed a single document.
   // Note that adding a check for 'streaming' is not expensive since we only have at most
   // one root element.
   if ( ! _json_iter->streaming() ) {
+    // The following lines do not fully protect against garbage content within the
+    // array: e.g., `[1, 2] foo]`. Users concerned with garbage content should
+    // also call `at_end()` on the document instance at the end of the processing to
+    // ensure that the processing has finished at the end.
+    //
     if (*_json_iter->peek_last() != ']') {
       _json_iter->abandon();
       return report_error(INCOMPLETE_ARRAY_OR_OBJECT, "missing ] at end");
@@ -441,6 +457,12 @@ simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::start
       return report_error(INCOMPLETE_ARRAY_OR_OBJECT, "the document is unbalanced");
     }
   }
+  return SUCCESS;
+}
+
+simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::started_root_array() noexcept {
+  auto error = check_root_array();
+  if (error) { return error; }
   return started_array();
 }
 
