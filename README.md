@@ -28,15 +28,37 @@ This library is part of the [Awesome Modern C++](https://awesomecpp.com) list.
 Table of Contents
 -----------------
 
+* [Real-world usage](#real-world-usage)
 * [Quick Start](#quick-start)
 * [Documentation](#documentation)
 * [Performance results](#performance-results)
-* [Real-world usage](#real-world-usage)
 * [Bindings and Ports of simdjson](#bindings-and-ports-of-simdjson)
 * [About simdjson](#about-simdjson)
 * [Funding](#funding)
 * [Contributing to simdjson](#contributing-to-simdjson)
 * [License](#license)
+
+
+Real-world usage
+----------------
+
+- [ClickHouse](https://github.com/ClickHouse/ClickHouse)
+- [Facebook/Meta Velox](https://velox-lib.io)
+- [milvus](https://github.com/milvus-io/milvus)
+- [Clang Build Analyzer](https://github.com/aras-p/ClangBuildAnalyzer)
+- [Shopify HeapProfiler](https://github.com/Shopify/heap-profiler)
+- [StarRocks](https://github.com/StarRocks/starrocks)
+- [Microsoft FishStore](https://github.com/microsoft/FishStore)
+- [Intel PCM](https://github.com/intel/pcm)
+- [WatermelonDB](https://github.com/Nozbe/WatermelonDB)
+- [Apache Doris](https://github.com/apache/doris)
+- [Dgraph](https://github.com/dgraph-io/dgraph)
+- [UJRPC](https://github.com/unum-cloud/ujrpc)
+- [fastgltf](https://github.com/spnda/fastgltf)
+- [Clang Build Analyzer](https://github.com/aras-p/ClangBuildAnalyzer)
+- [vast](https://github.com/tenzir/vast)
+
+If you are planning to use simdjson in a product, please work from one of our releases.
 
 Quick Start
 -----------
@@ -110,22 +132,6 @@ For NDJSON files, we can exceed 3 GB/s with [our  multithreaded parsing function
 
 
 
-Real-world usage
-----------------
-
-- [ClickHouse](https://github.com/ClickHouse/ClickHouse)
-- [Clang Build Analyzer](https://github.com/aras-p/ClangBuildAnalyzer)
-- [Shopify HeapProfiler](https://github.com/Shopify/heap-profiler)
-- [StarRocks](https://github.com/StarRocks/starrocks)
-- [Microsoft FishStore](https://github.com/microsoft/FishStore)
-- [Intel PCM](https://github.com/intel/pcm)
-- [WatermelonDB](https://github.com/Nozbe/WatermelonDB)
-- [Apache Doris](https://github.com/apache/doris)
-- [Dgraph](https://github.com/dgraph-io/dgraph)
-- [UJRPC](https://github.com/unum-cloud/ujrpc)
-- [fastgltf](https://github.com/spnda/fastgltf)
-
-If you are planning to use simdjson in a product, please work from one of our releases.
 
 Bindings and Ports of simdjson
 ------------------------------
@@ -146,10 +152,12 @@ We distinguish between "bindings" (which just wrap the C++ code) and a port to a
 - [simdjson-go](https://github.com/minio/simdjson-go): Go port using Golang assembly.
 - [rcppsimdjson](https://github.com/eddelbuettel/rcppsimdjson): R bindings.
 - [simdjson_erlang](https://github.com/ChomperT/simdjson_erlang): erlang bindings.
+- [simdjsone](https://github.com/saleyn/simdjsone): erlang bindings.
 - [lua-simdjson](https://github.com/FourierTransformer/lua-simdjson): lua bindings.
 - [hermes-json](https://hackage.haskell.org/package/hermes-json): haskell bindings.
 - [simdjzon](https://github.com/travisstaloch/simdjzon): zig port.
 - [JSON-Simd](https://github.com/rawleyfowler/JSON-simd): Raku bindings.
+- [JSON::SIMD](https://metacpan.org/pod/JSON::SIMD): Perl bindings; fully-featured JSON module that uses simdjson for decoding.
 
 About simdjson
 --------------
