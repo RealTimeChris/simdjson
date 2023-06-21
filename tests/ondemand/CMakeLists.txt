@@ -3,6 +3,7 @@ link_libraries(simdjson)
 include_directories(..)
 add_subdirectory(compilation_failure_tests)
 add_cpp_test(ondemand_log_tests              LABELS ondemand acceptance per_implementation)
+add_cpp_test(ondemand_log_error_tests        LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_tostring_tests         LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_active_tests           LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_array_tests            LABELS ondemand acceptance per_implementation)
@@ -24,6 +25,7 @@ add_cpp_test(ondemand_readme_examples        LABELS ondemand acceptance per_impl
 add_cpp_test(ondemand_scalar_tests           LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_twitter_tests          LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_wrong_type_error_tests LABELS ondemand acceptance per_implementation)
+add_cpp_test(ondemand_iterate_many_csv       LABELS ondemand acceptance per_implementation)
 
 if(HAVE_POSIX_FORK AND HAVE_POSIX_WAIT) # assert tests use fork and wait, which aren't on MSVC
   add_cpp_test(ondemand_assert_out_of_order_values LABELS assert per_implementation explicitonly ondemand)

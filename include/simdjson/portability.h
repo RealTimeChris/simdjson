@@ -32,13 +32,6 @@
 #endif // __clang__
 #endif // _MSC_VER
 
-#if SIMDJSON_REGULAR_VISUAL_STUDIO
-// https://en.wikipedia.org/wiki/C_alternative_tokens
-// This header should have no effect, except maybe
-// under Visual Studio.
-#include <iso646.h>
-#endif
-
 #if defined(__x86_64__) || defined(_M_AMD64)
 #define SIMDJSON_IS_X86_64 1
 #elif defined(__aarch64__) || defined(_M_ARM64)
@@ -177,8 +170,9 @@ use a 64-bit target such as x64, 64-bit ARM or 64-bit PPC.")
 #define simdjson_strncasecmp strncasecmp
 #endif
 
-#ifdef NDEBUG
-
+#if defined(NDEBUG) || defined(__OPTIMIZE__) || (defined(_MSC_VER) && !defined(_DEBUG))
+// If NDEBUG is set, or __OPTIMIZE__ is set, or we are under MSVC in release mode,
+// then do away with asserts and use __assume.
 #if SIMDJSON_VISUAL_STUDIO
 #define SIMDJSON_UNREACHABLE() __assume(0)
 #define SIMDJSON_ASSUME(COND) __assume(COND)
@@ -187,8 +181,8 @@ use a 64-bit target such as x64, 64-bit ARM or 64-bit PPC.")
 #define SIMDJSON_ASSUME(COND) do { if (!(COND)) __builtin_unreachable(); } while (0)
 #endif
 
-#else // NDEBUG
-
+#else // defined(NDEBUG) || defined(__OPTIMIZE__) || (defined(_MSC_VER) && !defined(_DEBUG))
+// This should only ever be enabled in debug mode.
 #define SIMDJSON_UNREACHABLE() assert(0);
 #define SIMDJSON_ASSUME(COND) assert(COND)
 

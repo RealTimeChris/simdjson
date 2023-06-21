@@ -25,11 +25,11 @@ An overview of what you need to know to use simdjson, with examples.
     - [Current location in document](#current-location-in-document)
     - [Checking for trailing content](#checking-for-trailing-content)
   - [Rewinding](#rewinding)
-  - [Direct Access to the Raw String](#direct-access-to-the-raw-string)
   - [Newline-Delimited JSON (ndjson) and JSON lines](#newline-delimited-json-ndjson-and-json-lines)
   - [Parsing Numbers Inside Strings](#parsing-numbers-inside-strings)
   - [Dynamic Number Types](#dynamic-number-types)
   - [Raw Strings](#raw-strings)
+  - [General Direct Access to the Raw JSON String](#general-direct-access-to-the-raw-json-string)
   - [Thread Safety](#thread-safety)
   - [Standard Compliance](#standard-compliance)
   - [Backwards Compatibility](#backwards-compatibility)
@@ -202,6 +202,13 @@ Consider reusing the same buffers and limiting memory allocations.
 
 By default, the simdjson library throws exceptions (`simdjson_error`) on errors. We omit `try`-`catch` clauses from our illustrating examples: if you omit `try`-`catch` in your code, an uncaught exception will halt your program. It is also possible to use simdjson without generating exceptions, and you may even build the library without exception support at all. See [Error Handling](#error-handling) for details.
 
+
+Some users may want to browse code along with the compiled assembly. You want to check out the following lists of examples:
+
+* [simdjson examples with errors handled through exceptions](https://godbolt.org/z/98Kx9Kqjn)
+* [simdjson examples with errors without exceptions](https://godbolt.org/z/PKG7GdbPo)
+
+
 Documents are Iterators
 -----------------------
 
@@ -323,13 +330,13 @@ support for users who avoid exceptions. See [the simdjson error handling documen
 * **Validate What You Use:** When calling `iterate`, the document is quickly indexed. If it is
   not a valid Unicode (UTF-8) string or if there is an unclosed string, an error may be reported right away.
   However, it is not fully validated. On Demand only fully validates the values you use and the
-  structure leading to it.
+  structure leading to it. It means that at every step as you traverse the document, you may encounter an error. You can handle errors either with exceptions or with error codes.
 * **Extracting Values:** You can cast a JSON element to a native type:
   `double(element)`. This works for `std::string_view`, double, uint64_t, int64_t, bool,
   ondemand::object and ondemand::array. We also have explicit methods such as `get_string()`, `get_double()`,
   `get_uint64()`, `get_int64()`, `get_bool()`, `get_object()` and `get_array()`. After a cast or an explicit method,
-  the number, string or boolean will be parsed, or the initial `{` or `[` will be verified for ondemand::object and ondemand::array. An exception is thrown if
-  the cast is not possible. Importantly, when getting an ondemand::object or ondemand::array instance, its content is
+  the number, string or boolean will be parsed, or the initial `{` or `[` will be verified for `ondemand::object` and `ondemand::array`. An exception may be thrown if
+  the cast is not possible: there error code is `simdjson::INCORRECT_TYPE` (see [Error Handling](#error-handling)). Importantly, when getting an ondemand::object or ondemand::array instance, its content is
   not validated: you are only guaranteed that the corresponding initial character (`{` or `[`) is present. Thus,
   for example, you could have an ondemand::object instance pointing at the invalid JSON `{ "this is not a valid object" }`: the validation occurs as you access the content.
   The `get_string()` returns a valid UTF-8 string, after
@@ -347,9 +354,9 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   > `get_string()` twice on an object (or to cast an object twice to `std::string_view`).
 * **Field Access:** To get the value of the "foo" field in an object, use `object["foo"]`. This will
   scan through the object looking for the field with the matching string, doing a character-by-character
-  comparison. For efficiency reason, you should avoid looking up the same field repeatedly: e.g., do
-  not do `object["foo"]` followed by `object["foo"]` with the same `object` instance. If you consume an
-  object twice: `std::string_view(object["foo"]` followed by `std::string_view(object["foo"]`, your code
+  comparison. It may generate the error `simdjson::NO_SUCH_FIELD` if there is no such key in the object, it may throw an exception (see [Error Handling](#error-handling)). For efficiency reason, you should avoid looking up the same field repeatedly: e.g., do
+  not do `object["foo"]` followed by `object["foo"]` with the same `object` instance. Keep in mind that On Demand does not buffer or save the result of the parsing: if you repeatedly access `object["foo"]`, then it must repeatedly seek the key and parse the content. The library does not provide a distinct function to check if a key is present, instead we recommend you attempt to access the key: e.g., by doing `ondemand::value val{}; if(!object["foo"].get(val)) {...}`, you have that `val` contains the requested value inside the if clause.  It is your responsability as a user to temporarily keep a reference to the value (`auto v = object["foo"]`), or to consume the content and store it in your own data structures. If you consume an
+  object twice: `std::string_view(object["foo"]` followed by `std::string_view(object["foo"]` then your code
   is in error. Furthermore, you can only consume one field at a time, on the same object. The
   value instance you get from  `content["bids"]` becomes invalid when you call `content["asks"]`.
   If you have retrieved `content["bids"].get_array()` and you later call
@@ -364,8 +371,9 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   > to support escaped keys, the method `unescaped_key()` provides the desired unescaped keys by
   > parsing and writing out the unescaped keys to a string buffer and returning a `std::string_view`
   > instance. You should expect a performance penalty when using `unescaped_key()`.
+  >
   > ```c++
-  > auto json = R"({"k\u0065y": 1})"_padded;
+  > auto json = R"({"k\u0065y": 1})"_padded;
   > ondemand::parser parser;
   > auto doc = parser.iterate(json);
   > ondemand::object object = doc.get_object();
@@ -879,9 +887,16 @@ auto error = parser.iterate(json).get(doc);
 if (error) { cerr << error << endl; exit(1); }
 ```
 
-When there is no error, the error code simdjson::SUCCESS is returned: it evaluates as false as a Boolean.
+When there is no error, the error code `simdjson::SUCCESS`is returned: it evaluates as false as a Boolean.
 We have several error codes to indicate errors, they all evaluate to true as a Boolean: your software should not generally not depend on exact
 error codes. We may change the error codes in future releases and the exact error codes could vary depending on your system.
+
+Some errors are recoverable:
+
+* You may get the error `simdjson::INCORRECT_TYPE` after trying to convert a value to an incorrect type: e.g., you expected a number and try to convert the value to a number, but it is an array.
+* You may query a key from an object, but the key is missing in which case you get the error `simdjson::NO_SUCH_FIELD`: e.g., you call `obj["myname"]` and the object does not have a key `"myname"`.
+
+Other errors (e.g., `simdjson::INCOMPLETE_ARRAY_OR_OBJECT`) may indicate a fatal error and often follow from the fact that the document is not valid JSON. In which case, it is no longer possible to continue accessing the document: calling the method `is_alive()` on the document instance returns false. All following accesses will keep returning the same fatal error (e.g., `simdjson::INCOMPLETE_ARRAY_OR_OBJECT`).
 
 When you use the code without exceptions, it is your responsibility to check for error before using the
 result: if there is an error, the result value will not be valid and using it will caused undefined behavior. Most compilers should be able to help you if you activate the right
@@ -1142,6 +1157,28 @@ int main(void) {
 }
 ```
 
+
+You can do handle errors gracefully as well...
+
+```C++
+#include <iostream>
+#include "simdjson.h"
+int main(void) {
+  simdjson::ondemand::parser parser;
+  simdjson::padded_string json_string;
+  simdjson::ondemand::document doc;
+  try {
+    json_string = padded_string::load("twitter.json");
+    doc = parser.iterate(json_string);
+    uint64_t identifier = doc["statuses"].at(0)["id"];
+    std::cout << identifier << std::endl;
+  } catch (simdjson::simdjson_error &error) {
+    std::cerr << "JSON error: " << error.what() << " near "
+              << doc.current_location() << " in " << json_string << std::endl;
+  }
+}
+```
+
 ### Current location in document
 
 Sometimes, it might be helpful to know the current location in the document during iteration. This is especially useful when encountering errors. The `current_location()` method on a
@@ -1304,41 +1341,6 @@ internal string buffer. Thus you should consume values only once
 even if you can iterate through the array or object more than once.
 If you unescape a string within an array more than once, you have unsafe code.
 
-Direct Access to the Raw String
---------------------------------
-
-The simdjson library makes explicit assumptions about types. For examples, numbers
-must be integers (up to 64-bit integers) or binary64 floating-point numbers. Some users
-have different needs. For example, some users might want to support big integers.
-The library makes this possible by providing a `raw_json_token` method which returns
-a `std::string_view` instance containing the value as a string which you may then
-parse as you see fit.
-
-```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::object obj = doc.get_object();
-std::string_view token = obj["value"].raw_json_token();
-// token has value 12321323213213213213213213213211223, it points inside the input string
-```
-
-The `raw_json_token` method even works when the JSON value is a string. In such cases, it
-will return the complete string with the quotes and with eventual escaped sequences as in the
-source document.
-
-```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::object obj = doc.get_object();
-string_view token = obj["value"].raw_json_token();
-// token has value "12321323213213213213213213213211223", it points inside the input string
-```
-
-The `raw_json_token()` should be fast and free of allocation.
-
-
 
 Newline-Delimited JSON (ndjson) and JSON lines
 ----------------------------------------------
@@ -1427,9 +1429,8 @@ This parser can't support a document that big
 
 If your documents are large (e.g., larger than a megabyte), then the `iterate_many` function is maybe ill-suited. It is really meant to support reading efficiently streams of relatively small documents (e.g., a few kilobytes each). If you have larger documents, you should use other functions like `iterate`.
 
+We also provide some support for comma-separated documents and other advanced features.
 See [iterate_many.md](iterate_many.md) for detailed information and design.
-
-
 
 Parsing Numbers Inside Strings
 ------------------------------
@@ -1641,6 +1642,78 @@ JSON string to a user-provided buffer:
       // writes 'Jack The Ripper 3', escaping the \u0033
       mystrings.push_back(valuesv);
     }
+```
+
+
+General Direct Access to the Raw JSON String
+--------------------------------
+If your value is a string, the `raw_json_string` gives you direct access to the unprocess
+string. The simdjson library allows you to have access to the raw underlying JSON
+more generally.
+
+The simdjson library makes explicit assumptions about types. For examples, numbers
+must be integers (up to 64-bit integers) or binary64 floating-point numbers. Some users
+have different needs. For example, some users might want to support big integers.
+The library makes this possible by providing a `raw_json_token` method which returns
+a `std::string_view` instance containing the value as a string which you may then
+parse as you see fit.
+
+```C++
+simdjson::ondemand::parser parser;
+simdjson::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
+simdjson::ondemand::document doc = parser.iterate(docdata);
+simdjson::ondemand::object obj = doc.get_object();
+std::string_view token = obj["value"].raw_json_token();
+// token has value 12321323213213213213213213213211223, it points inside the input string
+```
+
+The `raw_json_token` method even works when the JSON value is a string. In such cases, it
+will return the complete string with the quotes and with eventual escaped sequences as in the
+source document.
+
+```C++
+simdjson::ondemand::parser parser;
+simdjson::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
+simdjson::ondemand::document doc = parser.iterate(docdata);
+simdjson::ondemand::object obj = doc.get_object();
+string_view token = obj["value"].raw_json_token();
+// token has value "12321323213213213213213213213211223", it points inside the input string
+```
+
+The `raw_json_token()` should be fast and free of allocation.
+
+If you value is an array or an object, `raw_json_token()` returns effectively a single
+character (`[`) or (`}`) which is not very useful. For arrays and objects, we have another
+method called `raw_json()` which consumes (traverse) the array or the object.
+
+```C++
+simdjson::ondemand::parser parser;
+simdjson::padded_string docdata =  R"({"value":123})"_padded;
+simdjson::ondemand::document doc = parser.iterate(docdata);
+simdjson::ondemand::object obj = doc.get_object();
+string_view token = obj.raw_json(); // gives you `{"value":123}`
+```
+
+
+```C++
+simdjson::ondemand::parser parser;
+simdjson::padded_string docdata =  R"([1,2,3])"_padded;
+simdjson::ondemand::document doc = parser.iterate(docdata);
+simdjson::ondemand::array arr = doc.get_array();
+string_view token = arr.raw_json(); // gives you `[1,2,3]`
+```
+
+Because `raw_json()` consumes to object or the array, if you want to both have
+access to the raw string, and also use the array or object, you should call `reset()`.
+
+```C++
+simdjson::ondemand::parser parser;
+simdjson::padded_string docdata =  R"({"value":123})"_padded;
+simdjson::ondemand::document doc = parser.iterate(docdata);
+simdjson::ondemand::object obj = doc.get_object();
+string_view token = obj.raw_json(); // gives you `{"value":123}`
+obj.reset(); // revise the object
+uint64_t x = obj["value"]; // gives me 123
 ```
 
 Thread Safety
@@ -1894,4 +1967,4 @@ Performance Tips
 	std::string_view year = data["year"];
 	std::string_view rating = data["rating"];
   ```
-- To better understand the operation of your On Demand parser, and whether it is performing as well as you think it should be, there is a  logger feature built in to simdjson! To use it, define the pre-processor directive `SIMDJSON_VERBOSE_LOGGING` prior to including the `simdjson.h` header, which enables logging in simdjson. Run your code. It may generate a lot of logging output; adding printouts from your application that show each section may be helpful. The log’s output will show step-by-step information on state, buffer pointer position, depth, and key retrieval status.
+- To better understand the operation of your On Demand parser, and whether it is performing as well as you think it should be, there is a  logger feature built in to simdjson! To use it, define the pre-processor directive `SIMDJSON_VERBOSE_LOGGING` prior to including the `simdjson.h` header, which enables logging in simdjson. Run your code. It may generate a lot of logging output; adding printouts from your application that show each section may be helpful. The log’s output will show step-by-step information on state, buffer pointer position, depth, and key retrieval status. The log level is set to `INFO` by default, but can be modified with the environment variable `SIMDJSON_LOG_LEVEL`. Setting the environment variable `SIMDJSON_LOG_LEVEL` to `ERROR` will log only errors.

@@ -255,6 +255,7 @@ public:
   simdjson_inline simdjson_result<std::string_view> unescape_wobbly(raw_json_string in) noexcept;
   simdjson_inline void reenter_child(token_position position, depth_t child_depth) noexcept;
 
+  simdjson_inline error_code consume_character(char c) noexcept;
 #if SIMDJSON_DEVELOPMENT_CHECKS
   simdjson_inline token_position start_position(depth_t depth) const noexcept;
   simdjson_inline void set_start_position(depth_t depth, token_position position) noexcept;
@@ -297,8 +298,8 @@ protected:
   friend class raw_json_string;
   friend class parser;
   friend class value_iterator;
-  friend simdjson_inline void logger::log_line(const json_iterator &iter, const char *title_prefix, const char *title, std::string_view detail, int delta, int depth_delta) noexcept;
-  friend simdjson_inline void logger::log_line(const json_iterator &iter, token_position index, depth_t depth, const char *title_prefix, const char *title, std::string_view detail) noexcept;
+  friend simdjson_inline void logger::log_line(const json_iterator &iter, const char *title_prefix, const char *title, std::string_view detail, int delta, int depth_delta, logger::log_level level) noexcept;
+  friend simdjson_inline void logger::log_line(const json_iterator &iter, token_position index, depth_t depth, const char *title_prefix, const char *title, std::string_view detail, logger::log_level level) noexcept;
 }; // json_iterator
 
 } // namespace ondemand
