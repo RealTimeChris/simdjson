@@ -1,13 +1,14 @@
 #ifndef SIMDJSON_ICELAKE_IMPLEMENTATION_H
 #define SIMDJSON_ICELAKE_IMPLEMENTATION_H
 
+#ifndef SIMDJSON_AMALGAMATED
 #include "simdjson/implementation.h"
+#include "simdjson/internal/instruction_set.h"
+#endif // SIMDJSON_AMALGAMATED
 
 // The constructor may be executed on any host, so we take care not to use SIMDJSON_TARGET_ICELAKE
 namespace simdjson {
 namespace icelake {
-
-using namespace simdjson;
 
 /**
  * @private

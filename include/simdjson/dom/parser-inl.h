@@ -1,12 +1,15 @@
-#ifndef SIMDJSON_INLINE_PARSER_H
-#define SIMDJSON_INLINE_PARSER_H
+#ifndef SIMDJSON_PARSER_INL_H
+#define SIMDJSON_PARSER_INL_H
 
+#include "simdjson/dom/base.h"
 #include "simdjson/dom/document_stream.h"
-#include "simdjson/dom/parser.h"
 #include "simdjson/implementation.h"
-#include "simdjson/internal/jsonformatutils.h"
-#include "simdjson/portability.h"
-#include <cstdio>
+#include "simdjson/internal/dom_parser_implementation.h"
+
+#include "simdjson/error-inl.h"
+#include "simdjson/padded_string-inl.h"
+#include "simdjson/dom/element-inl.h"
+
 #include <climits>
 
 namespace simdjson {
@@ -236,4 +239,4 @@ simdjson_inline void parser::set_max_capacity(size_t max_capacity) noexcept {
 } // namespace dom
 } // namespace simdjson
 
-#endif // SIMDJSON_INLINE_PARSER_H
+#endif // SIMDJSON_PARSER_INL_H

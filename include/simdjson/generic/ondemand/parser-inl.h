@@ -1,3 +1,18 @@
+#ifndef SIMDJSON_GENERIC_ONDEMAND_PARSER_INL_H
+
+#ifndef SIMDJSON_AMALGAMATED
+#define SIMDJSON_GENERIC_ONDEMAND_PARSER_INL_H
+#include "simdjson/padded_string.h"
+#include "simdjson/padded_string_view.h"
+#include "simdjson/implementation.h"
+#include "simdjson/internal/dom_parser_implementation.h"
+#include "simdjson/dom/base.h" // for MINIMAL_DOCUMENT_CAPACITY
+#include "simdjson/generic/ondemand/base.h"
+#include "simdjson/generic/ondemand/document_stream.h"
+#include "simdjson/generic/ondemand/parser.h"
+#include "simdjson/generic/ondemand/raw_json_string.h"
+#endif // SIMDJSON_AMALGAMATED
+
 namespace simdjson {
 namespace SIMDJSON_IMPLEMENTATION {
 namespace ondemand {
@@ -145,3 +160,5 @@ simdjson_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::parser>::simd
     : implementation_simdjson_result_base<SIMDJSON_IMPLEMENTATION::ondemand::parser>(error) {}
 
 } // namespace simdjson
+
+#endif // SIMDJSON_GENERIC_ONDEMAND_PARSER_INL_H

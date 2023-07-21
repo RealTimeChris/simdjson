@@ -2,10 +2,10 @@
 #define SIMDJSON_COMMON_DEFS_H
 
 #include <cassert>
+#include "simdjson/compiler_check.h"
 #include "simdjson/portability.h"
 
 namespace simdjson {
-
 namespace internal {
 /**
  * @private
@@ -20,7 +20,6 @@ char *to_chars(char *first, const char *last, double value);
  */
 double from_chars(const char *first) noexcept;
 double from_chars(const char *first, const char* end) noexcept;
-
 }
 
 #ifndef SIMDJSON_EXCEPTIONS
@@ -30,26 +29,6 @@ double from_chars(const char *first, const char* end) noexcept;
 #define SIMDJSON_EXCEPTIONS 0
 #endif
 #endif
-
-/** The maximum document size supported by simdjson. */
-constexpr size_t SIMDJSON_MAXSIZE_BYTES = 0xFFFFFFFF;
-
-/**
- * The amount of padding needed in a buffer to parse JSON.
- *
- * The input buf should be readable up to buf + SIMDJSON_PADDING
- * this is a stopgap; there should be a better description of the
- * main loop and its behavior that abstracts over this
- * See https://github.com/simdjson/simdjson/issues/174
- */
-constexpr size_t SIMDJSON_PADDING = 64;
-
-/**
- * By default, simdjson supports this many nested objects and arrays.
- *
- * This is the default for parser::max_depth().
- */
-constexpr size_t DEFAULT_MAX_DEPTH = 1024;
 
 } // namespace simdjson
 
@@ -105,6 +84,9 @@ constexpr size_t DEFAULT_MAX_DEPTH = 1024;
   #define SIMDJSON_DISABLE_STRICT_OVERFLOW_WARNING
   #define SIMDJSON_POP_DISABLE_WARNINGS __pragma(warning( pop ))
 
+  #define SIMDJSON_PUSH_DISABLE_UNUSED_WARNINGS
+  #define SIMDJSON_POP_DISABLE_UNUSED_WARNINGS
+
 #else // SIMDJSON_REGULAR_VISUAL_STUDIO
 
   #define simdjson_really_inline inline __attribute__((always_inline))
@@ -150,7 +132,8 @@ constexpr size_t DEFAULT_MAX_DEPTH = 1024;
     SIMDJSON_DISABLE_GCC_WARNING(-Wshadow) \
     SIMDJSON_DISABLE_GCC_WARNING(-Wunused-parameter) \
     SIMDJSON_DISABLE_GCC_WARNING(-Wunused-variable) \
-    SIMDJSON_DISABLE_GCC_WARNING(-Wmaybe-uninitialized)
+    SIMDJSON_DISABLE_GCC_WARNING(-Wmaybe-uninitialized) \
+    SIMDJSON_DISABLE_GCC_WARNING(-Wformat-security)
   #endif // __clang__
 
   #define SIMDJSON_PRAGMA(P) _Pragma(#P)
@@ -163,6 +146,10 @@ constexpr size_t DEFAULT_MAX_DEPTH = 1024;
   #define SIMDJSON_DISABLE_DEPRECATED_WARNING SIMDJSON_DISABLE_GCC_WARNING(-Wdeprecated-declarations)
   #define SIMDJSON_DISABLE_STRICT_OVERFLOW_WARNING SIMDJSON_DISABLE_GCC_WARNING(-Wstrict-overflow)
   #define SIMDJSON_POP_DISABLE_WARNINGS _Pragma("GCC diagnostic pop")
+
+  #define SIMDJSON_PUSH_DISABLE_UNUSED_WARNINGS SIMDJSON_PUSH_DISABLE_WARNINGS \
+    SIMDJSON_DISABLE_GCC_WARNING(-Wunused)
+  #define SIMDJSON_POP_DISABLE_UNUSED_WARNINGS SIMDJSON_POP_DISABLE_WARNINGS
 
 
 
@@ -322,7 +309,6 @@ namespace std {
 # define simdjson_fallthrough do {} while (0)  /* fallthrough */
 #endif // simdjson_fallthrough
 
-
 #if SIMDJSON_DEVELOPMENT_CHECKS
 #define SIMDJSON_DEVELOPMENT_ASSERT(expr) do { assert ((expr)); } while (0)
 #else
@@ -331,6 +317,27 @@ namespace std {
 
 #ifndef SIMDJSON_UTF8VALIDATION
 #define SIMDJSON_UTF8VALIDATION 1
+#endif
+
+#ifdef __has_include
+// How do we detect that a compiler supports vbmi2?
+// For sure if the following header is found, we are ok?
+#if __has_include(<avx512vbmi2intrin.h>)
+#define SIMDJSON_COMPILER_SUPPORTS_VBMI2 1
+#endif
+#endif
+
+#ifdef _MSC_VER
+#if _MSC_VER >= 1920
+// Visual Studio 2019 and up support VBMI2 under x64 even if the header
+// avx512vbmi2intrin.h is not found.
+#define SIMDJSON_COMPILER_SUPPORTS_VBMI2 1
+#endif
+#endif
+
+// By default, we allow AVX512.
+#ifndef SIMDJSON_AVX512_ALLOWED
+#define SIMDJSON_AVX512_ALLOWED 1
 #endif
 
 #endif // SIMDJSON_COMMON_DEFS_H

@@ -1,0 +1,8 @@
+#ifdef SIMDJSON_AMALGAMATED
+#error generic/dependencies.h must be included before defining SIMDJSON_AMALGAMATED!
+#endif
+
+#ifndef SIMDJSON_SRC_GENERIC_DEPENDENCIES_H
+#define SIMDJSON_SRC_GENERIC_DEPENDENCIES_H
+
+#endif // SIMDJSON_SRC_GENERIC_DEPENDENCIES_H

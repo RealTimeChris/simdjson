@@ -1,13 +1,10 @@
-#ifndef SIMDJSON_INLINE_PADDED_STRING_H
-#define SIMDJSON_INLINE_PADDED_STRING_H
+#ifndef SIMDJSON_PADDED_STRING_INL_H
+#define SIMDJSON_PADDED_STRING_INL_H
 
-#include "simdjson/portability.h"
-#include "simdjson/common_defs.h" // for SIMDJSON_PADDING
+#include "simdjson/padded_string.h"
+#include "simdjson/padded_string_view.h"
 
 #include <climits>
-#include <cstring>
-#include <memory>
-#include <string>
 
 namespace simdjson {
 namespace internal {
@@ -170,4 +167,4 @@ inline simdjson_result<padded_string> padded_string::load(std::string_view filen
 
 } // namespace simdjson
 
-#endif // SIMDJSON_INLINE_PADDED_STRING_H
+#endif // SIMDJSON_PADDED_STRING_INL_H
