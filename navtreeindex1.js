@@ -1,6 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#ad210f9115679a625ada433add55eff51":[11,0,0,1,0,7,12],
 "classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#ad742392a9223e096f1be16b7bbf20ca8":[11,0,0,1,0,7,6],
 "classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#adbe7322f665109b9816c5bcb9c10a9cb":[11,0,0,1,0,7,10],
 "classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#add102ee85423a75e22e4d7ca9a3eaacd":[11,0,0,1,0,7,4],
@@ -249,5 +248,6 @@ var NAVTREEINDEX1 =
 "classsimdjson_1_1dom_1_1object_1_1iterator.html#a1da5ce328cc2609432be961736c6e810":[11,0,0,0,4,0,9],
 "classsimdjson_1_1dom_1_1object_1_1iterator.html#a2049ae539dca6999cc33300d212a5014":[11,0,0,0,4,0,19],
 "classsimdjson_1_1dom_1_1object_1_1iterator.html#a238b57daf0b007591b767b268639473e":[11,0,0,0,4,0,15],
-"classsimdjson_1_1dom_1_1object_1_1iterator.html#a3d4dcacb8171b99f783396bb6a337c65":[11,0,0,0,4,0,20]
+"classsimdjson_1_1dom_1_1object_1_1iterator.html#a3d4dcacb8171b99f783396bb6a337c65":[11,0,0,0,4,0,20],
+"classsimdjson_1_1dom_1_1object_1_1iterator.html#a4807eeb1ed5f596b587d0b61dfb550e7":[11,0,0,0,4,0,6]
 };

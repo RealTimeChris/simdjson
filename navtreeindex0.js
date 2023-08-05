@@ -9,7 +9,6 @@ var NAVTREEINDEX0 =
 "arm64_2end_8h_source.html":[12,0,0,0,0,4],
 "arm64_2implementation_8h_source.html":[12,0,0,0,0,5],
 "arm64_2intrinsics_8h_source.html":[12,0,0,0,0,6],
-"arm64_2numberparsing__defs_8h.html#ae2f7c9103f5e8c993f915094150c2d99":[10,0,0,6,0,0],
 "arm64_2numberparsing__defs_8h_source.html":[12,0,0,0,0,7],
 "arm64_2ondemand_8h_source.html":[12,0,0,0,0,8],
 "arm64_2simd_8h_source.html":[12,0,0,0,0,9],
@@ -249,5 +248,6 @@ var NAVTREEINDEX0 =
 "classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#a9f1cd920980a8bc0330d2c7f1f0be74b":[11,0,0,1,0,7,14],
 "classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#aa14649f261616070b04829c9ba6b28da":[11,0,0,1,0,7,18],
 "classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#aa25020165cc5a191026a243a10da6558":[11,0,0,1,0,7,8],
-"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#ab6b2e9769ce75fc625aa91504f26d82b":[11,0,0,1,0,7,7]
+"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#ab6b2e9769ce75fc625aa91504f26d82b":[11,0,0,1,0,7,7],
+"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1object.html#ad210f9115679a625ada433add55eff51":[11,0,0,1,0,7,12]
 };

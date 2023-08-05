@@ -1,7 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"logger-inl_8h.html#a66e3122a7ae01bfe5f81ecb1bf1814cc":[10,0,0,6,1,0,5],
-"logger-inl_8h.html#a6ca1434e6fe03e97dbc88360cc6ea5db":[10,0,0,6,1,0,2],
 "logger-inl_8h.html#a720bb462b108c1f9bcaa02cdcdfe6546":[10,0,0,6,1,0,13],
 "logger-inl_8h.html#a8cd7cf74fd4b1c9386ac006febabeebd":[10,0,0,6,1,0,10],
 "logger-inl_8h.html#a92b499d3d191a02e913f90de4f641e2e":[10,0,0,6,1,0,11],
@@ -160,10 +158,10 @@ var NAVTREEINDEX3 =
 "namespacesimdjson.html#a537445bb236ae76d2b5559b1851b7108":[10,0,0,56],
 "namespacesimdjson.html#a56e8e2fa6798b9e0da80bc51ae4a5f29":[10,0,0,43],
 "namespacesimdjson.html#a598dd79ec46726de8a6d409ba1bae034":[10,0,0,63],
-"namespacesimdjson.html#a61a74357c3e9313ad84c5f1243fdf581":[10,0,0,59],
 "namespacesimdjson.html#a630111c8201eafec9b4c44fe0456a475":[10,0,0,49],
 "namespacesimdjson.html#a63b494af834917af13120dcd57719bdb":[10,0,0,32],
 "namespacesimdjson.html#a65b00a7a7a9c8fafe9eb3b9b413a36fa":[10,0,0,42],
+"namespacesimdjson.html#a667605c4c36cfa45bf111d6c76d39284":[10,0,0,59],
 "namespacesimdjson.html#a688157fcec0f7a073ebcbaa277df1647":[10,0,0,51],
 "namespacesimdjson.html#a6a670913a79379b38ac49a0599b437e8":[10,0,0,68],
 "namespacesimdjson.html#a6df2598eb1d4e1ea669c41831cc7325d":[10,0,0,79],
@@ -249,5 +247,7 @@ var NAVTREEINDEX3 =
 "namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#ac915f0c06e5ab0363e09593bba651330aa8cfde6331bd59eb2ac96f8911c4b666":[10,0,0,6,1,16,1],
 "namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#ac915f0c06e5ab0363e09593bba651330ab1bc248a7ff2b2e95569f56de68615df":[10,0,0,6,1,16,2],
 "namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#ac915f0c06e5ab0363e09593bba651330ab45cffe084dd3d20d928bee85e7b0f21":[10,0,0,6,1,16,3],
-"namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#ac915f0c06e5ab0363e09593bba651330af1f713c9e000f5d3f280adbd124df4f5":[10,0,0,6,1,16,0]
+"namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#ac915f0c06e5ab0363e09593bba651330af1f713c9e000f5d3f280adbd124df4f5":[10,0,0,6,1,16,0],
+"namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#adab1063af10b90a1f45f87b307225995":[10,0,0,6,1,27],
+"namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#ae52a82c2f754a47eb9dac12223b3311d":[10,0,0,6,1,24]
 };
