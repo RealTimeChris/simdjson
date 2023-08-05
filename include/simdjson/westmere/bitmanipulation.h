@@ -1,10 +1,13 @@
 #ifndef SIMDJSON_WESTMERE_BITMANIPULATION_H
 #define SIMDJSON_WESTMERE_BITMANIPULATION_H
 
+#ifndef SIMDJSON_CONDITIONAL_INCLUDE
 #include "simdjson/westmere/base.h"
+#include "simdjson/westmere/intrinsics.h"
+#endif // SIMDJSON_CONDITIONAL_INCLUDE
 
 namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace westmere {
 namespace {
 
 // We sometimes call trailing_zero on inputs that are zero,
@@ -49,7 +52,7 @@ simdjson_inline int leading_zeroes(uint64_t input_num) {
 
 #if SIMDJSON_REGULAR_VISUAL_STUDIO
 simdjson_inline unsigned __int64 count_ones(uint64_t input_num) {
-  // note: we do not support legacy 32-bit Windows
+  // note: we do not support legacy 32-bit Windows in this kernel
   return __popcnt64(input_num);// Visual Studio wants two underscores
 }
 #else
@@ -70,7 +73,7 @@ simdjson_inline bool add_overflow(uint64_t value1, uint64_t value2,
 }
 
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
+} // namespace westmere
 } // namespace simdjson
 
 #endif // SIMDJSON_WESTMERE_BITMANIPULATION_H

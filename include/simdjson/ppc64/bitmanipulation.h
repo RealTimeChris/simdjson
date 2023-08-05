@@ -1,10 +1,12 @@
 #ifndef SIMDJSON_PPC64_BITMANIPULATION_H
 #define SIMDJSON_PPC64_BITMANIPULATION_H
 
+#ifndef SIMDJSON_CONDITIONAL_INCLUDE
 #include "simdjson/ppc64/base.h"
+#endif // SIMDJSON_CONDITIONAL_INCLUDE
 
 namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace ppc64 {
 namespace {
 
 // We sometimes call trailing_zero on inputs that are zero,
@@ -49,7 +51,7 @@ simdjson_inline int leading_zeroes(uint64_t input_num) {
 
 #if SIMDJSON_REGULAR_VISUAL_STUDIO
 simdjson_inline int count_ones(uint64_t input_num) {
-  // note: we do not support legacy 32-bit Windows
+  // note: we do not support legacy 32-bit Windows in this kernel
   return __popcnt64(input_num); // Visual Studio wants two underscores
 }
 #else
@@ -70,7 +72,7 @@ simdjson_inline bool add_overflow(uint64_t value1, uint64_t value2,
 }
 
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
+} // namespace ppc64
 } // namespace simdjson
 
 #endif // SIMDJSON_PPC64_BITMANIPULATION_H

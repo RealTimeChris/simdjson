@@ -1,6 +1,6 @@
 #ifndef SIMDJSON_GENERIC_ONDEMAND_OBJECT_INL_H
 
-#ifndef SIMDJSON_AMALGAMATED
+#ifndef SIMDJSON_CONDITIONAL_INCLUDE
 #define SIMDJSON_GENERIC_ONDEMAND_OBJECT_INL_H
 #include "simdjson/generic/ondemand/base.h"
 #include "simdjson/generic/ondemand/field.h"
@@ -9,7 +9,7 @@
 #include "simdjson/generic/ondemand/raw_json_string.h"
 #include "simdjson/generic/ondemand/json_iterator.h"
 #include "simdjson/generic/ondemand/value-inl.h"
-#endif // SIMDJSON_AMALGAMATED
+#endif // SIMDJSON_CONDITIONAL_INCLUDE
 
 namespace simdjson {
 namespace SIMDJSON_IMPLEMENTATION {
@@ -96,7 +96,7 @@ simdjson_inline simdjson_result<std::string_view> object::raw_json() noexcept {
   const uint8_t * starting_point{iter.peek_start()};
   auto error = consume();
   if(error) { return error; }
-  const uint8_t * final_point{iter._json_iter->peek(0)};
+  const uint8_t * final_point{iter._json_iter->peek()};
   return std::string_view(reinterpret_cast<const char*>(starting_point), size_t(final_point - starting_point));
 }
 

@@ -1,20 +1,24 @@
 #ifndef SIMDJSON_SRC_WESTMERE_CPP
 #define SIMDJSON_SRC_WESTMERE_CPP
 
-#include "simdjson/westmere.h"
-#include "simdjson/westmere/implementation.h"
+#ifndef SIMDJSON_CONDITIONAL_INCLUDE
+#include <base.h>
+#endif // SIMDJSON_CONDITIONAL_INCLUDE
 
-#include "simdjson/westmere/begin.h"
-#include "generic/amalgamated.h"
-#include "generic/stage1/amalgamated.h"
-#include "generic/stage2/amalgamated.h"
+#include <simdjson/westmere.h>
+#include <simdjson/westmere/implementation.h>
+
+#include <simdjson/westmere/begin.h>
+#include <generic/amalgamated.h>
+#include <generic/stage1/amalgamated.h>
+#include <generic/stage2/amalgamated.h>
 
 //
 // Stage 1
 //
 
 namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace westmere {
 
 simdjson_warn_unused error_code implementation::create_dom_parser_implementation(
   size_t capacity,
@@ -113,7 +117,7 @@ simdjson_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> prev2,
 }
 
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
+} // namespace westmere
 } // namespace simdjson
 
 //
@@ -125,17 +129,7 @@ simdjson_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> prev2,
 //
 
 namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
-namespace {
-namespace stage1 {
-
-simdjson_inline uint64_t json_string_scanner::find_escaped(uint64_t backslash) {
-  if (!backslash) { uint64_t escaped = prev_escaped; prev_escaped = 0; return escaped; }
-  return find_escaped_branchless(backslash);
-}
-
-} // namespace stage1
-} // unnamed namespace
+namespace westmere {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
   return westmere::stage1::json_minifier::minify<64>(buf, len, dst, dst_len);
@@ -173,9 +167,9 @@ simdjson_warn_unused error_code dom_parser_implementation::parse(const uint8_t *
   return stage2(_doc);
 }
 
-} // namespace SIMDJSON_IMPLEMENTATION
+} // namespace westmere
 } // namespace simdjson
 
-#include "simdjson/westmere/end.h"
+#include <simdjson/westmere/end.h>
 
 #endif // SIMDJSON_SRC_WESTMERE_CPP
