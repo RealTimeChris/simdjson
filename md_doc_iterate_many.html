@@ -30,7 +30,7 @@
   <td id="projectlogo"><img alt="Logo" src="logotiny.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">simdjson
-   &#160;<span id="projectnumber">3.2.2</span>
+   &#160;<span id="projectnumber">3.3.0</span>
    </div>
    <div id="projectbrief">Ridiculously Fast JSON</div>
   </td>
@@ -100,7 +100,12 @@ $(document).ready(function(){initNavTree('md_doc_iterate_many.html',''); initRes
 Contents</h1>
 <ul>
 <li><a href="#motivations">Motivations</a></li>
-<li><a href="#how-it-works">How it works</a></li>
+<li><a href="#how-it-works">How it works</a><ul>
+<li><a href="#context">Context</a></li>
+<li><a href="#design">Design</a></li>
+<li><a href="#threads">Threads</a></li>
+</ul>
+</li>
 <li><a href="#support">Support</a></li>
 <li><a href="#api">API</a></li>
 <li><a href="#use-cases">Use cases</a></li>
@@ -181,12 +186,12 @@ Tracking your position</h1>
 <div class="line">   simdjson::ondemand::parser parser;</div>
 <div class="line">   simdjson::ondemand::document_stream stream;</div>
 <div class="line">   auto error = parser.iterate_many(json).get(stream);</div>
-<div class="line">   if( error ) { /* do something */ }</div>
+<div class="line">   if (error) { /* do something */ }</div>
 <div class="line">   auto i = stream.begin();</div>
 <div class="line">    size_t count{0};</div>
 <div class="line">   for(; i != stream.end(); ++i) {</div>
 <div class="line">       auto doc = *i;</div>
-<div class="line">       if(!i.error()) {</div>
+<div class="line">       if (!i.error()) {</div>
 <div class="line">         std::cout &lt;&lt; &quot;got full document at &quot; &lt;&lt; i.current_index() &lt;&lt; std::endl;</div>
 <div class="line">         std::cout &lt;&lt; i.source() &lt;&lt; std::endl;</div>
 <div class="line">         count++;</div>
@@ -210,7 +215,7 @@ Incomplete streams</h1>
 <div class="line">   simdjson::ondemand::parser parser;</div>
 <div class="line">   simdjson::ondemand::document_stream stream;</div>
 <div class="line">   auto error = parser.iterate_many(json,json.size()).get(stream);</div>
-<div class="line">   if(error) { std::cerr &lt;&lt; error &lt;&lt; std::endl; return; }</div>
+<div class="line">   if (error) { std::cerr &lt;&lt; error &lt;&lt; std::endl; return; }</div>
 <div class="line">   for(auto i = stream.begin(); i != stream.end(); ++i) {</div>
 <div class="line">      std::cout &lt;&lt; i.source() &lt;&lt; std::endl;</div>
 <div class="line">   }</div>
@@ -231,7 +236,7 @@ Comma-separated documents</h1>
 <div class="line">   // we pass &#39;true&#39; to the allow_comma parameter, the batch size will be set to at least</div>
 <div class="line">   // the document size.</div>
 <div class="line">   auto error = parser.iterate_many(json, 32, true).get(doc_stream);</div>
-<div class="line">   if(error) { std::cerr &lt;&lt; error &lt;&lt; std::endl; return; }</div>
+<div class="line">   if (error) { std::cerr &lt;&lt; error &lt;&lt; std::endl; return; }</div>
 <div class="line">   for (auto doc : doc_stream) {</div>
 <div class="line">       std::cout &lt;&lt; doc.type() &lt;&lt; std::endl;</div>
 <div class="line">   }</div>
