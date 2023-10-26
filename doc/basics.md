@@ -179,8 +179,8 @@ strcpy(json, "[1]");
 ondemand::document doc = parser.iterate(json, strlen(json), sizeof(json));
 ```
 
-The simdjson library will also accept `std::string` instances, as long as the `capacity()` of
-the string exceeds the `size()` by at least `SIMDJSON_PADDING`. You can increase the `capacity()` with the `reserve()` function of your strings.
+The simdjson library will also accept `std::string` instances. If the provided
+reference is non-const, it will allocate padding as needed.
 
 You can copy your data directly on a `simdjson::padded_string` as follows:
 
@@ -1653,7 +1653,7 @@ JSON string to a user-provided buffer:
 
 General Direct Access to the Raw JSON String
 --------------------------------
-If your value is a string, the `raw_json_string` gives you direct access to the unprocess
+If your value is a string, the `raw_json_string` you with `get_raw_json_string()` gives you direct access to the unprocessed
 string. The simdjson library allows you to have access to the raw underlying JSON
 more generally.
 
@@ -1721,6 +1721,41 @@ string_view token = obj.raw_json(); // gives you `{"value":123}`
 obj.reset(); // revise the object
 uint64_t x = obj["value"]; // gives me 123
 ```
+
+Storing Directly into an Existing std::string Instance
+-----------------------------------------------------
+
+The simdjson library favours  the use of `std::string_view` instances because
+it tends to lead to better performance due to causing fewer memory allocations.
+However, they are cases where you need to store a string result in an `std::string``
+instance. You can do so with a version of the `to_string()` method which takes as
+a parameter a reference to an `std::string`.
+
+```C++
+  auto json = R"({
+  "name": "Daniel",
+  "age": 42
+})"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  std::string name;
+  doc["name"].get_string(name);
+```
+
+The same routine can be written without exceptions handling:
+
+```C++
+  std::string name;
+  auto err = doc["name"].get_string(name);
+  if(err) { /* handle error */ }
+```
+
+The `std::string` instance, once created, is independent. Unlike our `std::string_view` instances, it does not point at data that is
+within our `parser` instance. The same caveat applies: you should
+only consume a JSON string once.
+
+You should be mindful of the trade-off: allocating multiple
+`std::string` instances can become expensive.
 
 Thread Safety
 -------------

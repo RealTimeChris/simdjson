@@ -20,7 +20,39 @@ bool string2() {
 }
 
 
+bool to_string_example_no_except() {
+    TEST_START();
+  auto json = R"({
+  "name": "Daniel",
+  "age": 42
+})"_padded;
+  ondemand::parser parser;
+  ondemand::document doc;
+  auto err = parser.iterate(json).get(doc);
+  if(err) { return false; }
+  std::string name;
+  err = doc["name"].get_string(name);
+  if(err) { return false; }
+  TEST_SUCCEED();
+}
+
 #if SIMDJSON_EXCEPTIONS
+
+
+bool to_string_example() {
+    TEST_START();
+  auto json = R"({
+  "name": "Daniel",
+  "age": 42
+})"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  std::string name;
+  doc["name"].get_string(name);
+  ASSERT_EQUAL(name, "Daniel");
+  TEST_SUCCEED();
+}
+
 bool gen_raw1() {
   TEST_START();
   simdjson::ondemand::parser parser;
@@ -107,6 +139,76 @@ bool examplecrt() {
 ])"_padded;
   auto parser = ondemand::parser{};
   auto doc = parser.iterate(padded_input_json);
+  auto root_array = doc.get_array();
+  // the root should be an object, not an array, but that's the JSON we are
+  // given.
+  for (ondemand::object node : root_array) {
+    // We know that we are going to have just one element in the object.
+    for (auto field : node) {
+      std::cout << "\n\ntop level:" << field.key() << std::endl;
+      // You can get a proper std::string_view for the key with:
+      // std::string_view key = field.unescaped_key();
+      // and second for-range loop to get child-elements here
+      for (ondemand::object inner_object : field.value()) {
+        auto i = inner_object.begin();
+        if (i == inner_object.end()) {
+          std::cout << "empty object" << std::endl;
+          continue;
+        } else {
+          for (; i != inner_object.end(); ++i) {
+            auto inner_field = *i;
+            std::cout << '"' << inner_field.key()
+                      << "\" : " << inner_field.value() << ", ";
+            // You can get proper std::string_view for the key and value with:
+            // std::string_view inner_key = field.unescaped_key();
+            // std::string_view value_str = field.value();
+          }
+        }
+        std::cout << std::endl;
+      }
+      // You can break here if you only want just the first element.
+      // break;
+    }
+  }
+  TEST_SUCCEED();
+}
+
+
+bool examplecrt_realloc() {
+  TEST_START();
+  std::string unpadded_input_json = R"([
+	{ "monitor": [
+		{ "id": "monitor",		"type": "toggle",		"label": "monitor"			},
+		{ "id": "profile",		"type": "selector",		"label": "collection"		},
+		{ "id": "overlay",		"type": "selector",		"label": "overlay"			},
+		{ "id": "zoom",			"type": "toggleSlider",	"label": "zoom"				}
+	] },
+
+	{ "crt": [
+		{ "id": "system",		"type": "multi",		"label": "system",		"choices": "PAL, NTSC"	},
+		{ "type": "spacer" },
+		{ "id": "brightness",	"type": "slider",		"icon": "brightness"		},
+		{ "id": "contrast",		"type": "slider",		"icon": "contrast"			},
+		{ "id": "saturation",	"type": "slider",		"icon": "saturation"		},
+		{ "type": "spacer" },
+		{ "id": "overscan",		"type": "toggleSlider",	"label": "overscan"			},
+		{ "type": "spacer" },
+		{ "id": "emulation",	"type": "toggle",		"label": "CRT emulation"	},
+		{ "type": "spacer" },
+		{ "id": "curve",		"type": "toggleSlider",	"label": "curve"			},
+		{ "id": "bleed",		"type": "toggleSlider",	"label": "bleed"			},
+		{ "id": "vignette",		"type": "toggleSlider",	"label": "vignette"			},
+		{ "id": "scanlines",	"type": "toggleSlider",	"label": "scanlines"		},
+		{ "id": "gridlines",	"type": "toggleSlider",	"label": "gridlines"		},
+		{ "id": "glow",			"type": "toggleSlider",	"label": "glow"				},
+		{ "id": "flicker",		"type": "toggleSlider",	"label": "flicker"			},
+		{ "id": "noise",		"type": "toggleSlider",	"label": "noise"			},
+    {}
+	] }
+])";
+  unpadded_input_json.shrink_to_fit();
+  auto parser = ondemand::parser{};
+  auto doc = parser.iterate(unpadded_input_json);
   auto root_array = doc.get_array();
   // the root should be an object, not an array, but that's the JSON we are
   // given.
@@ -1420,11 +1522,14 @@ bool run() {
     && current_location_user_error()
     && current_location_out_of_bounds()
     && current_location_no_error()
+    && to_string_example_no_except()
   #if SIMDJSON_EXCEPTIONS
+    && to_string_example()
     && raw_string()
     && number_tests()
     && current_location_tape_error_with_except()
     && examplecrt()
+    && examplecrt_realloc()
   #endif
   ;
 }
