@@ -30,6 +30,7 @@ An overview of what you need to know to use simdjson, with examples.
   - [Dynamic Number Types](#dynamic-number-types)
   - [Raw Strings](#raw-strings)
   - [General Direct Access to the Raw JSON String](#general-direct-access-to-the-raw-json-string)
+  - [Storing Directly into an Existing String Instance](#storing-directly-into-an-existing-string-instance)
   - [Thread Safety](#thread-safety)
   - [Standard Compliance](#standard-compliance)
   - [Backwards Compatibility](#backwards-compatibility)
@@ -1688,9 +1689,9 @@ string_view token = obj["value"].raw_json_token();
 
 The `raw_json_token()` should be fast and free of allocation.
 
-If you value is an array or an object, `raw_json_token()` returns effectively a single
+If your value is an array or an object, `raw_json_token()` returns effectively a single
 character (`[`) or (`}`) which is not very useful. For arrays and objects, we have another
-method called `raw_json()` which consumes (traverse) the array or the object.
+method called `raw_json()` which consumes (traverses) the array or the object.
 
 ```C++
 simdjson::ondemand::parser parser;
@@ -1722,13 +1723,42 @@ obj.reset(); // revise the object
 uint64_t x = obj["value"]; // gives me 123
 ```
 
-Storing Directly into an Existing std::string Instance
+You can use `raw_json()` with the values inside an array and object. When
+calling `raw_json()` on an untyped value, it acts as `raw_json()` when the
+value is an array or an object. Otherwise, it acts as `raw_json_token()`.
+It is useful if you do not care for the type of the value and just wants a
+string representation.
+
+```C++
+  auto json = R"( [1,2,"fds", {"a":1}, [1,344]] )"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  size_t counter = 0;
+  for(auto array: doc) {
+    std::string_view raw = array.raw_json();
+    // will capture "1", "2", "\"fds\"", "{\"a\":1}", "[1,344]"
+  }
+```
+
+```C++
+  auto json = R"( {"key1":1,"key2":2,"key3":"fds", "key4":{"a":1}, "key5":[1,344]} )"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  size_t counter = 0;
+  for(auto key_value: doc.get_object()) {
+    std::string_view raw = key_value.value().raw_json();
+    // will capture "1", "2", "\"fds\"", "{\"a\":1}", "[1,344]"
+  }
+```
+
+
+Storing Directly into an Existing String Instance
 -----------------------------------------------------
 
 The simdjson library favours  the use of `std::string_view` instances because
 it tends to lead to better performance due to causing fewer memory allocations.
 However, they are cases where you need to store a string result in an `std::string``
-instance. You can do so with a version of the `to_string()` method which takes as
+instance. You can do so with a templated version of the `to_string()` method which takes as
 a parameter a reference to an `std::string`.
 
 ```C++
@@ -1750,9 +1780,21 @@ The same routine can be written without exceptions handling:
   if(err) { /* handle error */ }
 ```
 
-The `std::string` instance, once created, is independent. Unlike our `std::string_view` instances, it does not point at data that is
-within our `parser` instance. The same caveat applies: you should
+The `std::string` instance, once created, is independent. Unlike our `std::string_view` instances,
+it does not point at data that is within our `parser` instance. The same caveat applies: you should
 only consume a JSON string once.
+
+Because `get_string()` is a template that requires a type that can be assigned an `std::string`, you
+can use it with features such as `std::optional`:
+
+```C++
+  auto json = R"({ "foo1": "3.1416" } )"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  std::optional<std::string> value;
+  if(doc["foo1"].get_string(value)) { /* error */ }
+  // value was populated with "3.1416"
+```
 
 You should be mindful of the trade-off: allocating multiple
 `std::string` instances can become expensive.

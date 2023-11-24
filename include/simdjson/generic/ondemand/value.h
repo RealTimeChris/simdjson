@@ -148,7 +148,8 @@ public:
    *
    * @returns INCORRECT_TYPE if the JSON value is not a string. Otherwise, we return SUCCESS.
    */
-  simdjson_inline error_code get_string(std::string& receiver, bool allow_replacement = false) noexcept;
+  template <typename string_type>
+  simdjson_inline error_code get_string(string_type& receiver, bool allow_replacement = false) noexcept;
 
   /**
    * Cast this JSON value to a "wobbly" string.
@@ -492,8 +493,20 @@ public:
    * - true
    * - false
    * - null
+   *
+   * See also value::raw_json().
    */
   simdjson_inline std::string_view raw_json_token() noexcept;
+
+  /**
+   * Get a string_view pointing at this value in the JSON document.
+   * If this element is an array or an object, it consumes the array or the object
+   * and returns a string_view instance corresponding to the
+   * array as represented in JSON. It points inside the original document.
+   * If this element is a scalar (string, number, Boolean, null), it returns what
+   * raw_json_token() would return.
+   */
+  simdjson_inline simdjson_result<std::string_view> raw_json() noexcept;
 
   /**
    * Returns the current location in the document if in bounds.
@@ -619,7 +632,8 @@ public:
   simdjson_inline simdjson_result<double> get_double() noexcept;
   simdjson_inline simdjson_result<double> get_double_in_string() noexcept;
   simdjson_inline simdjson_result<std::string_view> get_string(bool allow_replacement = false) noexcept;
-  simdjson_inline error_code get_string(std::string& receiver, bool allow_replacement = false) noexcept;
+  template <typename string_type>
+  simdjson_inline error_code get_string(string_type& receiver, bool allow_replacement = false) noexcept;
   simdjson_inline simdjson_result<std::string_view> get_wobbly_string() noexcept;
   simdjson_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::raw_json_string> get_raw_json_string() noexcept;
   simdjson_inline simdjson_result<bool> get_bool() noexcept;
@@ -712,6 +726,7 @@ public:
 
   /** @copydoc simdjson_inline std::string_view value::raw_json_token() const noexcept */
   simdjson_inline simdjson_result<std::string_view> raw_json_token() noexcept;
+  simdjson_inline simdjson_result<std::string_view> raw_json() noexcept;
 
   /** @copydoc simdjson_inline simdjson_result<const char *> current_location() noexcept */
   simdjson_inline simdjson_result<const char *> current_location() noexcept;

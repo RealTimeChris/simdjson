@@ -41,7 +41,8 @@ Real-world usage
 ----------------
 
 - [ClickHouse](https://github.com/ClickHouse/ClickHouse)
-- [Facebook/Meta Velox](https://velox-lib.io)
+- [Meta Velox](https://velox-lib.io)
+- [Google Pax](https://github.com/google/paxml)
 - [milvus](https://github.com/milvus-io/milvus)
 - [Clang Build Analyzer](https://github.com/aras-p/ClangBuildAnalyzer)
 - [Shopify HeapProfiler](https://github.com/Shopify/heap-profiler)
@@ -163,6 +164,7 @@ We distinguish between "bindings" (which just wrap the C++ code) and a port to a
 - [simdjzon](https://github.com/travisstaloch/simdjzon): zig port.
 - [JSON-Simd](https://github.com/rawleyfowler/JSON-simd): Raku bindings.
 - [JSON::SIMD](https://metacpan.org/pod/JSON::SIMD): Perl bindings; fully-featured JSON module that uses simdjson for decoding.
+- [gemmaJSON](https://github.com/sainttttt/gemmaJSON): Nim json parser based on simdjson bindings.
 
 About simdjson
 --------------
