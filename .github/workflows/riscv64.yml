@@ -1,4 +1,4 @@
-name: Ubuntu ppc64le (GCC 11)
+name: Ubuntu riscv64 (GCC 11)
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
         name: Test
         id: runcmd
         with:
-          arch: ppc64le
+          arch: riscv64
           distro: ubuntu_latest
           githubToken: ${{ github.token }}
           install: |

@@ -86,7 +86,7 @@ include(FetchContent)
 FetchContent_Declare(
   simdjson
   GIT_REPOSITORY https://github.com/simdjson/simdjson.git
-  GIT_TAG  tags/v0.9.6
+  GIT_TAG  tags/v3.6.0
   GIT_SHALLOW TRUE)
 
 FetchContent_MakeAvailable(simdjson)
@@ -219,7 +219,8 @@ This means that while you iterate an array, or search for a field in an object, 
 walking through the original JSON text, merrily reading commas and colons and brackets to make sure
 you get where you are going. This is the key to On Demand's performance: since it's just an iterator,
 it lets you parse values as you use them. And particularly, it lets you *skip* values you do not want
-to use.
+to use. On Demand is also ideally suited when you want to capture part of the document without parsing it
+immediately (e.g., see [Raw Strings](#raw-strings)).
 
 We refer to "On Demand" as a front-end component since it is an interface between the
 low-level parsing functions and the user. It hides much of the complexity of parsing JSON
@@ -254,7 +255,8 @@ copy the data into their own favorite class instances (e.g., alternatives to `st
 
 A `std::string_view` instance is effectively just a pointer to a region in memory representing
 a string. In simdjson, we return `std::string_view` instances that either point within the
-input string you parsed, or to a temporary string buffer inside our parser class instances.
+input string you parsed (when using [raw Strings](#raw-strings)), or to a temporary string buffer inside
+our parser class instances that is valid until the parser object is destroyed or you use it to parse another document.
 When using `std::string_view` instances, it is your responsibility to ensure that
 `std::string_view` instance does not outlive the pointed-to memory (e.g., either the input
 buffer or the parser instance). Furthermore, some operations reset the string buffer
@@ -262,6 +264,7 @@ inside our parser instances: e.g., when we parse a new document. Thus a `std::st
 is often best viewed as a temporary string value that is tied to the document you are parsing.
 At the cost of some memory allocation, you may convert your `std::string_view` instances for long-term storage into `std::string` instances:
 `std::string mycopy(view)` (C++17) or  `std::string mycopy(view.begin(), view.end())` (prior to C++17).
+For convenience, we also allow [storing an escaped string directly into an existing string instance](#storing-directly-into-an-existing-string-instance).
 
 The `std::string_view` class has become standard as part of C++17 but it is not always available
 on compilers which only supports C++11. When we detect that `string_view` is natively
@@ -356,7 +359,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
 * **Field Access:** To get the value of the "foo" field in an object, use `object["foo"]`. This will
   scan through the object looking for the field with the matching string, doing a character-by-character
   comparison. It may generate the error `simdjson::NO_SUCH_FIELD` if there is no such key in the object, it may throw an exception (see [Error Handling](#error-handling)). For efficiency reason, you should avoid looking up the same field repeatedly: e.g., do
-  not do `object["foo"]` followed by `object["foo"]` with the same `object` instance. Keep in mind that On Demand does not buffer or save the result of the parsing: if you repeatedly access `object["foo"]`, then it must repeatedly seek the key and parse the content. The library does not provide a distinct function to check if a key is present, instead we recommend you attempt to access the key: e.g., by doing `ondemand::value val{}; if (!object["foo"].get(val)) {...}`, you have that `val` contains the requested value inside the if clause.  It is your responsibility as a user to temporarily keep a reference to the value (`auto v = object["foo"]`), or to consume the content and store it in your own data structures. If you consume an
+  not do `object["foo"]` followed by `object["foo"]` with the same `object` instance. For best performance, you should try to query the keys in the same order they appear in the document. If you need several keys and you cannot predict the order they will appear in, it is recommended to iterate through all keys `for(auto field : object) {...}`.  Keep in mind that On Demand does not buffer or save the result of the parsing: if you repeatedly access `object["foo"]`, then it must repeatedly seek the key and parse the content. The library does not provide a distinct function to check if a key is present, instead we recommend you attempt to access the key: e.g., by doing `ondemand::value val{}; if (!object["foo"].get(val)) {...}`, you have that `val` contains the requested value inside the if clause.  It is your responsibility as a user to temporarily keep a reference to the value (`auto v = object["foo"]`), or to consume the content and store it in your own data structures. If you consume an
   object twice: `std::string_view(object["foo"]` followed by `std::string_view(object["foo"]` then your code
   is in error. Furthermore, you can only consume one field at a time, on the same object. The
   value instance you get from  `content["bids"]` becomes invalid when you call `content["asks"]`.
@@ -542,9 +545,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
 * **Tree Walking and JSON Element Types:** Sometimes you don't necessarily have a document
   with a known type, and are trying to generically inspect or walk over JSON elements.
   You can also represent arbitrary JSON values with
-  `ondemand::value` instances: it can represent anything except a scalar document (lone number, string, null or Boolean). You can check for scalar documents with the method `scalar()`.
-  You can query the type of a document or a value with the `type()` method.
-  The `type()` method does not consume or validate documents and values, but it tells you whether they are
+  `ondemand::value` instances: it can represent anything except a scalar document (lone number, string, null or Boolean). You can check for scalar documents with the method `scalar()`. You can cast a document that is either an array or an object to an `ondemand::value` instance immediately after you create the document instance: you cannot create a `ondemand::value` instance from a document that has already been accessed as it would mean that you would have two instances of the object or array simultaneously (see [rewinding](#rewinding)). You can query the type of a document or a value with the `type()` method. The `type()` method does not consume or validate documents and values, but it tells you whether they are
   - arrays (`json_type::array`),
   - objects (`json_type::object`)
   - numbers (`json_type::number`),
