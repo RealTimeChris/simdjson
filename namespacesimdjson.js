@@ -5,11 +5,16 @@ var namespacesimdjson =
     [ "fallback", "namespacesimdjson_1_1fallback.html", null ],
     [ "haswell", "namespacesimdjson_1_1haswell.html", null ],
     [ "icelake", "namespacesimdjson_1_1icelake.html", null ],
+    [ "ondemand", null, [
+      [ "json_path_to_pointer_conversion", "json__path__to__pointer__conversion-inl_8h.html#a39425f9221b5a826d35c92337472b23f", null ]
+    ] ],
     [ "ppc64", "namespacesimdjson_1_1ppc64.html", null ],
     [ "SIMDJSON_IMPLEMENTATION", null, [
+      [ "internal", null, [
+        [ "json_path_to_pointer_conversion", "json__path__to__pointer__conversion_8h.html#a61b6ae0646529c9ad9888658eb7e3f86", null ]
+      ] ],
       [ "numberparsing", null, [
         [ "parse_number", "numberparsing_8h.html#abfab4a11a66cf3429d4b584165a0d47e", null ],
-        [ "slow_float_parsing", "numberparsing_8h.html#a8a19d7f5fc0e7495a136073daee8df78", null ],
         [ "write_float", "numberparsing_8h.html#a4c645a86ea19178e55e6ceaa96ad29ae", null ]
       ] ],
       [ "ondemand", "namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html", "namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand" ],
@@ -19,7 +24,8 @@ var namespacesimdjson =
       [ "number_type", "generic_2base_8h.html#a6ce99de87fa73b924822cd28045c97c0", [
         [ "floating_point_number", "generic_2base_8h.html#a6ce99de87fa73b924822cd28045c97c0ac5695c1a5026a1e5bec81b77096c1e9f", null ],
         [ "signed_integer", "generic_2base_8h.html#a6ce99de87fa73b924822cd28045c97c0aa14b6141855cd58c670ca6559c75c941", null ],
-        [ "unsigned_integer", "generic_2base_8h.html#a6ce99de87fa73b924822cd28045c97c0a7383104b83254a99f5991d0ac77a6666", null ]
+        [ "unsigned_integer", "generic_2base_8h.html#a6ce99de87fa73b924822cd28045c97c0a7383104b83254a99f5991d0ac77a6666", null ],
+        [ "big_integer", "generic_2base_8h.html#a6ce99de87fa73b924822cd28045c97c0ae31b13bfd9383fa5b4dce96caa6a3e2c", null ]
       ] ],
       [ "operator<<", "numberparsing_8h.html#ade2dc27fe18a87c9fb48782885fc76a3", null ]
     ] ],
@@ -49,7 +55,6 @@ var namespacesimdjson =
     [ "padded_string", "structsimdjson_1_1padded__string.html", "structsimdjson_1_1padded__string" ],
     [ "padded_string_view", "classsimdjson_1_1padded__string__view.html", "classsimdjson_1_1padded__string__view" ],
     [ "ErrorValues", "namespacesimdjson.html#a63b494af834917af13120dcd57719bdb", null ],
-    [ "ParsedJson", "namespacesimdjson.html#a9245ff68919610377256bb9b21070e2a", null ],
     [ "error_code", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9", [
       [ "SUCCESS", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9aa4ffc800804829a88c5b52ac3c4c6681", null ],
       [ "CAPACITY", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a2d50048bbe409023df4e88f6ffe3bc71", null ],
@@ -61,6 +66,7 @@ var namespacesimdjson =
       [ "F_ATOM_ERROR", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ae726a74b8a99e4bf802f3078436a2394", null ],
       [ "N_ATOM_ERROR", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a4e161f7bd0b3ca10f41a220a75de8cde", null ],
       [ "NUMBER_ERROR", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9adfcabbbd1ddb0843a0f320e062866ae8", null ],
+      [ "BIGINT_ERROR", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ae5acac431888aeadfef98bee7d66957e", null ],
       [ "UTF8_ERROR", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a398a5389d6e20c39e8880b0101b66f56", null ],
       [ "UNINITIALIZED", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ac2aef8f0fc33187cc118c95fade925d2", null ],
       [ "EMPTY", "namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a7aed571b420dcdfe59742e0df97b415a", null ],
@@ -89,11 +95,6 @@ var namespacesimdjson =
       [ "streaming_partial", "namespacesimdjson.html#ae6ec9f0ce23fc51d87116b64fdbeb811a929eb14f376ff68fc0ddd3d682e00d4c", null ],
       [ "streaming_final", "namespacesimdjson.html#ae6ec9f0ce23fc51d87116b64fdbeb811ac059cc555f4992b3eb481f03b70df100", null ]
     ] ],
-    [ "build_parsed_json", "namespacesimdjson.html#a971a402db39c41031e4d905fe3614585", null ],
-    [ "build_parsed_json", "namespacesimdjson.html#ace2a91673313643def02966826e3920b", null ],
-    [ "build_parsed_json", "namespacesimdjson.html#aa17af188e477e08db53a67ab6ceeacf4", null ],
-    [ "build_parsed_json", "namespacesimdjson.html#a8acc50c61e4e3ea1aaa7aa8afd42c2b3", null ],
-    [ "build_parsed_json", "namespacesimdjson.html#a055b1230968101c76d7379da72cf3be1", null ],
     [ "builtin_implementation", "namespacesimdjson.html#af63210cc51d5c99ad84958daf9812e63", null ],
     [ "error_message", "namespacesimdjson.html#a65b00a7a7a9c8fafe9eb3b9b413a36fa", null ],
     [ "error_message", "namespacesimdjson.html#a56e8e2fa6798b9e0da80bc51ae4a5f29", null ],
@@ -101,11 +102,6 @@ var namespacesimdjson =
     [ "get_available_implementations", "namespacesimdjson.html#a7e4483a8ae684fdb5b2f1e7d4a8acc69", null ],
     [ "get_corpus", "namespacesimdjson.html#ad394176adf22f9151f92d9cd541d0aee", null ],
     [ "is_streaming", "namespacesimdjson.html#a6f306690d6d088d80b0cc2717040b2d0", null ],
-    [ "json_parse", "namespacesimdjson.html#a3dfa142328d096b51f85e13fe96fd25e", null ],
-    [ "json_parse", "namespacesimdjson.html#a630111c8201eafec9b4c44fe0456a475", null ],
-    [ "json_parse", "namespacesimdjson.html#a2ec7825eb81d38a4a101dd89031ad86c", null ],
-    [ "json_parse", "namespacesimdjson.html#a688157fcec0f7a073ebcbaa277df1647", null ],
-    [ "json_parse", "namespacesimdjson.html#a913aabdb29fe97e1b8246f1e210f1c40", null ],
     [ "minify", "namespacesimdjson.html#a94bb4244756d764cf0ed7de180ae6520", null ],
     [ "minify", "namespacesimdjson.html#a083a32b06fd32b6cd5e747abe3db6172", null ],
     [ "minify", "namespacesimdjson.html#aeb4ef5cab43d52da3fdd99cb689aff2c", null ],
