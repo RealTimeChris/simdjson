@@ -10,6 +10,7 @@
 #include <sstream>
 #include <utility>
 #include <unistd.h>
+using namespace std::string_literals;
 
 #include "simdjson.h"
 #include "cast_tester.h"
@@ -452,14 +453,18 @@ namespace parse_api_tests {
     element doc_root1 = parser.parse_into_document(doc, input);
     if(simdjson::to_string(doc_root1) != "[1,2,3]") { return false; }
     //... doc_root1 is a pointer inside doc
-    element doc_root2 = parser.parse_into_document(doc, input);
+    element doc_root2 = parser.load_into_document(doc, TWITTER_JSON);
     //... doc_root2 is a pointer inside doc
-    if(simdjson::to_string(doc_root2) != "[1,2,3]") { return false; }
+    if(uint64_t(doc_root2["search_metadata"]["count"]) != 100) { return false; }
+    if(uint64_t(doc.root()["search_metadata"]["count"]) != 100) { return false; }
+    element doc_root3 = parser.parse_into_document(doc, input);
+    //... doc_root3 is a pointer inside doc
+    if(simdjson::to_string(doc_root3) != "[1,2,3]") { return false; }
 
     // Here let us take moving the document:
     dom::document docm = std::move(doc);
-    element doc_root3 = docm.root();
-    if(simdjson::to_string(doc_root3) != "[1,2,3]") { return false; }
+    element doc_root4 = docm.root();
+    if(simdjson::to_string(doc_root4) != "[1,2,3]") { return false; }
     return true;
   }
 
@@ -908,6 +913,43 @@ namespace dom_api_tests {
     return true;
   }
 
+  bool object_iterator_advance() {
+    std::cout << "Running " << __func__ << std::endl;
+    string json(R"({ "a": 1, "b": 2, "c": 3 })");
+    const char* expected_key[] = { "a", "b", "c" };
+    uint64_t expected_value[] = { 1, 2, 3 };
+
+    dom::parser parser;
+    dom::object object;
+    ASSERT_SUCCESS( parser.parse(json).get(object) );
+    auto iter = object.begin();
+    for (auto i = 0; i * sizeof(expected_value[0]) < sizeof(expected_value); i++) {
+      auto [key, value] = *iter;
+      ASSERT_EQUAL( key, expected_key[i] );
+      ASSERT_EQUAL( value.get_uint64().value_unsafe(), expected_value[i] );
+      std::advance( iter, 1 );
+    }
+    return true;
+  }
+
+  bool array_iterator_advance() {
+    std::cout << "Running " << __func__ << std::endl;
+    string json(R"([ 1, 10, 100 ])");
+    uint64_t expected_value[] = { 1, 10, 100 };
+
+    dom::parser parser;
+    dom::array array;
+    ASSERT_SUCCESS( parser.parse(json).get(array) );
+    auto iter = array.begin();
+    for (auto i = 0; i * sizeof(expected_value[0]) < sizeof(expected_value); i++) {
+      uint64_t v;
+      ASSERT_SUCCESS( (*iter).get(v) );
+      ASSERT_EQUAL( v, expected_value[i] );
+      std::advance( iter, 1 );
+    }
+    return true;
+  }
+
   bool string_value() {
     std::cout << "Running " << __func__ << std::endl;
     string json(R"([ "hi", "has backslash\\" ])");
@@ -1287,6 +1329,8 @@ namespace dom_api_tests {
            array_iterator() &&
            object_iterator_empty() &&
            array_iterator_empty() &&
+           object_iterator_advance() &&
+           array_iterator_advance() &&
            string_value() &&
            numeric_values() &&
            boolean_values() &&
@@ -2236,14 +2280,14 @@ bool simple_overflows() {
   std::cout << "Running " << __func__ << std::endl;
   simdjson::dom::parser parser;
   simdjson::dom::element doc;
-  ASSERT_ERROR( parser.parse(std::string("[f]")).get(doc), simdjson::F_ATOM_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("[t]")).get(doc), simdjson::T_ATOM_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("[n]")).get(doc), simdjson::N_ATOM_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("[-]")).get(doc), simdjson::NUMBER_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("{\"a\":f}")).get(doc), simdjson::F_ATOM_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("{\"a\":t}")).get(doc), simdjson::T_ATOM_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("{\"a\":n}")).get(doc), simdjson::N_ATOM_ERROR);
-  ASSERT_ERROR( parser.parse(std::string("{\"a\":-}")).get(doc), simdjson::NUMBER_ERROR);
+  ASSERT_ERROR( parser.parse("[f]"s).get(doc), simdjson::F_ATOM_ERROR);
+  ASSERT_ERROR( parser.parse("[t]"s).get(doc), simdjson::T_ATOM_ERROR);
+  ASSERT_ERROR( parser.parse("[n]"s).get(doc), simdjson::N_ATOM_ERROR);
+  ASSERT_ERROR( parser.parse("[-]"s).get(doc), simdjson::NUMBER_ERROR);
+  ASSERT_ERROR( parser.parse("{\"a\":f}"s).get(doc), simdjson::F_ATOM_ERROR);
+  ASSERT_ERROR( parser.parse("{\"a\":t}"s).get(doc), simdjson::T_ATOM_ERROR);
+  ASSERT_ERROR( parser.parse("{\"a\":n}"s).get(doc), simdjson::N_ATOM_ERROR);
+  ASSERT_ERROR( parser.parse("{\"a\":-}"s).get(doc), simdjson::NUMBER_ERROR);
   return true;
 }
 

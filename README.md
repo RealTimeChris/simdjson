@@ -29,6 +29,7 @@ Table of Contents
 * [Real-world usage](#real-world-usage)
 * [Quick Start](#quick-start)
 * [Documentation](#documentation)
+* [Godbolt](#godbolt)
 * [Performance results](#performance-results)
 * [Bindings and Ports of simdjson](#bindings-and-ports-of-simdjson)
 * [About simdjson](#about-simdjson)
@@ -68,9 +69,9 @@ The simdjson library is easily consumable with a single .h and .cpp file.
 
 0. Prerequisites: `g++` (version 7 or better) or `clang++` (version 6 or better), and a 64-bit
    system with a command-line shell (e.g., Linux, macOS, freeBSD). We also support programming
-   environments like Visual Studio and Xcode, but different steps are needed.
+   environments like Visual Studio and Xcode, but different steps are needed. Users of clang++ may need to specify the C++ version (e.g., `c++ -std=c++17`) since clang++ tends to default on C++98.
 1. Pull [simdjson.h](singleheader/simdjson.h) and [simdjson.cpp](singleheader/simdjson.cpp) into a
-   directory, along with the sample file [twitter.json](jsonexamples/twitter.json).
+   directory, along with the sample file [twitter.json](jsonexamples/twitter.json). You can download them with the `wget` utility:
 
    ```
    wget https://raw.githubusercontent.com/simdjson/simdjson/master/singleheader/simdjson.h https://raw.githubusercontent.com/simdjson/simdjson/master/singleheader/simdjson.cpp https://raw.githubusercontent.com/simdjson/simdjson/master/jsonexamples/twitter.json
@@ -95,6 +96,7 @@ int main(void) {
    100 results.
   ```
 
+
 Documentation
 -------------
 
@@ -106,11 +108,12 @@ Usage documentation is available:
   how you can work with it.
 * [API](https://simdjson.github.io/simdjson/) contains the automatically generated API documentation.
 
+Godbolt
+-------------
 
 Some users may want to browse code along with the compiled assembly. You want to check out the following lists of examples:
-
-* [simdjson examples with errors handled through exceptions](https://godbolt.org/z/98Kx9Kqjn)
-* [simdjson examples with errors without exceptions](https://godbolt.org/z/PKG7GdbPo)
+* [simdjson examples with errors handled through exceptions](https://godbolt.org/z/7G5qE4sr9)
+* [simdjson examples with errors without exceptions](https://godbolt.org/z/e9dWb9E4v)
 
 Performance results
 -------------------
@@ -165,7 +168,8 @@ We distinguish between "bindings" (which just wrap the C++ code) and a port to a
 - [simdjzon](https://github.com/travisstaloch/simdjzon): zig port.
 - [JSON-Simd](https://github.com/rawleyfowler/JSON-simd): Raku bindings.
 - [JSON::SIMD](https://metacpan.org/pod/JSON::SIMD): Perl bindings; fully-featured JSON module that uses simdjson for decoding.
-- [gemmaJSON](https://github.com/sainttttt/gemmaJSON): Nim json parser based on simdjson bindings.
+- [gemmaJSON](https://github.com/sainttttt/gemmaJSON): Nim JSON parser based on simdjson bindings.
+- [simdjson-java](https://github.com/simdjson/simdjson-java): Java port.
 
 About simdjson
 --------------
@@ -174,7 +178,11 @@ The simdjson library takes advantage of modern microarchitectures, parallelizing
 instructions, reducing branch misprediction, and reducing data dependency to take advantage of each
 CPU's multiple execution cores.
 
-Some people [enjoy reading our paper](https://arxiv.org/abs/1902.08318): A description of the design
+Our default front-end is called On Demand, and we wrote a paper about it:
+
+- John Keiser, Daniel Lemire, [On-Demand JSON: A Better Way to Parse Documents?](http://arxiv.org/abs/2312.17149), Software: Practice and Experience (to appear)
+
+Some people [enjoy reading the first (2019) simdjson paper](https://arxiv.org/abs/1902.08318): A description of the design
 and implementation of simdjson is in our research article:
 - Geoff Langdale, Daniel Lemire, [Parsing Gigabytes of JSON per Second](https://arxiv.org/abs/1902.08318), VLDB Journal 28 (6), 2019.
 

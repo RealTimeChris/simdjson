@@ -36,12 +36,13 @@ public:
    * @returns INCORRECT_TYPE If the JSON value is not the given type.
    */
   template<typename T> simdjson_inline simdjson_result<T> get() noexcept {
-    // Unless the simdjson library provides an inline implementation, calling this method should
+    // Unless the simdjson library or the user provides an inline implementation, calling this method should
     // immediately fail.
     static_assert(!sizeof(T), "The get method with given type is not implemented by the simdjson library. "
       "The supported types are ondemand::object, ondemand::array, raw_json_string, std::string_view, uint64_t, "
       "int64_t, double, and bool. We recommend you use get_double(), get_bool(), get_uint64(), get_int64(), "
-      " get_object(), get_array(), get_raw_json_string(), or get_string() instead of the get template.");
+      " get_object(), get_array(), get_raw_json_string(), or get_string() instead of the get template."
+      " You may also add support for custom types, see our documentation.");
   }
 
   /**
@@ -194,6 +195,17 @@ public:
   simdjson_inline simdjson_result<bool> is_null() noexcept;
 
 #if SIMDJSON_EXCEPTIONS
+  /**
+   * Cast this JSON value to an instance of type T. The programmer is responsible for
+   * providing an implementation of get<T> for the type T, if T is not one of the types
+   * supported by the library (object, array, raw_json_string, string_view, uint64_t, etc.).
+   *
+   * See https://github.com/simdjson/simdjson/blob/master/doc/basics.md#adding-support-for-custom-types
+   *
+   * @returns An instance of type T
+   */
+  template <class T>
+  explicit simdjson_inline operator T() noexcept(false);
   /**
    * Cast this JSON value to an array.
    *
@@ -357,7 +369,7 @@ public:
    * that only one field is returned.
    *
    * Use find_field() if you are sure fields will be in order (or are willing to treat it as if the
-   * field wasn't there when they aren't).
+   * field as not there when they are not in order).
    *
    * @param key The key to look up.
    * @returns The value of the field, or NO_SUCH_FIELD if the field is not in the object.
@@ -393,6 +405,13 @@ public:
    * @error TAPE_ERROR when the JSON value is a bad token like "}" "," or "alse".
    */
   simdjson_inline simdjson_result<bool> is_scalar() noexcept;
+  /**
+   * Checks whether the value is a string.
+   *
+   * @returns true if the type is string
+   * @error TAPE_ERROR when the JSON value is a bad token like "}" "," or "alse".
+   */
+  simdjson_inline simdjson_result<bool> is_string() noexcept;
 
   /**
    * Checks whether the value is a negative number.
@@ -425,10 +444,12 @@ public:
    * get_number().get_number_type().
    *
    * get_number_type() is number_type::unsigned_integer if we have
-   * an integer greater or equal to 9223372036854775808
+   * an integer greater or equal to 9223372036854775808.
    * get_number_type() is number_type::signed_integer if we have an
-   * integer that is less than 9223372036854775808
-   * Otherwise, get_number_type() has value number_type::floating_point_number
+   * integer that is less than 9223372036854775808.
+   * get_number_type() is number_type::big_integer for integers that do not fit in 64 bits,
+   * in which case the digit_count is set to the length of the big integer string.
+   * Otherwise, get_number_type() has value number_type::floating_point_number.
    *
    * This function requires processing the number string, but it is expected
    * to be faster than get_number().get_number_type() because it is does not
@@ -455,6 +476,8 @@ public:
    * You can recover the value by calling number.get_uint64() and you
    * have that number.is_uint64() is true.
    *
+   * For integers that do not fit in 64 bits, the function returns BIGINT_ERROR error code.
+   *
    * Otherwise, number.get_number_type() has value number_type::floating_point_number
    * and we have a binary64 number.
    * You can recover the value by calling number.get_double() and you
@@ -469,7 +492,6 @@ public:
    * efficiently the type and storing it in an efficient manner.
    */
   simdjson_warn_unused simdjson_inline simdjson_result<number> get_number() noexcept;
-
 
   /**
    * Get the raw JSON for this token.
@@ -568,6 +590,20 @@ public:
    */
   simdjson_inline simdjson_result<value> at_pointer(std::string_view json_pointer) noexcept;
 
+  /**
+   * Get the value associated with the given JSONPath expression. We only support
+   * JSONPath queries that trivially convertible to JSON Pointer queries: key
+   * names and array indices.
+   *
+   * @return The value associated with the given JSONPath expression, or:
+   *         - INVALID_JSON_POINTER if the JSONPath to JSON Pointer conversion fails
+   *         - NO_SUCH_FIELD if a field does not exist in an object
+   *         - INDEX_OUT_OF_BOUNDS if an array index is larger than an array length
+   *         - INCORRECT_TYPE if a non-integer is used to access an array
+   */
+  simdjson_inline simdjson_result<value> at_path(std::string_view at_path) noexcept;
+
+
 protected:
   /**
    * Create a value.
@@ -607,6 +643,7 @@ protected:
   friend class object;
   friend struct simdjson_result<value>;
   friend struct simdjson_result<field>;
+  friend class field;
 };
 
 } // namespace ondemand
@@ -644,6 +681,8 @@ public:
   template<typename T> simdjson_inline error_code get(T &out) noexcept;
 
 #if SIMDJSON_EXCEPTIONS
+  template <class T>
+  explicit simdjson_inline operator T() noexcept(false);
   simdjson_inline operator SIMDJSON_IMPLEMENTATION::ondemand::array() noexcept(false);
   simdjson_inline operator SIMDJSON_IMPLEMENTATION::ondemand::object() noexcept(false);
   simdjson_inline operator uint64_t() noexcept(false);
@@ -697,7 +736,7 @@ public:
    * APIs assume this. Therefore, you must be explicit if you want to treat objects as out of order.
    *
    * Use find_field() if you are sure fields will be in order (or are willing to treat it as if the
-   * field wasn't there when they aren't).
+   * field as not there when they are not in order).
    *
    * @param key The key to look up.
    * @returns The value of the field, or NO_SUCH_FIELD if the field is not in the object.
@@ -719,6 +758,7 @@ public:
    */
   simdjson_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::json_type> type() noexcept;
   simdjson_inline simdjson_result<bool> is_scalar() noexcept;
+  simdjson_inline simdjson_result<bool> is_string() noexcept;
   simdjson_inline simdjson_result<bool> is_negative() noexcept;
   simdjson_inline simdjson_result<bool> is_integer() noexcept;
   simdjson_inline simdjson_result<SIMDJSON_IMPLEMENTATION::number_type> get_number_type() noexcept;
@@ -733,6 +773,7 @@ public:
   /** @copydoc simdjson_inline int32_t current_depth() const noexcept */
   simdjson_inline simdjson_result<int32_t> current_depth() const noexcept;
   simdjson_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> at_pointer(std::string_view json_pointer) noexcept;
+  simdjson_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> at_path(std::string_view json_path) noexcept;
 };
 
 } // namespace simdjson

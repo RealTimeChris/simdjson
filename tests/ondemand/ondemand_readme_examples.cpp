@@ -3,6 +3,9 @@
 #if __cpp_lib_optional >= 201606L
 #include <optional>
 #endif
+#if SIMDJSON_CPLUSPLUS17
+#include <charconv>
+#endif
 using namespace std;
 using namespace simdjson;
 using error_code=simdjson::error_code;
@@ -21,7 +24,6 @@ bool string2() {
   return true;
 }
 
-
 bool to_string_example_no_except() {
     TEST_START();
   auto json = R"({
@@ -38,11 +40,149 @@ bool to_string_example_no_except() {
   TEST_SUCCEED();
 }
 
+
+struct Car {
+  Car() : make(), model(), year(), tire_pressure() {}
+  std::string make;
+  std::string model;
+  int64_t year;
+  std::vector<double> tire_pressure;
+};
+
+template <>
+simdjson_inline simdjson_result<std::vector<double>>
+simdjson::ondemand::value::get() noexcept {
+  // This works on a value, if the std::vector<double> is the document, we need to also implement
+  // simdjson::ondemand::document::get<std::vector<double>>.
+  ondemand::array array;
+  auto error = get_array().get(array);
+  if(error) { return error; }
+  std::vector<double> vec;
+  for (auto v : array) {
+    double val;
+    error = v.get_double().get(val);
+    if(error) { return error; }
+    vec.push_back(val);
+  }
+  return vec;
+}
+
+
+
+template <>
+simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
+  ondemand::object obj;
+  auto error = get_object().get(obj);
+  if (error) { return error; }
+  Car car;
+  // Instead of repeatedly obj["something"], we iterate through the object which
+  // we expect to be faster.
+  for (auto field : obj) {
+    raw_json_string key;
+    if (error = field.key().get(key); error) { return error; }
+    if (key == "make") {
+      error = field.value().get_string(car.make);
+      if(error) { return error; }
+    } else if (key == "model") {
+      error = field.value().get_string(car.model);
+      if(error) { return error; }
+    } else if (key == "year") {
+      error = field.value().get_int64().get(car.year);
+      if(error) { return error; }
+    } else if (key == "tire_pressure") {
+      error = field.value().get<std::vector<double>>().get(car.tire_pressure);
+      if (error) { return error; }
+    }
+  }
+  return car;
+}
+
+
+int custom_type_without_exceptions() {
+  padded_string json = R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
+       "tire_pressure": [ 40.1, 39.9 ] },
+  { "make": "Kia",    "model": "Soul",   "year": 2012,
+       "tire_pressure": [ 30.1, 31.0 ] },
+  { "make": "Toyota", "model": "Tercel", "year": 1999,
+       "tire_pressure": [ 29.8, 30.0 ] }
+])"_padded;
+  ondemand::parser parser;
+  ondemand::document doc;
+  auto error = parser.iterate(json).get(doc);
+  if(error) { std::cerr << error << std::endl; return EXIT_FAILURE; }
+  for (auto val : doc) {
+    Car c;
+    error = val.get<Car>().get(c);
+    if(error) { std::cerr << error << std::endl; return EXIT_FAILURE; }
+    std::cout << c.make << std::endl;
+  }
+  return 0;
+}
+
+
+template <>
+simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() & noexcept {
+  ondemand::object obj;
+  auto error = get_object().get(obj);
+  if (error) {
+    return error;
+  }
+  Car car;
+  // Instead of repeatedly obj["something"], we iterate through the object which
+  // we expect to be faster.
+  for (auto field : obj) {
+    raw_json_string key;
+    error = field.key().get(key);
+    if (error) { return error; }
+    if (key == "make") {
+      error = field.value().get_string(car.make);
+      if (error) { return error; }
+    } else if (key == "model") {
+      error = field.value().get_string(car.model);
+      if (error) { return error; }
+    } else if (key == "year") {
+      error = field.value().get_int64().get(car.year);
+      if (error) { return error; }
+    } else if (key == "tire_pressure") {
+      error = field.value().get<std::vector<double>>().get(car.tire_pressure);
+      if (error) { return error; }
+    }
+  }
+  return car;
+}
+
 #if SIMDJSON_EXCEPTIONS
 
 
+int custom_type_on_document() {
+  padded_string json = R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
+       "tire_pressure": [ 40.1, 39.9 ] } )"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  Car c(doc);
+  std::cout << c.make << std::endl;
+  return 0;
+}
+
+int custom_type_with_exceptions() {
+  padded_string json = R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
+       "tire_pressure": [ 40.1, 39.9 ] },
+  { "make": "Kia",    "model": "Soul",   "year": 2012,
+       "tire_pressure": [ 30.1, 31.0 ] },
+  { "make": "Toyota", "model": "Tercel", "year": 1999,
+       "tire_pressure": [ 29.8, 30.0 ] }
+])"_padded;
+  ondemand::parser parser;
+  ondemand::document doc = parser.iterate(json);
+  for (auto val : doc) {
+    Car c(val);
+    std::cout << c.make << std::endl;
+  }
+  return 0;
+}
+
 bool to_string_example() {
-    TEST_START();
+  TEST_START();
   auto json = R"({
   "name": "Daniel",
   "age": 42
@@ -245,22 +385,84 @@ bool examplecrt_realloc() {
   TEST_SUCCEED();
 }
 
+#if SIMDJSON_CPLUSPLUS17
+bool big_int_array() {
+  TEST_START();
+  ondemand::parser parser;
+  padded_string docdata = R"([-9223372036854775809, 18446744073709551617, 99999999999999999999999 ])"_padded;
+  std::string expected[] = {"-9223372036854775809", "18446744073709551617", "99999999999999999999999 "};
+  ondemand::document doc = parser.iterate(docdata);
+  ondemand::array arr = doc.get_array();
+  size_t i = 0;
+  for(ondemand::value val : arr) {
+    if(i > 3) {
+      std::cerr << "unexpected number of elements" << std::endl;
+      return false;
+    }
+    if(val.get_number_type() != ondemand::number_type::big_integer) {
+      std::cerr << "unexpected number type" << std::endl;
+      std::cout << val.get_number_type() << std::endl;
+      std::cout << val.raw_json_token() << std::endl;
+      return false;
+    }
+    std::string_view token = val.raw_json_token();
+    std::string_view expected_token = expected[i];
+    if(token != expected_token) {
+      std::cerr << "unexpected token: " << token << " expected: " << expected_token << std::endl;
+      return false;
+    }
+    i++;
+  }
+  if(i != 3) {
+    std::cerr << "unexpected number of elements" << std::endl;
+    return false;
+  }
+  TEST_SUCCEED();
+}
+#endif
+
+bool big_int_array_as_double() {
+  TEST_START();
+  ondemand::parser parser;
+  padded_string docdata = R"([-9223372036854775809, 18446744073709551617, 99999999999999999999999 ])"_padded;
+  double dexpected[] = {-9223372036854775808.0, 18446744073709551616.0, 1e23};
+  ondemand::document doc = parser.iterate(docdata);
+  ondemand::array arr = doc.get_array();
+  size_t i = 0;
+  for(ondemand::value val : arr) {
+    if(i > 3) {
+      std::cerr << "unexpected number of elements" << std::endl;
+      return false;
+    }
+    if((val.get_number_type() != ondemand::number_type::big_integer) || (dexpected[i] != val.get_double())) {
+      return false;
+    }
+    i++;
+  }
+  if(i != 3) {
+    std::cerr << "unexpected number of elements" << std::endl;
+    return false;
+  }
+  TEST_SUCCEED();
+}
+
 bool number_tests() {
   TEST_START();
   ondemand::parser parser;
-  padded_string docdata = R"([1.0, 3, 1, 3.1415,-13231232,9999999999999999999])"_padded;
+  padded_string docdata = R"([1.0, 3, 1, 3.1415,-13231232,9999999999999999999,12345678901234567890123])"_padded;
   ondemand::document doc = parser.iterate(docdata);
   ondemand::array arr = doc.get_array();
   for(ondemand::value val : arr) {
     std::cout << val << " ";
     std::cout << "negative: " << val.is_negative() << " ";
     std::cout << "is_integer: " << val.is_integer() << " ";
-    ondemand::number num = val.get_number();
-    ondemand::number_type t = num.get_number_type();
     // direct computation without materializing the number:
     ondemand::number_type dt = val.get_number_type();
-    if(t != dt) { throw std::runtime_error("bug"); }
-    switch(t) {
+    ondemand::number num;
+    auto res = val.get_number().get(num);
+    ondemand::number_type t = num.get_number_type();
+    if(t != dt && res != BIGINT_ERROR) { throw std::runtime_error("bug"); }
+    switch(dt) {
       case ondemand::number_type::signed_integer:
         std::cout  << "integer: " << int64_t(num) << " ";
         std::cout  << "integer: " << num.get_int64() << std::endl;
@@ -272,6 +474,9 @@ bool number_tests() {
       case ondemand::number_type::floating_point_number:
         std::cout  << "float: " << double(num) << " ";
         std::cout << "float: " << num.get_double() << std::endl;
+        break;
+      case ondemand::number_type::big_integer:
+        std::cout  << "big-integer: " << val.raw_json_token() << std::endl;
         break;
     }
   }
@@ -931,7 +1136,83 @@ bool json_pointer_simple() {
     TEST_SUCCEED();
 }
 
+bool json_pointer_unicode() {
+    TEST_START();
+    const padded_string json = u8"{\"\u00E9\":123}"_padded;
+    ondemand::parser parser;
+    ondemand::document doc;
+    int64_t x;
+    ASSERT_SUCCESS(parser.iterate(json).get(doc));
+    ASSERT_SUCCESS(doc.at_pointer((const char*)u8"/\u00E9").get(x));
+    ASSERT_EQUAL(x,123);
+
+    const padded_string json2 = "{\"\\u00E9\":123}"_padded;
+    ASSERT_SUCCESS(parser.iterate(json2).get(doc));
+    ASSERT_SUCCESS(doc.at_pointer("/\\u00E9").get(x));
+    ASSERT_ERROR(doc.at_pointer((const char*)u8"/\u00E9"), NO_SUCH_FIELD);
+    ASSERT_EQUAL(x,123);
+    TEST_SUCCEED();
+}
+
+bool json_path_simple() {
+  TEST_START();
+  ondemand::parser parser;
+  ondemand::document cars;
+  double x;
+  ASSERT_SUCCESS(parser.iterate(cars_json).get(cars));
+  ASSERT_SUCCESS(cars.at_path("[0].tire_pressure[1]").get(x));
+  ASSERT_EQUAL(x,39.9);
+  TEST_SUCCEED();
+}
+
+bool json_path_unicode() {
+  TEST_START();
+  ondemand::parser parser;
+  ondemand::document doc;
+  const padded_string json = u8"{\"\u00E9\":123}"_padded;
+  int64_t x;
+  ASSERT_SUCCESS(parser.iterate(json).get(doc));
+  ASSERT_SUCCESS(doc.at_path((const char*)u8".\u00E9").get(x));
+  ASSERT_EQUAL(x,123);
+
+  const padded_string json2 = "{\"\\u00E9\":123}"_padded;
+  ASSERT_SUCCESS(parser.iterate(json2).get(doc));
+  ASSERT_SUCCESS(doc.at_path(".\\u00E9").get(x));
+  ASSERT_ERROR(doc.at_path((const char*)u8".\u00E9"), NO_SUCH_FIELD);
+  ASSERT_EQUAL(x,123);
+  TEST_SUCCEED();
+}
+
+bool invalid_json_path() {
+  TEST_START();
+  ondemand::parser parser;
+  ondemand::document cars;
+  double x;
+  ASSERT_SUCCESS(parser.iterate(cars_json).get(cars));
+  ASSERT_ERROR(cars.at_path("[0].tire_presure[1").get(x), INVALID_JSON_POINTER); // Fails on conversion to JSON Pointer
+  ASSERT_ERROR(cars.at_path("[0].incorrect_field[1]").get(x), NO_SUCH_FIELD); // Fails on at_pointer()
+  TEST_SUCCEED();
+}
+
 bool json_pointer_multiple() {
+	TEST_START();
+	using namespace std::string_literals;
+	ondemand::parser parser;
+	ondemand::document cars;
+	size_t size;
+	ASSERT_SUCCESS(parser.iterate(cars_json).get(cars));
+	ASSERT_SUCCESS(cars.count_elements().get(size));
+	double expected[] = {39.9, 31, 30};
+	for (size_t i = 0; i < size; i++) {
+		std::string json_pointer = "/"s + std::to_string(i) + "/tire_pressure/1"s;
+		double x;
+		ASSERT_SUCCESS(cars.at_pointer(json_pointer).get(x));
+		ASSERT_EQUAL(x,expected[i]);
+	}
+	TEST_SUCCEED();
+}
+
+bool json_path_multiple() {
 	TEST_START();
 	ondemand::parser parser;
 	ondemand::document cars;
@@ -940,9 +1221,9 @@ bool json_pointer_multiple() {
 	ASSERT_SUCCESS(cars.count_elements().get(size));
 	double expected[] = {39.9, 31, 30};
 	for (size_t i = 0; i < size; i++) {
-		std::string json_pointer = std::string("/") + std::to_string(i) + std::string("/tire_pressure/1");
+		std::string json_path = "["s + std::to_string(i) + "].tire_pressure[1]"s;
 		double x;
-		ASSERT_SUCCESS(cars.at_pointer(json_pointer).get(x));
+		ASSERT_SUCCESS(cars.at_path(json_path).get(x));
 		ASSERT_EQUAL(x,expected[i]);
 	}
 	TEST_SUCCEED();
@@ -1078,6 +1359,38 @@ bool simple_error_example() {
 
 
 #if SIMDJSON_EXCEPTIONS
+
+#include "simdjson.h"
+#include <iostream>
+
+  // prints the content of the array as hexadecimal 64-bit integers
+  void f(simdjson::ondemand::array v) {
+    for(uint64_t val : v) {
+      std::cout << "0x" << std::hex << val << std::endl;
+    }
+  }
+
+
+  int callf(void) {
+    simdjson::padded_string json = R"( [ 897314173811950000, 3122321 ])"_padded;
+    simdjson::ondemand::parser parser;
+    simdjson::ondemand::document doc = parser.iterate(json);
+    f(doc.get_array());
+    return EXIT_SUCCESS;
+  }
+
+  bool key_raw_json_token() {
+    TEST_START();
+    auto json = R"( {"name"   : "Jack The Ripper \u0033"} )"_padded;
+    ondemand::parser parser;
+    ondemand::document doc = parser.iterate(json);
+    for (auto key_value : doc.get_object()) {
+      std::string_view keysv = key_value.key_raw_json_token();
+      ASSERT_EQUAL(keysv,"\"name\"   ");
+    }
+    TEST_SUCCEED();
+  }
+
   bool raw_string() {
     TEST_START();
     auto json = R"( {"name": "Jack The Ripper \u0033"} )"_padded;
@@ -1533,13 +1846,18 @@ bool value_raw_json_object() {
 bool run() {
   return true
 #if SIMDJSON_EXCEPTIONS
+#if SIMDJSON_CPLUSPLUS17
+    && big_int_array()
+#endif // SIMDJSON_CPLUSPLUS17
+    && big_int_array_as_double()
+    && key_raw_json_token()
     && to_optional()
     && value_raw_json_array() && value_raw_json_object()
     && gen_raw1() && gen_raw2() && gen_raw3()
     && at_end()
     && example1956() && example1958()
     && allow_comma_separated_example()
-//    && basics_1() // Fails because twitter.json isn't in current directory. Compile test only.
+//    && basics_1() // Fails because twitter.json is not in current directory. Compile test only.
     &&  basics_treewalk()
     &&  basics_treewalk_breakline()
     && json_value_with_array_count()
@@ -1561,7 +1879,12 @@ bool run() {
 #endif
     && using_the_parsed_json_6()
     && json_pointer_simple()
+    && json_pointer_unicode()
+    && json_path_simple()
+    && json_path_unicode()
+    && invalid_json_path()
     && json_pointer_multiple()
+    && json_path_multiple()
     && json_pointer_rewind()
     && iterate_many_example()
     && iterate_many_truncated_example()

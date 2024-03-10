@@ -146,7 +146,7 @@ public:
    * @param delta The relative position of the token to retrieve. e.g. 0 = next token, -1 = prev token.
    *
    * TODO consider a string_view, assuming the length will get stripped out by the optimizer when
-   * it isn't used ...
+   * it is not used ...
    */
   simdjson_inline const uint8_t *peek(int32_t delta=0) const noexcept;
   /**
@@ -174,7 +174,7 @@ public:
    * @param position The position of the token to retrieve.
    *
    * TODO consider a string_view, assuming the length will get stripped out by the optimizer when
-   * it isn't used ...
+   * it is not used ...
    */
   simdjson_inline const uint8_t *peek(token_position position) const noexcept;
   /**
@@ -186,12 +186,20 @@ public:
    */
   simdjson_inline uint32_t peek_length(token_position position) const noexcept;
   /**
+   * Get the maximum length of the JSON text for the current root token.
+   *
+   * The length will include any whitespace at the end of the token.
+   *
+   * @param position The position of the token to retrieve.
+   */
+  simdjson_inline uint32_t peek_root_length(token_position position) const noexcept;
+  /**
    * Get the JSON text for the last token in the document.
    *
    * This is not null-terminated; it is a view into the JSON.
    *
    * TODO consider a string_view, assuming the length will get stripped out by the optimizer when
-   * it isn't used ...
+   * it is not used ...
    */
   simdjson_inline const uint8_t *peek_last() const noexcept;
 
@@ -300,6 +308,7 @@ protected:
   friend class raw_json_string;
   friend class parser;
   friend class value_iterator;
+  friend class field;
   template <typename... Args>
   friend simdjson_inline void logger::log_line(const json_iterator &iter, const char *title_prefix, const char *title, std::string_view detail, int delta, int depth_delta, logger::log_level level, Args&&... args) noexcept;
   template <typename... Args>

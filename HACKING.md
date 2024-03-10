@@ -80,7 +80,7 @@ simdjson's source structure, from the top level, looks like this:
     * simdjson/internal/*.h: the `simdjson::internal` namespace. Private classes and functions used by the rest of simdjson.
   * simdjson/dom.h: the `simdjson::dom` namespace. Includes all public DOM classes.
     * simdjson/dom/*.h: Declarations/definitions for individual DOM classes.
-  * simdjson/arm64|fallback|haswell|icelake|ppc64|westmere.h: `simdjson::<implementation>` namesapce. Common implementation-specific tools like number and string parsing, as well as minification.
+  * simdjson/arm64|fallback|haswell|icelake|ppc64|westmere.h: `simdjson::<implementation>` namespace. Common implementation-specific tools like number and string parsing, as well as minification.
     * simdjson/arm64|fallback|haswell|icelake|ppc64|westmere/*.h: implementation-specific functions such as , etc.
     * simdjson/generic/*.h: the bulk of the actual code, written generically and compiled for each implementation, using functions defined in the implementation's .h files.
       * simdjson/generic/dependencies.h: dependencies on common, non-implementation-specific simdjson classes. This will be included before including amalgamated.h.
@@ -283,8 +283,6 @@ If your compiler does not default on C++11 support or better you may get failing
 
 Note that the name of directory (`build`) is arbitrary, you can name it as you want (e.g., `buildgcc`) and you can have as many different such directories as you would like (one per configuration).
 
-
-
 ## Usage (CMake on 64-bit Windows using Visual Studio 2019 or better)
 
 Recent versions of Visual Studio support CMake natively, [please refer to the Visual Studio documentation](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170).
@@ -304,17 +302,15 @@ Though having Visual Studio installed is necessary, one can build simdjson using
 - `mkdir build`
 - `cd build`
 - `cmake ..`
-- `cmake --build . -config Release`
+- `cmake --build . --config Release`
 
 
 Furthermore, if you have installed LLVM clang on Windows, for example as a component of Visual Studio 2019, you can configure and build simdjson using LLVM clang on Windows using cmake:
 
-
 - `mkdir build`
 - `cd build`
 - `cmake -T ClangCL ..`
-- `cmake --build . -config Release`
-
+- `cmake --build . --config Release`
 
 ## Various References
 

@@ -211,7 +211,7 @@ namespace number_tests {
   bool get_number_tests() {
     TEST_START();
     ondemand::parser parser;
-    padded_string docdata = R"([1.0, 3, 1, 3.1415,-13231232,9999999999999999999,-9223372036854775807,-9223372036854775808])"_padded;
+    padded_string docdata = R"([1.0, 3, 1, 3.1415,-13231232,9999999999999999999,-9223372036854775807,-9223372036854775808,12345678901234567890123])"_padded;
     ondemand::number_type expectedtypes[] = {ondemand::number_type::floating_point_number,
                                  ondemand::number_type::signed_integer,
                                  ondemand::number_type::signed_integer,
@@ -219,10 +219,11 @@ namespace number_tests {
                                  ondemand::number_type::signed_integer,
                                  ondemand::number_type::unsigned_integer,
                                  ondemand::number_type::signed_integer,
-                                 ondemand::number_type::signed_integer
+                                 ondemand::number_type::signed_integer,
+                                 ondemand::number_type::big_integer
                                  };
-    bool is_negative[] = {false, false, false, false, true, false, true, true};
-    bool is_integer[] = {false, true, true, false, true, true, true, true};
+    bool is_negative[] = {false, false, false, false, true, false, true, true, false};
+    bool is_integer[] = {false, true, true, false, true, true, true, true, true};
 
     ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
@@ -233,17 +234,25 @@ namespace number_tests {
       ondemand::value val;
       ASSERT_SUCCESS(valr.get(val));
       ondemand::number_type nt{};
-      ASSERT_SUCCESS(val.get_number_type().get(nt));
+      auto r = val.get_number_type().get(nt);
+      ASSERT_SUCCESS(r);
       ASSERT_EQUAL(expectedtypes[counter], nt);
-      ondemand::number num;
-      ASSERT_SUCCESS(val.get_number().get(num));
-      ASSERT_EQUAL(is_negative[counter], val.is_negative());
       bool intvalue{};
-      ASSERT_SUCCESS(val.is_integer().get(intvalue));
+      auto res = val.is_integer().get(intvalue);
+      ASSERT_SUCCESS(res);
+      ondemand::number num;
+      auto rr = val.get_number().get(num);
+      if(counter == 8) {
+        ASSERT_EQUAL(rr, BIGINT_ERROR);
+        ASSERT_EQUAL(nt, ondemand::number_type::big_integer);
+      } else {
+        ASSERT_SUCCESS(rr);
+        ondemand::number_type t = num.get_number_type();
+        ASSERT_EQUAL(expectedtypes[counter], t);
+      }
       ASSERT_EQUAL(is_integer[counter], intvalue);
-      ondemand::number_type t = num.get_number_type();
-      ASSERT_EQUAL(expectedtypes[counter], t);
-      switch(t) {
+      ASSERT_EQUAL(is_negative[counter], val.is_negative());
+      switch(nt) {
         case ondemand::number_type::signed_integer:
           ASSERT_TRUE(num.is_int64());
           break;
@@ -253,30 +262,57 @@ namespace number_tests {
         case ondemand::number_type::floating_point_number:
           ASSERT_TRUE(num.is_double());
           break;
+        case ondemand::number_type::big_integer:
+          break;
       }
-      if(counter == 0) {
-        ASSERT_EQUAL(num.get_double(), 1.0);
-        ASSERT_EQUAL((double)num, 1.0);
-      } else if(counter == 1) {
-        ASSERT_EQUAL(num.get_int64(), 3);
-        ASSERT_EQUAL((int64_t)num, 3);
-      } else if(counter == 2) {
-        ASSERT_EQUAL(num.get_int64(), 1);
-        ASSERT_EQUAL((int64_t)num, 1);
-      } else if(counter == 3) {
-        ASSERT_EQUAL(num.get_double(), 3.1415);
-        ASSERT_EQUAL((double)num, 3.1415);
-      } else if(counter == 4) {
-        ASSERT_EQUAL(num.get_int64(), -13231232);
-        ASSERT_EQUAL((int64_t)num, -13231232);
-      } else if(counter == 5) {
-        ASSERT_EQUAL(num.get_uint64(), UINT64_C(9999999999999999999));
-        ASSERT_EQUAL((uint64_t)num, UINT64_C(9999999999999999999));
+      switch(counter) {
+        case 0:
+          ASSERT_EQUAL(num.get_double(), 1.0);
+          ASSERT_EQUAL((double)num, 1.0);
+          break;
+        case 1:
+          ASSERT_EQUAL(num.get_int64(), 3);
+          ASSERT_EQUAL((int64_t)num, 3);
+          break;
+        case 2:
+          ASSERT_EQUAL(num.get_int64(), 1);
+          ASSERT_EQUAL((int64_t)num, 1);
+          break;
+        case 3:
+          ASSERT_EQUAL(num.get_double(), 3.1415);
+          ASSERT_EQUAL((double)num, 3.1415);
+          break;
+        case 4:
+          ASSERT_EQUAL(num.get_int64(), -13231232);
+          ASSERT_EQUAL((int64_t)num, -13231232);
+          break;
+        case 5:
+          ASSERT_EQUAL(num.get_uint64(), UINT64_C(9999999999999999999));
+          ASSERT_EQUAL((uint64_t)num, UINT64_C(9999999999999999999));
+          break;
+        case 8:
+          ASSERT_EQUAL(val.raw_json_token(), "12345678901234567890123");
+          break;
+        default:
+          break;
       }
       counter++;
     }
     TEST_SUCCEED();
   }
+
+  bool issue2099() {
+    TEST_START();
+    ondemand::parser parser;
+    auto json = "1000000000.000000001"_padded;
+    ondemand::document doc;
+    ASSERT_SUCCESS(parser.iterate(json).get(doc));
+    ondemand::number number;
+    ASSERT_SUCCESS(doc.get_number().get(number));
+    ASSERT_EQUAL(number.get_number_type(), ondemand::number_type::floating_point_number);
+    ASSERT_EQUAL(number.get_double(), 1e9);
+    TEST_SUCCEED();
+}
 
   bool issue1878() {
     TEST_START();
@@ -428,8 +464,51 @@ namespace number_tests {
     TEST_SUCCEED();
   }
 
+  bool big_int_not_zero() {
+    TEST_START();
+    ondemand::parser parser;
+    ondemand::document doc;
+    // This is not a big integer, it is a mistake
+    padded_string docdata = R"(09500000000000000000000000000000000000)"_padded;
+    ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
+    ASSERT_ERROR(doc.get_number(), NUMBER_ERROR);
+    TEST_SUCCEED();
+  }
+
+  bool negative_big_int() {
+    TEST_START();
+    ondemand::parser parser;
+    ondemand::document doc;
+    // This is not a big integer, it is a mistake
+    padded_string docdata = R"(-18446744073709551616)"_padded;
+    ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
+    ASSERT_ERROR(doc.get_number(), BIGINT_ERROR);
+    std::string_view my_big;
+    ASSERT_SUCCESS(doc.raw_json_token().get(my_big));
+    ASSERT_EQUAL(my_big, "-18446744073709551616");
+    TEST_SUCCEED();
+  }
+
+  bool gigantic_big_int() {
+    TEST_START();
+    ondemand::parser parser;
+    ondemand::document doc;
+    std::string number(2000, '1');
+    // This is not a big integer, it is a mistake
+    ASSERT_SUCCESS(parser.iterate(number).get(doc));
+    ASSERT_ERROR(doc.get_number(), BIGINT_ERROR);
+    std::string_view my_big;
+    ASSERT_SUCCESS(doc.raw_json_token().get(my_big));
+    ASSERT_EQUAL(my_big, number);
+    TEST_SUCCEED();
+  }
+
   bool run() {
-    return issue2093() &&
+    return gigantic_big_int() &&
+           big_int_not_zero() &&
+           negative_big_int() &&
+           issue2099() &&
+           issue2093() &&
            issue2045() &&
            issue2017() &&
            issue_1898() &&

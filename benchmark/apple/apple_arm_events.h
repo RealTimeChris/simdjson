@@ -993,7 +993,6 @@ struct AppleEvents {
     // check permission
     int force_ctrs = 0;
     if (kpc_force_all_ctrs_get(&force_ctrs)) {
-      printf("Permission denied, xnu/kpc requires root privileges.\n");
       return (worked = false);
     }
     int ret;
@@ -1100,8 +1099,8 @@ struct AppleEvents {
       return 1;
     }
     return performance_counters {
-        counters_0[counter_map[0]], counters_0[counter_map[3]],
-        counters_0[counter_map[2]], counters_0[counter_map[1]]};
+        counters_0[counter_map[0]], counters_0[counter_map[2]],
+        counters_0[counter_map[3]], counters_0[counter_map[1]]};
   }
 };
 

@@ -1,11 +1,10 @@
 #include "simdjson.h"
 #include "test_ondemand.h"
 #include <string>
-using namespace std::string_literals;
 
 using namespace simdjson;
 
-namespace json_pointer_tests {
+namespace json_path_tests {
     const padded_string TEST_JSON = R"(
     {
         "/~01abc": [
@@ -39,20 +38,20 @@ namespace json_pointer_tests {
     }
     )"_padded;
 
-    bool run_success_test(const padded_string & json,std::string_view json_pointer,std::string expected) {
+    bool run_success_test(const padded_string & json,std::string_view json_path,std::string expected) {
         TEST_START();
-        std::cout <<":"<< json_pointer<<std::endl;
+        std::cout <<":"<< json_path<<std::endl;
         ondemand::parser parser;
         ondemand::document doc;
         ondemand::value val;
         std::string_view actual;
         ASSERT_SUCCESS(parser.iterate(json).get(doc));
-        ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
+        ASSERT_SUCCESS(doc.at_path(json_path).get(val));
         ASSERT_SUCCESS(simdjson::to_json_string(val).get(actual));
         ASSERT_EQUAL(actual,expected);
         // We want to see if the value is usable besides to_json_string.
         ASSERT_SUCCESS(parser.iterate(json).get(doc));
-        ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
+        ASSERT_SUCCESS(doc.at_path(json_path).get(val));
         ondemand::json_type type;
         ASSERT_SUCCESS(val.type().get(type));
         switch (type) {
@@ -80,13 +79,13 @@ namespace json_pointer_tests {
         TEST_SUCCEED();
     }
 
-    bool run_failure_test(const padded_string & json,std::string_view json_pointer,error_code expected) {
+    bool run_failure_test(const padded_string & json,std::string_view json_path,error_code expected) {
         TEST_START();
-        std::cout << "json_pointer: " << json_pointer << std::endl;
+        std::cout << "json_path: " << json_path << std::endl;
         ondemand::parser parser;
         ondemand::document doc;
         ASSERT_SUCCESS(parser.iterate(json).get(doc));
-        ASSERT_EQUAL(doc.at_pointer(json_pointer).error(),expected);
+        ASSERT_EQUAL(doc.at_path(json_path).error(),expected);
         TEST_SUCCEED();
     }
 
@@ -102,7 +101,7 @@ namespace json_pointer_tests {
         ondemand::document cars;
         double x;
         ASSERT_SUCCESS(parser.iterate(cars_json).get(cars));
-        ASSERT_SUCCESS(cars.at_pointer("/0/tire_pressure/1").get(x));
+        ASSERT_SUCCESS(cars.at_path("[0].tire_pressure[1]").get(x));
         ASSERT_EQUAL(x,39.9);
         TEST_SUCCEED();
     }
@@ -121,7 +120,7 @@ namespace json_pointer_tests {
         ASSERT_SUCCESS(parser.iterate(cars_json).get(cars));
         for (auto car_element : cars) {
             double x;
-            ASSERT_SUCCESS(car_element.at_pointer("/tire_pressure/1").get(x));
+            ASSERT_SUCCESS(car_element.at_path(".tire_pressure[1]").get(x));
             measured.push_back(x);
         }
 
@@ -147,42 +146,42 @@ namespace json_pointer_tests {
         ASSERT_SUCCESS(parser.iterate(number_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_path("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking null"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(null_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_path("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking string"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(string_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_path("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking false"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(false_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_path("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking true"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(true_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_path("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking object"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(object_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_FALSE(is_scalar);
-        ASSERT_SUCCESS(doc.at_pointer("").get(val));
+        ASSERT_SUCCESS(doc.at_path("").get(val));
         std::cout << "  checking array"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(array_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_FALSE(is_scalar);
-        ASSERT_SUCCESS(doc.at_pointer("").get(val));
+        ASSERT_SUCCESS(doc.at_path("").get(val));
         TEST_SUCCEED();
     }
 
 
-    bool many_json_pointers() {
+    bool many_json_paths() {
         TEST_START();
         auto cars_json = R"( [
         { "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
@@ -196,8 +195,8 @@ namespace json_pointer_tests {
         ASSERT_SUCCESS(parser.iterate(cars_json).get(cars));
         for (int i = 0; i < 3; i++) {
             double x;
-            std::string json_pointer = "/"s + std::to_string(i) + "/tire_pressure/1"s;
-            ASSERT_SUCCESS(cars.at_pointer(json_pointer).get(x));
+            std::string json_path = std::string("[") + std::to_string(i) + std::string("].tire_pressure[1]");
+            ASSERT_SUCCESS(cars.at_path(json_path).get(x));
             measured.push_back(x);
         }
 
@@ -219,33 +218,33 @@ namespace json_pointer_tests {
         auto missing_bracket_before = R"( {"hello": [0,1,2,3, "test": "foo", "bool": true, "num":1234, "success":"yes"} )"_padded;
         auto missing_bracket_after = R"( {"test": "foo", "bool": true, "num":1234, "success":"yes", "hello":[0,1,2,3} )"_padded;
 
-        std::string json_pointer = "/success";
+        std::string json_path = ".success";
         std::cout << "\t- invalid_escape_key" << std::endl;
         ASSERT_SUCCESS(parser.iterate(invalid_escape_key).get(doc));
-        ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
+        ASSERT_SUCCESS(doc.at_path(json_path).get(val));
         std::cout << "\t- invalid_escape_value" << std::endl;
         ASSERT_SUCCESS(parser.iterate(invalid_escape_value).get(doc));
-        ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
+        ASSERT_SUCCESS(doc.at_path(json_path).get(val));
         std::cout << "\t- invalid_escape_value_at_jp_nomat" << std::endl;
         ASSERT_SUCCESS(parser.iterate(invalid_escape_value_at_jp).get(doc));
-        ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(v));
+        ASSERT_SUCCESS(doc.at_path(json_path).get(v));
         std::cout << "\t- invalid_escape_value_at_jp" << std::endl;
         ASSERT_SUCCESS(parser.iterate(invalid_escape_value_at_jp).get(doc));
-        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson::STRING_ERROR);
+        ASSERT_ERROR(doc.at_path(json_path).get(val), simdjson::STRING_ERROR);
         std::cout << "\t- unclosed_object" << std::endl;
         ASSERT_SUCCESS(parser.iterate(unclosed_object).get(doc));
-        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson::INCOMPLETE_ARRAY_OR_OBJECT);
+        ASSERT_ERROR(doc.at_path(json_path).get(val), simdjson::INCOMPLETE_ARRAY_OR_OBJECT);
         std::cout << "\t- missing_bracket_before" << std::endl;
         ASSERT_SUCCESS(parser.iterate(missing_bracket_before).get(doc));
-        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson::TAPE_ERROR);
+        ASSERT_ERROR(doc.at_path(json_path).get(val), simdjson::TAPE_ERROR);
         std::cout << "\t- missing_bracket_after" << std::endl;
         ASSERT_SUCCESS(parser.iterate(missing_bracket_after).get(doc));
-        ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
+        ASSERT_SUCCESS(doc.at_path(json_path).get(val));
         TEST_SUCCEED();
     }
 
 
-    bool many_json_pointers_object_array() {
+    bool many_json_paths_object_array() {
         TEST_START();
         auto dogcatpotato = R"( { "dog" : [1,2,3], "cat" : [5, 6, 7], "potato" : [1234]})"_padded;
 
@@ -255,13 +254,13 @@ namespace json_pointer_tests {
         ondemand::object obj;
         ASSERT_SUCCESS(doc.get_object().get(obj));
         int64_t x;
-        ASSERT_SUCCESS(obj.at_pointer("/dog/1").get(x));
+        ASSERT_SUCCESS(obj.at_path(".dog[1]").get(x));
         ASSERT_EQUAL(x, 2);
-        ASSERT_SUCCESS(obj.at_pointer("/potato/0").get(x));
+        ASSERT_SUCCESS(obj.at_path(".potato[0]").get(x));
         ASSERT_EQUAL(x, 1234);
         TEST_SUCCEED();
     }
-    bool many_json_pointers_object() {
+    bool many_json_paths_object() {
         TEST_START();
         auto cfoofoo2 = R"( { "c" :{ "foo": { "a": [ 10, 20, 30 ] }}, "d": { "foo2": { "a": [ 10, 20, 30 ] }} , "e": 120 })"_padded;
         ondemand::parser parser;
@@ -270,15 +269,15 @@ namespace json_pointer_tests {
         ondemand::object obj;
         ASSERT_SUCCESS(doc.get_object().get(obj));
         int64_t x;
-        ASSERT_SUCCESS(obj.at_pointer("/c/foo/a/1").get(x));
+        ASSERT_SUCCESS(obj.at_path(".c.foo.a[1]").get(x));
         ASSERT_EQUAL(x, 20);
-        ASSERT_SUCCESS(obj.at_pointer("/d/foo2/a/2").get(x));
+        ASSERT_SUCCESS(obj.at_path(".d.foo2.a.2").get(x));
         ASSERT_EQUAL(x, 30);
-        ASSERT_SUCCESS(obj.at_pointer("/e").get(x));
+        ASSERT_SUCCESS(obj.at_path(".e").get(x));
         ASSERT_EQUAL(x, 120);
         TEST_SUCCEED();
     }
-    bool many_json_pointers_array() {
+    bool many_json_paths_array() {
         TEST_START();
         auto cfoofoo2 = R"( [ 111, 2, 3, { "foo": { "a": [ 10, 20, 33 ] }}, { "foo2": { "a": [ 10, 20, 30 ] }}, 1001 ])"_padded;
         ondemand::parser parser;
@@ -287,7 +286,7 @@ namespace json_pointer_tests {
         ondemand::array arr;
         ASSERT_SUCCESS(doc.get_array().get(arr));
         int64_t x;
-        ASSERT_SUCCESS(arr.at_pointer("/3/foo/a/1").get(x));
+        ASSERT_SUCCESS(arr.at_path("[3].foo.a[1]").get(x));
         ASSERT_EQUAL(x, 20);
         TEST_SUCCEED();
     }
@@ -301,7 +300,7 @@ namespace json_pointer_tests {
           make{_make}, model{_model}, year(_year), tire_pressure(_tire_pressure) {}
     };
 
-    bool json_pointer_invalidation() {
+    bool json_path_invalidation() {
         TEST_START();
         auto cars_json = R"( [
         { "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
@@ -316,10 +315,10 @@ namespace json_pointer_tests {
         std::vector<car_type> content;
         for (int i = 0; i < 3; i++) {
             ondemand::object obj;
-            std::string json_pointer = "/"s + std::to_string(i);
-            // Each successive at_pointer call invalidates
+            std::string json_path = std::string("[") + std::to_string(i) + std::string("]");
+            // Each successive at_path call invalidates
             // previously parsed values, strings, objects and array.
-            ASSERT_SUCCESS(cars.at_pointer(json_pointer).get(obj));
+            ASSERT_SUCCESS(cars.at_path(json_path).get(obj));
             // We materialize the object.
             std::string_view make;
             ASSERT_SUCCESS(obj["make"].get(make));
@@ -348,7 +347,7 @@ namespace json_pointer_tests {
     }
 
 #if SIMDJSON_EXCEPTIONS
-    bool json_pointer_invalidation_exceptions() {
+    bool json_path_invalidation_exceptions() {
         TEST_START();
         auto cars_json = R"( [
         { "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
@@ -361,10 +360,10 @@ namespace json_pointer_tests {
         ondemand::document cars = parser.iterate(cars_json);
         std::vector<car_type> content;
         for (int i = 0; i < 3; i++) {
-            std::string json_pointer = "/"s + std::to_string(i);
-            // Each successive at_pointer call invalidates
+            std::string json_path = std::string("[") + std::to_string(i) + std::string("]");
+            // Each successive at_path call invalidates
             // previously parsed values, strings, objects and array.
-            ondemand::object obj(cars.at_pointer(json_pointer).get_object());
+            ondemand::object obj(cars.at_path(json_path).get_object());
             // We materialize the object.
             std::string_view make = obj["make"];
             std::string_view model = obj["model"];
@@ -388,26 +387,26 @@ namespace json_pointer_tests {
     bool run() {
         return
 #if SIMDJSON_EXCEPTIONS
-                json_pointer_invalidation_exceptions() &&
+                json_path_invalidation_exceptions() &&
 #endif
-                many_json_pointers_array() &&
-                many_json_pointers_object() &&
-                many_json_pointers_object_array() &&
+                many_json_paths_array() &&
+                many_json_paths_object() &&
+                many_json_paths_object_array() &&
                 run_broken_tests() &&
-                json_pointer_invalidation() &&
+                json_path_invalidation() &&
                 demo_test() &&
                 demo_relative_path() &&
-                run_success_test(TEST_RFC_JSON,"/foo",R"(["bar", "baz"])") &&
-                run_success_test(TEST_RFC_JSON,"/foo/0",R"("bar")") &&
-                run_success_test(TEST_RFC_JSON,"/",R"(0)") &&
-                run_success_test(TEST_RFC_JSON,"/a~1b",R"(1)") &&
-                run_success_test(TEST_RFC_JSON,"/c%d",R"(2)") &&
-                run_success_test(TEST_RFC_JSON,"/e^f",R"(3)") &&
-                run_success_test(TEST_RFC_JSON,"/g|h",R"(4)") &&
-                run_success_test(TEST_RFC_JSON,R"(/i\\j)",R"(5)") &&
-                run_success_test(TEST_RFC_JSON,R"(/k\"l)",R"(6)") &&
-                run_success_test(TEST_RFC_JSON,"/ ",R"(7)") &&
-                run_success_test(TEST_RFC_JSON,"/m~0n",R"(8)") &&
+                run_success_test(TEST_RFC_JSON,".foo",R"(["bar", "baz"])") &&
+                run_success_test(TEST_RFC_JSON,".foo[0]",R"("bar")") &&
+                run_success_test(TEST_RFC_JSON,".",R"(0)") &&
+                run_success_test(TEST_RFC_JSON,".a/b",R"(1)") &&
+                run_success_test(TEST_RFC_JSON,".c%d",R"(2)") &&
+                run_success_test(TEST_RFC_JSON,".e^f",R"(3)") &&
+                run_success_test(TEST_RFC_JSON,".g|h",R"(4)") &&
+                run_success_test(TEST_RFC_JSON,R"(.i\\j)",R"(5)") &&
+                run_success_test(TEST_RFC_JSON,R"(.k\"l)",R"(6)") &&
+                run_success_test(TEST_RFC_JSON,". ",R"(7)") &&
+                run_success_test(TEST_RFC_JSON,".m~n",R"(8)") &&
                 run_success_test(TEST_RFC_JSON,"",R"({
         "foo": ["bar", "baz"],
         "": 0,
@@ -435,7 +434,7 @@ namespace json_pointer_tests {
         "": "empty ok",
         "arr": []
     })") &&
-                run_success_test(TEST_JSON, R"(/~1~001abc)", R"([
+                run_success_test(TEST_JSON, R"(./~01abc)", R"([
         0,
         {
             "\\\" 0": [
@@ -444,21 +443,21 @@ namespace json_pointer_tests {
             ]
         }
         ])") &&
-                run_success_test(TEST_JSON, R"(/~1~001abc/1)", R"({
+                run_success_test(TEST_JSON, R"(./~01abc[1])", R"({
             "\\\" 0": [
             "value0",
             "value1"
             ]
         })") &&
-                run_success_test(TEST_JSON, R"(/~1~001abc/1/\\\" 0)", R"([
+                run_success_test(TEST_JSON, R"(./~01abc[1].\\\" 0)", R"([
             "value0",
             "value1"
             ])") &&
-                run_success_test(TEST_JSON, R"(/~1~001abc/1/\\\" 0/0)", "\"value0\"") &&
-                run_success_test(TEST_JSON, R"(/~1~001abc/1/\\\" 0/1)", "\"value1\"") &&
-                run_success_test(TEST_JSON, "/arr", R"([])") &&
-                run_success_test(TEST_JSON, "/0", "\"0 ok\"") &&
-                run_success_test(TEST_JSON, "/01", "\"01 ok\"") &&
+                run_success_test(TEST_JSON, R"(./~01abc[1].\\\" 0[0])", "\"value0\"") &&
+                run_success_test(TEST_JSON, R"(./~01abc[1].\\\" 0[1])", "\"value1\"") &&
+                run_success_test(TEST_JSON, ".arr", R"([])") &&
+                run_success_test(TEST_JSON, ".0", "\"0 ok\"") &&
+                run_success_test(TEST_JSON, ".01", "\"01 ok\"") &&
                 run_success_test(TEST_JSON, "", R"({
         "/~01abc": [
         0,
@@ -474,19 +473,19 @@ namespace json_pointer_tests {
         "": "empty ok",
         "arr": []
     })") &&
-                run_failure_test(TEST_JSON, R"(/~1~001abc/1/\\\" 0/2)", INDEX_OUT_OF_BOUNDS) &&
-                run_failure_test(TEST_JSON, "/arr/0", INDEX_OUT_OF_BOUNDS) &&
-                run_failure_test(TEST_JSON, "~1~001abc", INVALID_JSON_POINTER) &&
-                run_failure_test(TEST_JSON, "/~01abc", NO_SUCH_FIELD) &&
-                run_failure_test(TEST_JSON, "/~1~001abc/01", INVALID_JSON_POINTER) &&
-                run_failure_test(TEST_JSON, "/~1~001abc/", INVALID_JSON_POINTER) &&
-                run_failure_test(TEST_JSON, "/~1~001abc/-", INDEX_OUT_OF_BOUNDS) &&
-                many_json_pointers() &&
+                run_failure_test(TEST_JSON, R"(./~01abc[1].\\\" 0[2])", INDEX_OUT_OF_BOUNDS) &&
+                run_failure_test(TEST_JSON, ".arr[0]", INDEX_OUT_OF_BOUNDS) &&
+                run_failure_test(TEST_JSON, "/~01abc", INVALID_JSON_POINTER) &&
+                run_failure_test(TEST_JSON, ".~1abc", NO_SUCH_FIELD) &&
+                run_failure_test(TEST_JSON, "./~01abc.01", INVALID_JSON_POINTER) &&
+                run_failure_test(TEST_JSON, "./~01abc.", INVALID_JSON_POINTER) &&
+                run_failure_test(TEST_JSON, "./~01abc.-", INDEX_OUT_OF_BOUNDS) &&
+                many_json_paths() &&
                 document_as_scalar() &&
                 true;
     }
-}   // json_pointer_tests
+}   // json_path_tests
 
 int main(int argc, char *argv[]) {
-  return test_main(argc, argv, json_pointer_tests::run);
+  return test_main(argc, argv, json_path_tests::run);
 }

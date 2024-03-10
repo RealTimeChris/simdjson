@@ -6,6 +6,15 @@ using namespace simdjson;
 namespace error_tests {
   using namespace std;
 
+  bool issue2120() {
+    TEST_START();
+    ondemand::parser parser;
+    size_t bad_capacity = 0;
+    ondemand::document doc;
+    ASSERT_ERROR( parser.iterate("{\"a\": 0 }", bad_capacity).get(doc), INSUFFICIENT_PADDING);
+    TEST_SUCCEED();
+  }
+
   bool badbadjson() {
     TEST_START();
     ondemand::parser parser;
@@ -97,6 +106,29 @@ namespace error_tests {
     TEST_SUCCEED();
   }
 #if SIMDJSON_EXCEPTIONS
+  // This is a compile-only test
+  struct Class {
+      Class(std::string text)
+          : parser()
+          , doc(parser.iterate(text))
+      {
+      }
+      simdjson::ondemand::parser parser;
+      simdjson::ondemand::document doc;
+  };
+  bool document_in_class() {
+    TEST_START();
+    std::string text = "{}";
+    Class c(text);
+    TEST_SUCCEED();
+  }
+  bool direct_document() {
+    TEST_START();
+    std::string text = "{}";
+    simdjson::ondemand::parser parser;
+    simdjson::ondemand::document doc(parser.iterate(text));
+    TEST_SUCCEED();
+  }
   bool raw_json_string_except() {
     TEST_START();
     ondemand::parser parser;
@@ -366,11 +398,14 @@ namespace error_tests {
 
   bool run() {
     return
+           issue2120() &&
            badbadjson() &&
            badbadjson2() &&
            issue1834() &&
            issue1834_2() &&
 #if SIMDJSON_EXCEPTIONS
+           document_in_class() &&
+           direct_document() &&
            raw_json_string_except() &&
            raw_json_string_except_with_io() &&
 #endif

@@ -22,7 +22,7 @@ endif()
 # The bulk of our benchmarking and testing data has been moved simdjson/simdjson-data
 import_dependency(simdjson-data simdjson/simdjson-data a5b13babe65c1bba7186b41b43d4cbdc20a5c470)
 add_dependency(simdjson-data)
-
+option(SIMDJSON_USE_BOOST_JSON "Try to include BOOST_JSON, this may break your binaries under some systems." OFF)
 # This prevents variables declared with set() from unnecessarily escaping and
 # should not be called more than once
 function(competition_scope_)
@@ -36,8 +36,8 @@ function(competition_scope_)
 #endif
 
 int main() {}
-]] USE_BOOST_JSON)
-  if(USE_BOOST_JSON)
+]] SIMDJSON_FOUND_STRING_VIEW)
+  if(SIMDJSON_FOUND_STRING_VIEW AND SIMDJSON_USE_BOOST_JSON)
     import_dependency(boostjson boostorg/json ee8d72d)
     add_library(boostjson STATIC "${boostjson_SOURCE_DIR}/src/src.cpp")
     target_compile_definitions(boostjson PUBLIC BOOST_JSON_STANDALONE)
@@ -104,7 +104,11 @@ int main() {}
   target_compile_definitions(rapidjson INTERFACE RAPIDJSON_HAS_STDSTRING)
   target_include_directories(rapidjson SYSTEM INTERFACE
           "${rapidjson_SOURCE_DIR}/include")
-  target_compile_definitions(rapidjson INTERFACE SIMDJSON_COMPETITION_RAPIDJSON)
+  if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
+    message(STATUS "Disabling rapidjson")
+  else()
+    target_compile_definitions(rapidjson INTERFACE SIMDJSON_COMPETITION_RAPIDJSON)
+  endif()
 
   import_dependency(sajson chadaustin/sajson 2dcfd35)
   add_library(sajson INTERFACE)
@@ -130,7 +134,7 @@ int main() {}
   add_library(competition-core INTERFACE)
   target_link_libraries(competition-core INTERFACE nlohmann_json rapidjson sajson cjson jsmn yyjson)
 
-  if(USE_BOOST_JSON)
+  if(TARGET boostjson)
      target_compile_definitions(boostjson INTERFACE HAS_BOOST_JSON)
      target_link_libraries(competition-core INTERFACE boostjson)
   endif()

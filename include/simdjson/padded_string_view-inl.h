@@ -11,13 +11,19 @@ namespace simdjson {
 inline padded_string_view::padded_string_view(const char* s, size_t len, size_t capacity) noexcept
   : std::string_view(s, len), _capacity(capacity)
 {
+  if(_capacity < len) { _capacity = len; }
 }
 
 inline padded_string_view::padded_string_view(const uint8_t* s, size_t len, size_t capacity) noexcept
   : padded_string_view(reinterpret_cast<const char*>(s), len, capacity)
 {
 }
-
+#ifdef __cpp_char8_t
+inline padded_string_view::padded_string_view(const char8_t* s, size_t len, size_t capacity) noexcept
+  : padded_string_view(reinterpret_cast<const char*>(s), len, capacity)
+{
+}
+#endif
 inline padded_string_view::padded_string_view(const std::string &s) noexcept
   : std::string_view(s), _capacity(s.capacity())
 {
@@ -26,6 +32,7 @@ inline padded_string_view::padded_string_view(const std::string &s) noexcept
 inline padded_string_view::padded_string_view(std::string_view s, size_t capacity) noexcept
   : std::string_view(s), _capacity(capacity)
 {
+  if(_capacity < s.length()) { _capacity = s.length(); }
 }
 
 inline size_t padded_string_view::capacity() const noexcept { return _capacity; }
