@@ -93,6 +93,30 @@ static const simdjson::westmere::implementation* get_westmere_singleton() {
 } // namespace simdjson
 #endif // SIMDJSON_IMPLEMENTATION_WESTMERE
 
+#if SIMDJSON_IMPLEMENTATION_LSX
+#include <simdjson/lsx/implementation.h>
+namespace simdjson {
+namespace internal {
+static const simdjson::lsx::implementation* get_lsx_singleton() {
+  static const simdjson::lsx::implementation lsx_singleton{};
+  return &lsx_singleton;
+}
+} // namespace internal
+} // namespace simdjson
+#endif // SIMDJSON_IMPLEMENTATION_LSX
+
+#if SIMDJSON_IMPLEMENTATION_LASX
+#include <simdjson/lasx/implementation.h>
+namespace simdjson {
+namespace internal {
+static const simdjson::lasx::implementation* get_lasx_singleton() {
+  static const simdjson::lasx::implementation lasx_singleton{};
+  return &lasx_singleton;
+}
+} // namespace internal
+} // namespace simdjson
+#endif // SIMDJSON_IMPLEMENTATION_LASX
+
 #undef SIMDJSON_CONDITIONAL_INCLUDE
 
 namespace simdjson {
@@ -104,6 +128,7 @@ namespace internal {
 #define SIMDJSON_SINGLE_IMPLEMENTATION (SIMDJSON_IMPLEMENTATION_ICELAKE \
              + SIMDJSON_IMPLEMENTATION_HASWELL + SIMDJSON_IMPLEMENTATION_WESTMERE \
              + SIMDJSON_IMPLEMENTATION_ARM64 + SIMDJSON_IMPLEMENTATION_PPC64 \
+             + SIMDJSON_IMPLEMENTATION_LSX + SIMDJSON_IMPLEMENTATION_LASX \
              + SIMDJSON_IMPLEMENTATION_FALLBACK == 1)
 
 #if SIMDJSON_SINGLE_IMPLEMENTATION
@@ -124,6 +149,12 @@ namespace internal {
 #if SIMDJSON_IMPLEMENTATION_PPC64
     get_ppc64_singleton();
 #endif
+#if SIMDJSON_IMPLEMENTATION_LSX
+    get_lsx_singleton();
+#endif
+#if SIMDJSON_IMPLEMENTATION_LASX
+    get_lasx_singleton();
+#endif
 #if SIMDJSON_IMPLEMENTATION_FALLBACK
     get_fallback_singleton();
 #endif
@@ -138,8 +169,8 @@ namespace internal {
  */
 class detect_best_supported_implementation_on_first_use final : public implementation {
 public:
-  const std::string &name() const noexcept final { return set_best()->name(); }
-  const std::string &description() const noexcept final { return set_best()->description(); }
+  std::string name() const noexcept final { return set_best()->name(); }
+  std::string description() const noexcept final { return set_best()->description(); }
   uint32_t required_instruction_sets() const noexcept final { return set_best()->required_instruction_sets(); }
   simdjson_warn_unused error_code create_dom_parser_implementation(
     size_t capacity,
@@ -159,6 +190,8 @@ private:
   const implementation *set_best() const noexcept;
 };
 
+static_assert(std::is_trivially_destructible<detect_best_supported_implementation_on_first_use>::value, "detect_best_supported_implementation_on_first_use should be trivially destructible");
+
 static const std::initializer_list<const implementation *>& get_available_implementation_pointers() {
   static const std::initializer_list<const implementation *> available_implementation_pointers {
 #if SIMDJSON_IMPLEMENTATION_ICELAKE
@@ -175,6 +208,12 @@ static const std::initializer_list<const implementation *>& get_available_implem
 #endif
 #if SIMDJSON_IMPLEMENTATION_PPC64
     get_ppc64_singleton(),
+#endif
+#if SIMDJSON_IMPLEMENTATION_LSX
+    get_lsx_singleton(),
+#endif
+#if SIMDJSON_IMPLEMENTATION_LASX
+    get_lasx_singleton(),
 #endif
 #if SIMDJSON_IMPLEMENTATION_FALLBACK
     get_fallback_singleton(),
@@ -208,6 +247,8 @@ public:
   }
   unsupported_implementation() : implementation("unsupported", "Unsupported CPU (no detected SIMD instructions)", 0) {}
 };
+
+static_assert(std::is_trivially_destructible<unsupported_implementation>::value, "unsupported_singleton should be trivially destructible");
 
 const unsupported_implementation* get_unsupported_singleton() {
     static const unsupported_implementation unsupported_singleton{};

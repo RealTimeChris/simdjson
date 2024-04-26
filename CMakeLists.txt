@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 project(
     simdjson
     # The version number is modified by tools/release.py
-    VERSION 3.8.0
+    VERSION 3.9.1
     DESCRIPTION "Parsing gigabytes of JSON per second"
     HOMEPAGE_URL "https://simdjson.org/"
     LANGUAGES CXX C
@@ -20,8 +20,8 @@ string(
 # ---- Options, variables ----
 
 # These version numbers are modified by tools/release.py
-set(SIMDJSON_LIB_VERSION "21.0.0" CACHE STRING "simdjson library version")
-set(SIMDJSON_LIB_SOVERSION "21" CACHE STRING "simdjson library soversion")
+set(SIMDJSON_LIB_VERSION "22.0.0" CACHE STRING "simdjson library version")
+set(SIMDJSON_LIB_SOVERSION "22" CACHE STRING "simdjson library soversion")
 
 option(SIMDJSON_BUILD_STATIC_LIB "Build simdjson_static library along with simdjson" OFF)
 
@@ -104,6 +104,24 @@ if(
       target_compile_options PRIVATE
       -mno-avx256-split-unaligned-load -mno-avx256-split-unaligned-store
   )
+endif()
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(loongarch64)$")
+    option(SIMDJSON_PREFER_LSX "Prefer LoongArch SX" ON)
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag(-mlasx COMPILER_SUPPORTS_LASX)
+    check_cxx_compiler_flag(-mlsx COMPILER_SUPPORTS_LSX)
+    if(COMPILER_SUPPORTS_LASX AND NOT SIMDJSON_PREFER_LSX)
+        simdjson_add_props(
+            target_compile_options PRIVATE
+            -mlasx
+        )
+    elseif(COMPILER_SUPPORTS_LSX)
+        simdjson_add_props(
+            target_compile_options PRIVATE
+            -mlsx
+        )
+    endif()
 endif()
 
 # GCC and Clang have horrendous Debug builds when using SIMD.
