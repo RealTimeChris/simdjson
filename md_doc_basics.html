@@ -30,7 +30,7 @@
   <td id="projectlogo"><img alt="Logo" src="logotiny.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">simdjson
-   &#160;<span id="projectnumber">3.9.1</span>
+   &#160;<span id="projectnumber">3.9.4</span>
    </div>
    <div id="projectbrief">Ridiculously Fast JSON</div>
   </td>
@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('md_doc_basics.html',''); initResizable
 <li><a href="#minifying-json-strings-without-parsing">Minifying JSON strings without parsing</a></li>
 <li><a href="#utf-8-validation-alone">UTF-8 validation (alone)</a></li>
 <li><a href="#json-pointer">JSON Pointer</a></li>
-<li><a href="#json-path">JSONPath</a></li>
+<li><a href="#jsonpath">JSONPath</a></li>
 <li><a href="#error-handling">Error handling</a><ul>
 <li><a href="#error-handling-examples-without-exceptions">Error handling examples without exceptions</a></li>
 <li><a href="#disabling-exceptions">Disabling exceptions</a></li>
@@ -153,15 +153,16 @@ Including simdjson</h1>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">#include &quot;simdjson.h&quot;</div>
 <div class="line">using namespace simdjson; // optional</div>
-</div><!-- fragment --><p>You can compile with:</p>
+</div><!-- fragment --><p>Under most systems, you can compile with:</p>
 <div class="fragment"><div class="line">c++ myproject.cpp simdjson.cpp</div>
 </div><!-- fragment --><p>Note:</p><ul>
+<li>We recommend that you use simdjson by copying the single-header <code><a class="el" href="simdjson_8h.html">simdjson.h</a></code> file along with the source file <code>simdjson.cpp</code> directly in your project, as they are part of <a href="https://github.com/simdjson/simdjson/releases">every release</a> as assets. In this manner, you only have to compile <code>simdjson.cpp</code> as any other source file: it works well in every development environment. However, you may also use simdjson as a git submodule (<a href="https://github.com/simdjson/cmakedemo">example</a>), using FetchContent (<a href="https://github.com/simdjson/cmake_demo_single_file">example</a>), with ExternalProject_Add (<a href="https://github.com/simdjson/cmakedemo_externalproject">example</a>) or with CPM (<a href="https://github.com/cpm-cmake/CPM.cmake/tree/master/examples/simdjson">example</a>).</li>
 <li>Users on macOS and other platforms where default compilers do not provide C++11 compliant by default should request it with the appropriate flag (e.g., <code>c++ -std=c++11 myproject.cpp simdjson.cpp</code>).</li>
 <li>The library relies on <a class="el" href="md_doc_implementation_selection.html">runtime CPU detection</a>: avoid specifying an architecture at compile time (e.g., <code>-march-native</code>) if you want your binaries to run everywhere.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Using simdjson with package managers</h1>
-<p>You can install the simdjson library on your system or in your project using multiple package managers such as MSYS2, the conan package manager, vcpkg, brew, the apt package manager (debian-based Linux systems), the FreeBSD package manager (FreeBSD), and so on. <a href="https://github.com/simdjson/simdjson/wiki/Installing-simdjson-with-a-package-manager">Visit our wiki for more details</a>.</p>
+<p>You can install the simdjson library on your system or in your project using multiple package managers such as MSYS2, the conan package manager, vcpkg, brew, the apt package manager (debian-based Linux systems), the FreeBSD package manager (FreeBSD), and so on. E.g., <a href="https://github.com/simdjson/simdjson-vcpkg">we provide an complete example with vcpkg</a> that works under Windows. <a href="https://github.com/simdjson/simdjson/wiki/Installing-simdjson-with-a-package-manager">Visit our wiki for more details</a>.</p>
 <p>The following Linux distributions provide simdjson packages: Alpine, RedHat, Rocky Linux, Debian, Fedora, and Ubuntu.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Using simdjson as a CMake dependency</h1>
@@ -196,7 +197,7 @@ Versions</h1>
 <h1><a class="anchor" id="autotoc_md5"></a>
 The basics: loading and parsing JSON documents</h1>
 <p>The simdjson library allows you to navigate and validate JSON documents (<a href="https://www.tbray.org/ongoing/When/201x/2017/12/14/rfc8259.html">RFC 8259</a>). As required by the standard, your JSON document should be in a Unicode (UTF-8) string. The whole string, from the beginning to the end, needs to be valid: we do not attempt to tolerate bad inputs before or after a document.</p>
-<p>For efficiency reasons, simdjson requires a string with a few bytes (<code><a class="el" href="namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf" title="The amount of padding needed in a buffer to parse JSON.">simdjson::SIMDJSON_PADDING</a></code>) at the end, these bytes may be read but their content does not affect the parsing. In practice, it means that the JSON inputs should be stored in a memory region with <code><a class="el" href="namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf" title="The amount of padding needed in a buffer to parse JSON.">simdjson::SIMDJSON_PADDING</a></code> extra bytes at the end. You do not have to set these bytes to specific values though you may want to if you want to avoid runtime warnings with some sanitizers.</p>
+<p>For efficiency reasons, simdjson requires a string with a few bytes (<code><a class="el" href="namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf" title="The amount of padding needed in a buffer to parse JSON.">simdjson::SIMDJSON_PADDING</a></code>) at the end, these bytes may be read but their content does not affect the parsing. In practice, it means that the JSON inputs should be stored in a memory region with <code><a class="el" href="namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf" title="The amount of padding needed in a buffer to parse JSON.">simdjson::SIMDJSON_PADDING</a></code> extra bytes at the end. You do not have to set these bytes to specific values though you may want to if you want to avoid runtime warnings with some sanitizers. Advanced users may want to read the section Free Padding in <a class="el" href="md_doc_performance.html">our performance notes</a>.</p>
 <p>The simdjson library offers a tree-like <a href="https://en.wikipedia.org/wiki/API">API</a>, which you can access by creating a <code>ondemand::parser</code> and calling the <code>iterate()</code> method. The iterate method quickly indexes the input string and may detect some errors. The following example illustrates how to get started with an input JSON file (<code>"twitter.json"</code>):</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">ondemand::parser parser;</div>
@@ -369,7 +370,7 @@ Using the parsed JSON</h1>
 <div class="line"> auto json = R&quot;( { &quot;test&quot;:{ &quot;val1&quot;:1, &quot;val2&quot;:2 } }   )&quot;_padded;</div>
 <div class="line"> auto doc = parser.iterate(json);</div>
 <div class="line"> size_t count = doc.count_fields(); // requires simdjson 1.0 or better</div>
-<div class="line"> std::cout &lt;&lt; &quot;Number of fields: &quot; &lt;&lt;  new_count &lt;&lt; std::endl; // Prints &quot;Number of fields: 1&quot;</div>
+<div class="line"> std::cout &lt;&lt; &quot;Number of fields: &quot; &lt;&lt;  count &lt;&lt; std::endl; // Prints &quot;Number of fields: 1&quot;</div>
 </div><!-- fragment --><p> Similarly to <code>count_elements</code>, you should not let an object instance go out of scope before consuming it after calling the <code>count_fields</code> method. If you access an object inside a document, you can use the <code>count_fields</code> method as follow. </p><div class="fragment"><div class="line">ondemand::parser parser;</div>
 <div class="line">auto json = R&quot;( { &quot;test&quot;:{ &quot;val1&quot;:1, &quot;val2&quot;:2 } }   )&quot;_padded;</div>
 <div class="line">auto doc = parser.iterate(json);</div>
@@ -599,7 +600,7 @@ Adding support for custom types</h1>
 <div class="line">  }</div>
 <div class="line">  return vec;</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>We may then provide support for our <code>Car</code>` struct:</p>
+</div><!-- fragment --><p>We may then provide support for our <code>Car</code> struct:</p>
 <div class="fragment"><div class="line"> {C++}</div>
 <div class="line">template &lt;&gt;</div>
 <div class="line">simdjson_inline simdjson_result&lt;Car&gt; simdjson::ondemand::value::get() noexcept {</div>
@@ -935,7 +936,7 @@ JSONPath</h1>
 <div class="line">ondemand::parser parser;</div>
 <div class="line">auto cars = parser.iterate(cars_json);</div>
 <div class="line">cout &lt;&lt; cars.at_path(&quot;[0].tire_pressure[1]&quot;) &lt;&lt; endl; // Prints 39.9</div>
-</div><!-- fragment --><p>A call to <code>at_path(json_path)</code> can result in any of the errors that are returned by the <code>at_pointer</code> method and if the conversion of <code>json_path</code> to JSON Pointer fails, it will lead to an <code><a class="el" href="namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9aeeaf930969566f76840224d64ee3a9a1" title="Invalid JSON pointer reference.">simdjson::INVALID_JSON_POINTER</a></code>error.</p>
+</div><!-- fragment --><p>A call to <code>at_path(json_path)</code> can result in any of the errors that are returned by the <code>at_pointer</code> method and if the conversion of <code>json_path</code> to JSON Pointer fails, it will lead to an <code><a class="el" href="namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9aeeaf930969566f76840224d64ee3a9a1" title="Invalid JSON pointer syntax.">simdjson::INVALID_JSON_POINTER</a></code>error.</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">auto cars_json = R&quot;( [</div>
 <div class="line">  { &quot;make&quot;: &quot;Toyota&quot;, &quot;model&quot;: &quot;Camry&quot;,  &quot;year&quot;: 2018, &quot;tire_pressure&quot;: [ 40.1, 39.9, 37.7, 40.4 ] },</div>
@@ -1605,9 +1606,27 @@ General direct access to the raw JSON string</h1>
 <div class="line">   std::string_view raw = key_value.value().raw_json();</div>
 <div class="line">   // will capture &quot;1&quot;, &quot;2&quot;, &quot;\&quot;fds\&quot;&quot;, &quot;{\&quot;a\&quot;:1}&quot;, &quot;[1,344]&quot;</div>
 <div class="line"> }</div>
+</div><!-- fragment --><p>You can use <code>raw_json()</code> to capture the content of some JSON values as <code>std::string_view</code> instances which can be safely used later. The <code>std::string_view</code> instances point inside the original document and do not depend in any way on simdjson. In the following example, we store the <code>std::string_view</code> instances inside a <code>std::vector&lt;std::string_view&gt;</code> instance and print the out after the parsing is concluded:</p>
+<div class="fragment"><div class="line">padded_string json_padded = <span class="stringliteral">&quot;{\&quot;a\&quot;:[1,2,3], \&quot;b\&quot;: 2, \&quot;c\&quot;: \&quot;hello\&quot;}&quot;</span>_padded;</div>
+<div class="line">std::vector&lt;std::string_view&gt; fields;</div>
+<div class="line"> </div>
+<div class="line">ondemand::parser parser;</div>
+<div class="line"><span class="keyword">auto</span> doc = parser.iterate(json_padded);</div>
+<div class="line"><span class="keyword">auto</span> <span class="keywordtype">object</span> = doc.get_object();</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> field : <span class="keywordtype">object</span>) {</div>
+<div class="line">  fields.push_back(field.value().raw_json());</div>
+<div class="line">}</div>
+<div class="line"><span class="comment">// Output the fields</span></div>
+<div class="line"><span class="comment">// Expected output:</span></div>
+<div class="line"><span class="comment">// [1,2,3]</span></div>
+<div class="line"><span class="comment">// 2</span></div>
+<div class="line"><span class="comment">// &quot;hello&quot;</span></div>
+<div class="line"><span class="keywordflow">for</span> (std::string_view field_ref : fields) {</div>
+<div class="line">  std::cout &lt;&lt; field_ref &lt;&lt; std::endl;</div>
+<div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md29"></a>
 Storing directly into an existing string instance</h1>
-<p>The simdjson library favours the use of <code>std::string_view</code> instances because it tends to lead to better performance due to causing fewer memory allocations. However, they are cases where you need to store a string result in a <code>std::string</code><code> instance. You can do so with a templated version of the</code>to_string()<code>method which takes as a parameter a reference to a</code>std::string`.</p>
+<p>The simdjson library favours the use of <code>std::string_view</code> instances because it tends to lead to better performance due to causing fewer memory allocations. However, they are cases where you need to store a string result in a <code>std::string</code> instance. You can do so with a templated version of the <code>to_string()</code> method which takes as a parameter a reference to a <code>std::string</code>.</p>
 <div class="fragment"><div class="line"> {C++}</div>
 <div class="line">  auto json = R&quot;({</div>
 <div class="line">  &quot;name&quot;: &quot;Daniel&quot;,</div>
@@ -1939,9 +1958,31 @@ Examples</h1>
 <div class="line">  f(doc.get_array());</div>
 <div class="line">  return EXIT_SUCCESS;</div>
 <div class="line">}</div>
+</div><!-- fragment --><ul>
+<li>Example 4: Value capture with <code>std::string_view</code> instances</li>
+</ul>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> example() {</div>
+<div class="line">  ondemand::parser parser;</div>
+<div class="line">  <span class="keyword">const</span> padded_string json = R<span class="stringliteral">&quot;({ &quot;parent&quot;: {&quot;child1&quot;: {&quot;name&quot;: &quot;John&quot;} , &quot;child2&quot;: {&quot;name&quot;: &quot;Daniel&quot;}} })&quot;_padded;</span></div>
+<div class="line"><span class="stringliteral">  </span><span class="keyword">auto</span> doc = parser.iterate(json);</div>
+<div class="line">  ondemand::object parent = doc[<span class="stringliteral">&quot;parent&quot;</span>];</div>
+<div class="line">  <span class="comment">// parent owns the focus</span></div>
+<div class="line">  ondemand::object c1 = parent[<span class="stringliteral">&quot;child1&quot;</span>];</div>
+<div class="line">  <span class="comment">// c1 owns the focus</span></div>
+<div class="line">  <span class="comment">//</span></div>
+<div class="line">  std::string_view as1 = c1[<span class="stringliteral">&quot;name&quot;</span>];</div>
+<div class="line">  <span class="comment">// We have that as1 == &quot;John&quot;, as long as &#39;parser&#39; and &#39;json&#39; live</span></div>
+<div class="line">  <span class="comment">// c2 attempts to grab the focus from parent but fails</span></div>
+<div class="line">  ondemand::object c2 = parent[<span class="stringliteral">&quot;child2&quot;</span>];</div>
+<div class="line">  <span class="comment">// c2 owns the focus, at this point c1 is invalid</span></div>
+<div class="line">  std::string_view as2 = c2[<span class="stringliteral">&quot;name&quot;</span>];</div>
+<div class="line">  <span class="comment">// We have that as2 == &quot;Daniel&quot;, as long as &#39;parser&#39; and &#39;json&#39; live</span></div>
+<div class="line">  std::cout &lt;&lt; as1 &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; as2 &lt;&lt; std::endl; <span class="comment">// prints John Daniel</span></div>
+<div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md34"></a>
 Performance tips</h1>
 <ul>
+<li>Read <a class="el" href="md_doc_performance.html">our performance notes</a> for advanced topics.</li>
 <li>The On Demand front-end works best when doing a single pass over the input: avoid calling <code>count_elements</code>, <code>rewind</code> and similar methods.</li>
 <li>If you are familiar with assembly language, you may use the online tool godbolt to explore the compiled code. The following example may work: <a href="https://godbolt.org/z/xE4GWs573">https://godbolt.org/z/xE4GWs573</a>.</li>
 <li>Given a field <code>field</code> in an object, calling <code>field.key()</code> is often faster than <code>field.unescaped_key()</code> so if you do not need an unescaped <code>std::string_view</code> instance, prefer <code>field.key()</code>. Similarly, we expect <code>field.escaped_key()</code> to be faster than <code>field.unescaped_key()</code> even though both return a <code>std::string_view</code> instance.</li>
@@ -1961,7 +2002,7 @@ Performance tips</h1>
 <h1><a class="anchor" id="autotoc_md35"></a>
 Further reading</h1>
 <ul>
-<li>John Keiser, Daniel Lemire, <a href="http://arxiv.org/abs/2312.17149">On-Demand JSON: A Better Way to Parse Documents?</a>, Software: Practice and Experience (to appear) </li>
+<li>John Keiser, Daniel Lemire, <a href="http://arxiv.org/abs/2312.17149">On-Demand JSON: A Better Way to Parse Documents?</a>, Software: Practice and Experience 54 (6), 2024 </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

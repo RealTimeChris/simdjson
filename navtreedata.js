@@ -148,19 +148,20 @@ var NAVTREE =
       [ "Large files and huge page support", "md_doc_performance.html#autotoc_md98", null ],
       [ "Number parsing", "md_doc_performance.html#autotoc_md99", null ],
       [ "Visual Studio", "md_doc_performance.html#autotoc_md100", null ],
-      [ "Power Usage and Downclocking", "md_doc_performance.html#autotoc_md101", null ]
+      [ "Power Usage and Downclocking", "md_doc_performance.html#autotoc_md101", null ],
+      [ "Free Padding", "md_doc_performance.html#autotoc_md102", null ]
     ] ],
     [ "Tape structure in simdjson", "md_doc_tape.html", [
-      [ "Example", "md_doc_tape.html#autotoc_md103", [
-        [ "The Tape", "md_doc_tape.html#autotoc_md104", null ]
+      [ "Example", "md_doc_tape.html#autotoc_md104", [
+        [ "The Tape", "md_doc_tape.html#autotoc_md105", null ]
       ] ],
-      [ "General formal of the tape elements", "md_doc_tape.html#autotoc_md105", null ],
-      [ "Simple JSON values", "md_doc_tape.html#autotoc_md106", null ],
-      [ "Integer and Double values", "md_doc_tape.html#autotoc_md107", null ],
-      [ "Root node", "md_doc_tape.html#autotoc_md108", null ],
-      [ "Strings", "md_doc_tape.html#autotoc_md109", null ],
-      [ "Arrays", "md_doc_tape.html#autotoc_md110", null ],
-      [ "Objects", "md_doc_tape.html#autotoc_md111", null ]
+      [ "General formal of the tape elements", "md_doc_tape.html#autotoc_md106", null ],
+      [ "Simple JSON values", "md_doc_tape.html#autotoc_md107", null ],
+      [ "Integer and Double values", "md_doc_tape.html#autotoc_md108", null ],
+      [ "Root node", "md_doc_tape.html#autotoc_md109", null ],
+      [ "Strings", "md_doc_tape.html#autotoc_md110", null ],
+      [ "Arrays", "md_doc_tape.html#autotoc_md111", null ],
+      [ "Objects", "md_doc_tape.html#autotoc_md112", null ]
     ] ],
     [ "Deprecated List", "deprecated.html", null ],
     [ "Modules", "modules.html", "modules" ],
@@ -193,13 +194,13 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1field.html#a598e64f8fff7f033b2e38057798799d9",
-"classsimdjson_1_1dom_1_1element.html#ae38f84f4272ae3c32b32dd6d5007ffb9",
-"haswell_2numberparsing__defs_8h_source.html",
-"namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a80bcf6820da38abe1a2e9abeaa0f0c49",
-"structsimdjson_1_1simdjson__result_3_01_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1document_01_4.html#a88d370115d7ac1708b0127fc64ce9b2d",
-"westmere_2base_8h_source.html"
+"amalgamated_8h_source.html",
+"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1field.html#ad5f688629f86f80dff49cab2270b1967",
+"classsimdjson_1_1dom_1_1element.html#afb98fdfcb6ddf19071cd2300613218d3",
+"icelake_2base_8h_source.html",
+"namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ab6e8bfc242f7bea38657eaf61400077f",
+"structsimdjson_1_1simdjson__result_3_01_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1document_01_4.html#a9a751f7a061bc6e8d3159556466edbf0",
+"westmere_2bitmask_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
