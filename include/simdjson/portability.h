@@ -11,6 +11,9 @@
 #include <strings.h>
 #endif
 
+// We are using size_t without namespace std:: throughout the project
+using std::size_t;
+
 #ifdef _MSC_VER
 #define SIMDJSON_VISUAL_STUDIO 1
 /**
@@ -148,6 +151,11 @@
 #define SIMDJSON_NO_SANITIZE_UNDEFINED
 #endif
 
+#if defined(__clang__) || defined(__GNUC__)
+#define simdjson_pure [[gnu::pure]]
+#else
+#define simdjson_pure
+#endif
 
 #if defined(__clang__) || defined(__GNUC__)
 #if defined(__has_feature)

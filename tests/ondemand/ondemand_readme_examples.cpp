@@ -153,6 +153,25 @@ simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() & noexc
 
 #if SIMDJSON_EXCEPTIONS
 
+void main_capture() {
+  padded_string json_padded = "{\"a\":[1,2,3], \"b\": 2, \"c\": \"hello\"}"_padded;
+  std::vector<std::string_view> fields;
+
+  ondemand::parser parser;
+  auto doc = parser.iterate(json_padded);
+  auto object = doc.get_object();
+  for (auto field : object) {
+    fields.push_back(field.value().raw_json());
+  }
+  // Output the fields
+  // Expected output:
+  // [1,2,3]
+  // 2
+  // "hello"
+  for (std::string_view field_ref : fields) {
+    std::cout << field_ref << std::endl;
+  }
+}
 
 int custom_type_on_document() {
   padded_string json = R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
@@ -1538,6 +1557,29 @@ bool allow_comma_separated_example() {
   }
   TEST_SUCCEED();
 }
+
+bool issue2215() {
+  TEST_START();
+  ondemand::parser parser;
+  const padded_string json = R"({ "parent": {"child1": {"name": "John"} , "child2": {"name": "Daniel"}} })"_padded;
+  auto doc = parser.iterate(json);
+  ondemand::object parent = doc["parent"];
+  // parent owns the focus
+  ondemand::object c1 = parent["child1"];
+  // c1 owns the focus
+  //
+  std::string_view as1 = c1["name"];
+  // We have that as1 == "John", as long as 'parser' and 'json' live
+  // c2 attempts to grab the focus from parent but fails
+  ondemand::object c2 = parent["child2"];
+  // c2 owns the focus, at this point c1 is invalid
+  std::string_view as2 = c2["name"];
+  // We have that as2 == "Daniel", as long as 'parser' and 'json' live
+  ASSERT_EQUAL(as1, "John");
+  ASSERT_EQUAL(as2, "Daniel");
+  std::cout << as1 << " " << as2 << std::endl;
+  TEST_SUCCEED();
+}
 #endif
 bool test_load_example() {
   TEST_START();
@@ -1899,6 +1941,7 @@ bool run() {
     && current_location_no_error()
     && to_string_example_no_except()
   #if SIMDJSON_EXCEPTIONS
+    && issue2215()
     && to_string_example()
     && raw_string()
     && number_tests()

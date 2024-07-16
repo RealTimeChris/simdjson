@@ -20,7 +20,7 @@ An overview of what you need to know to use simdjson, with examples.
   - [Minifying JSON strings without parsing](#minifying-json-strings-without-parsing)
   - [UTF-8 validation (alone)](#utf-8-validation-alone)
   - [JSON Pointer](#json-pointer)
-  - [JSONPath](#json-path)
+  - [JSONPath](#jsonpath)
   - [Error handling](#error-handling)
     - [Error handling examples without exceptions](#error-handling-examples-without-exceptions)
     - [Disabling exceptions](#disabling-exceptions)
@@ -64,20 +64,23 @@ into your project. Then include it in your project with:
 using namespace simdjson; // optional
 ```
 
-You can compile with:
+Under most systems, you can compile with:
 
 ```
 c++ myproject.cpp simdjson.cpp
 ```
 
 Note:
+- We recommend that you use simdjson by copying the single-header `simdjson.h` file along with the source file `simdjson.cpp` directly in your project, as they are part of [every release](https://github.com/simdjson/simdjson/releases) as assets. In this manner, you only have to compile `simdjson.cpp` as any other source file: it works well in every development environment. However, you may also use simdjson as a git submodule ([example](https://github.com/simdjson/cmakedemo)), using FetchContent ([example](https://github.com/simdjson/cmake_demo_single_file)), with ExternalProject_Add ([example](https://github.com/simdjson/cmakedemo_externalproject)) or with CPM ([example](https://github.com/cpm-cmake/CPM.cmake/tree/master/examples/simdjson)).
 - Users on macOS and other platforms where default compilers do not provide C++11 compliant by default should request it with the appropriate flag (e.g., `c++ -std=c++11 myproject.cpp simdjson.cpp`).
 - The library relies on [runtime CPU detection](implementation-selection.md): avoid specifying an architecture at compile time (e.g., `-march-native`) if you want your binaries to run everywhere.
 
 Using simdjson with package managers
 ------------------
 
-You can install the simdjson library on your system or in your project using multiple package managers such as MSYS2, the conan package manager, vcpkg, brew, the apt package manager (debian-based Linux systems), the FreeBSD package manager (FreeBSD), and so on. [Visit our wiki for more details](https://github.com/simdjson/simdjson/wiki/Installing-simdjson-with-a-package-manager).
+You can install the simdjson library on your system or in your project using multiple package managers such as MSYS2, the conan package manager, vcpkg, brew, the apt package manager (debian-based Linux systems), the FreeBSD package manager (FreeBSD), and so on. E.g., [we provide an complete example with vcpkg](https://github.com/simdjson/simdjson-vcpkg) that works under Windows. [Visit our wiki for more details](https://github.com/simdjson/simdjson/wiki/Installing-simdjson-with-a-package-manager).
+
+
 
 The following Linux distributions provide simdjson packages: Alpine, RedHat, Rocky Linux, Debian, Fedora, and Ubuntu.
 
@@ -156,7 +159,8 @@ For efficiency reasons, simdjson requires a string with a few bytes (`simdjson::
 at the end, these bytes may be read but their content does not affect the parsing. In practice,
 it means that the JSON inputs should be stored in a memory region with `simdjson::SIMDJSON_PADDING`
 extra bytes at the end. You do not have to set these bytes to specific values though you may
-want to if you want to avoid runtime warnings with some sanitizers.
+want to if you want to avoid runtime warnings with some sanitizers. Advanced users may want to
+read the section Free Padding in [our performance notes](performance.md).
 
 The simdjson library offers a tree-like [API](https://en.wikipedia.org/wiki/API), which you can
 access by creating a `ondemand::parser` and calling the `iterate()` method. The iterate method
@@ -567,7 +571,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   auto json = R"( { "test":{ "val1":1, "val2":2 } }   )"_padded;
   auto doc = parser.iterate(json);
   size_t count = doc.count_fields(); // requires simdjson 1.0 or better
-  std::cout << "Number of fields: " <<  new_count << std::endl; // Prints "Number of fields: 1"
+  std::cout << "Number of fields: " <<  count << std::endl; // Prints "Number of fields: 1"
   ```
   Similarly to `count_elements`, you should not let an object instance go out of scope before consuming it after calling
   the `count_fields` method. If you access an object inside a document, you can use the `count_fields` method as follow.
@@ -837,7 +841,7 @@ simdjson::ondemand::value::get() noexcept {
 }
 ```
 
-We may then provide support for our `Car`` struct:
+We may then provide support for our `Car` struct:
 
 ```C++
 template <>
@@ -2211,12 +2215,39 @@ string representation.
 ```
 
 
+You can use `raw_json()` to capture the content of some JSON values as `std::string_view`
+instances which can be safely used later. The `std::string_view` instances point inside
+the original document and do not depend in any way on simdjson. In the following example,
+we store the `std::string_view` instances inside a `std::vector<std::string_view>` instance
+and print the out after the parsing is concluded:
+
+```cpp
+  padded_string json_padded = "{\"a\":[1,2,3], \"b\": 2, \"c\": \"hello\"}"_padded;
+  std::vector<std::string_view> fields;
+
+  ondemand::parser parser;
+  auto doc = parser.iterate(json_padded);
+  auto object = doc.get_object();
+  for (auto field : object) {
+    fields.push_back(field.value().raw_json());
+  }
+  // Output the fields
+  // Expected output:
+  // [1,2,3]
+  // 2
+  // "hello"
+  for (std::string_view field_ref : fields) {
+    std::cout << field_ref << std::endl;
+  }
+  ```
+
+
 Storing directly into an existing string instance
 -----------------------------------------------------
 
 The simdjson library favours  the use of `std::string_view` instances because
 it tends to lead to better performance due to causing fewer memory allocations.
-However, they are cases where you need to store a string result in a `std::string``
+However, they are cases where you need to store a string result in a `std::string`
 instance. You can do so with a templated version of the `to_string()` method which takes as
 a parameter a reference to a `std::string`.
 
@@ -2592,10 +2623,35 @@ int main(void) {
 }
 ```
 
+
+* Example 4: Value capture with `std::string_view` instances
+
+```cpp
+void example() {
+  ondemand::parser parser;
+  const padded_string json = R"({ "parent": {"child1": {"name": "John"} , "child2": {"name": "Daniel"}} })"_padded;
+  auto doc = parser.iterate(json);
+  ondemand::object parent = doc["parent"];
+  // parent owns the focus
+  ondemand::object c1 = parent["child1"];
+  // c1 owns the focus
+  //
+  std::string_view as1 = c1["name"];
+  // We have that as1 == "John", as long as 'parser' and 'json' live
+  // c2 attempts to grab the focus from parent but fails
+  ondemand::object c2 = parent["child2"];
+  // c2 owns the focus, at this point c1 is invalid
+  std::string_view as2 = c2["name"];
+  // We have that as2 == "Daniel", as long as 'parser' and 'json' live
+  std::cout << as1 << " " << as2 << std::endl; // prints John Daniel
+}
+```
+
 Performance tips
 --------
 
 
+- Read [our performance notes](performance.md) for advanced topics.
 - The On Demand front-end works best when doing a single pass over the input: avoid calling `count_elements`, `rewind` and similar methods.
 - If you are familiar with assembly language, you may use the online tool godbolt to explore the compiled code. The following example may work: [https://godbolt.org/z/xE4GWs573](https://godbolt.org/z/xE4GWs573).
 - Given a field `field` in an object, calling `field.key()` is often faster than `field.unescaped_key()` so if you do not need an unescaped `std::string_view` instance, prefer `field.key()`. Similarly, we expect `field.escaped_key()` to be faster than `field.unescaped_key()` even though both return a `std::string_view` instance.
@@ -2618,8 +2674,10 @@ Performance tips
   ```
 - To better understand the operation of your On Demand parser, and whether it is performing as well as you think it should be, there is a  logger feature built in to simdjson! To use it, define the pre-processor directive `SIMDJSON_VERBOSE_LOGGING` prior to including the `simdjson.h` header, which enables logging in simdjson. Run your code. It may generate a lot of logging output; adding printouts from your application that show each section may be helpful. The log's output will show step-by-step information on state, buffer pointer position, depth, and key retrieval status. Importantly, unless `SIMDJSON_VERBOSE_LOGGING` is defined, logging is entirely disabled and thus carries no overhead.
 
+
+
 Further reading
 --------
 
 
-- John Keiser, Daniel Lemire, [On-Demand JSON: A Better Way to Parse Documents?](http://arxiv.org/abs/2312.17149), Software: Practice and Experience (to appear)
+- John Keiser, Daniel Lemire, [On-Demand JSON: A Better Way to Parse Documents?](http://arxiv.org/abs/2312.17149), Software: Practice and Experience 54 (6), 2024
