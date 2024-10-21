@@ -18,7 +18,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);

@@ -12372,7 +12372,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -12650,7 +12650,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -12800,7 +12800,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -14144,13 +14144,13 @@ namespace simdjson {
 namespace arm64 {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
-  return arm64::stage1::json_minifier::minify<64>(buf, len, dst, dst_len);
+  return arm64::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
 simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return arm64::stage1::json_structural_indexer::index<64>(buf, len, *this, streaming);
+  return arm64::stage1::json_structural_indexer::index<256>(buf, len, *this, streaming);
 }
 
 simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
@@ -18602,7 +18602,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -18880,7 +18880,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -19030,7 +19030,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -24813,7 +24813,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -25091,7 +25091,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -25241,7 +25241,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -31307,7 +31307,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -31585,7 +31585,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -31735,7 +31735,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -33049,13 +33049,13 @@ namespace simdjson {
 namespace ppc64 {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
-  return ppc64::stage1::json_minifier::minify<64>(buf, len, dst, dst_len);
+  return ppc64::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
 simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return ppc64::stage1::json_structural_indexer::index<64>(buf, len, *this, streaming);
+  return ppc64::stage1::json_structural_indexer::index<256>(buf, len, *this, streaming);
 }
 
 simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
@@ -38363,7 +38363,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -38641,7 +38641,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -38791,7 +38791,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -40137,13 +40137,13 @@ namespace simdjson {
 namespace westmere {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
-  return westmere::stage1::json_minifier::minify<64>(buf, len, dst, dst_len);
+  return westmere::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
 simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return westmere::stage1::json_structural_indexer::index<64>(_buf, _len, *this, streaming);
+  return westmere::stage1::json_structural_indexer::index<256>(_buf, _len, *this, streaming);
 }
 
 simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
@@ -44398,7 +44398,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -44676,7 +44676,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -44826,7 +44826,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -46134,13 +46134,13 @@ namespace simdjson {
 namespace lsx {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
-  return lsx::stage1::json_minifier::minify<64>(buf, len, dst, dst_len);
+  return lsx::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
 simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return lsx::stage1::json_structural_indexer::index<64>(buf, len, *this, streaming);
+  return lsx::stage1::json_structural_indexer::index<256>(buf, len, *this, streaming);
 }
 
 simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
@@ -50424,7 +50424,7 @@ simdjson_inline void json_minifier::step<128>(const uint8_t *block_buf, buf_bloc
 }
 
 template<>
-simdjson_inline void json_minifier::step<64>(const uint8_t *block_buf, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   json_block block_1 = scanner.next(in_1);
   this->next(block_buf, block_1);
@@ -50702,7 +50702,7 @@ simdjson_inline void json_structural_indexer::step<128>(const uint8_t *block, bu
 }
 
 template<>
-simdjson_inline void json_structural_indexer::step<64>(const uint8_t *block, buf_block_reader<64> &reader) noexcept {
+simdjson_inline void json_structural_indexer::step<256>(const uint8_t *block, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block);
   json_block block_1 = scanner.next(in_1);
   this->next(in_1, block_1, reader.block_index());
@@ -50852,7 +50852,7 @@ namespace stage1 {
 template<class checker>
 bool generic_validate_utf8(const uint8_t * input, size_t length) {
     checker c{};
-    buf_block_reader<64> reader(input, length);
+    buf_block_reader<256> reader(input, length);
     while (reader.has_full_block()) {
       simd::simd8x64<uint8_t> in(reader.full_block());
       c.check_next_input(in);
@@ -52156,13 +52156,13 @@ namespace simdjson {
 namespace lasx {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
-  return lasx::stage1::json_minifier::minify<64>(buf, len, dst, dst_len);
+  return lasx::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
 simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return lasx::stage1::json_structural_indexer::index<64>(buf, len, *this, streaming);
+  return lasx::stage1::json_structural_indexer::index<256>(buf, len, *this, streaming);
 }
 
 simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {

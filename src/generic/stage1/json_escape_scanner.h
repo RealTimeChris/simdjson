@@ -16,7 +16,7 @@ namespace stage1 {
  */
 struct json_escape_scanner {
   /** The actual escape characters (the backslashes themselves). */
-  uint64_t next_is_escaped = 0ULL;
+  simd::simd8<uint8_t> next_is_escaped;
 
   struct escaped_and_escape {
     /**
@@ -28,7 +28,7 @@ struct json_escape_scanner {
      *  n  \   \ n  \ \
      * ```
      */
-    uint64_t escaped;
+    simd::simd8<uint8_t> escaped;
     /**
      * Mask of escape characters.
      *
@@ -38,7 +38,7 @@ struct json_escape_scanner {
      * \  \   \ \  \ \   \
      * ```
      */
-    uint64_t escape;
+    simd::simd8<uint8_t> escape;
   };
 
   /**
@@ -47,10 +47,12 @@ struct json_escape_scanner {
    * @param potential_escape A mask of the character that can escape others (but could be
    *        escaped itself). e.g. block.eq('\\')
    */
-  simdjson_really_inline escaped_and_escape next(uint64_t backslash) noexcept {
+  simdjson_really_inline escaped_and_escape next(simd::simd8<uint8_t> backslash) noexcept {
 
 #if !SIMDJSON_SKIP_BACKSLASH_SHORT_CIRCUIT
-    if (!backslash) { return {next_escaped_without_backslashes(), 0}; }
+    if (!backslash.test()) {
+      return {next_escaped_without_backslashes(), simd::simd8<uint8_t>{}};
+    }
 #endif
 
     // |                                | Mask (shows characters instead of 1's) | Depth | Instructions        |
@@ -63,19 +65,21 @@ struct json_escape_scanner {
     // | escape                         | `    \ \    \ \    \ \    \ \   \ \`   | 6     | 8 (escape_and_terminal_code & backslash)
     // | first_is_escaped               | `\                                 `   | 7 (*) | 9 (escape >> 63) ()
     //                                                                               (*) this is not needed until the next iteration
-    uint64_t escape_and_terminal_code = next_escape_and_terminal_code(backslash & ~this->next_is_escaped);
-    uint64_t escaped = escape_and_terminal_code ^ (backslash | this->next_is_escaped);
-    uint64_t escape = escape_and_terminal_code & backslash;
-    this->next_is_escaped = escape >> 63;
+    simd::simd8<uint8_t> escape_and_terminal_code =
+        next_escape_and_terminal_code(backslash & ~this->next_is_escaped);
+    simd::simd8<uint8_t> escaped =
+        escape_and_terminal_code ^ (backslash | this->next_is_escaped);
+    simd::simd8<uint8_t> escape = escape_and_terminal_code & backslash;
+    this->next_is_escaped = this->next_is_escaped.set_lsb(escape.get_msb());
     return {escaped, escape};
   }
 
 private:
-  static constexpr const uint64_t ODD_BITS = 0xAAAAAAAAAAAAAAAAULL;
 
-  simdjson_really_inline uint64_t next_escaped_without_backslashes() noexcept {
-    uint64_t escaped = this->next_is_escaped;
-    this->next_is_escaped = 0;
+  simdjson_really_inline simd::simd8<uint8_t>
+  next_escaped_without_backslashes() noexcept {
+    simd::simd8<uint8_t> escaped = this->next_is_escaped;
+    this->next_is_escaped = this->next_is_escaped.zero();
     return escaped;
   }
 
@@ -93,7 +97,9 @@ private:
    * & the result with potential_escape to get just the escape characters.
    * ^ the result with (potential_escape | first_is_escaped) to get escaped characters.
    */
-  static simdjson_really_inline uint64_t next_escape_and_terminal_code(uint64_t potential_escape) noexcept {
+  static simdjson_really_inline simd::simd8<uint8_t>
+  next_escape_and_terminal_code(
+      simd::simd8<uint8_t> potential_escape) noexcept {
     // If we were to just shift and mask out any odd bits, we'd actually get a *half* right answer:
     // any even-aligned backslash runs would be correct! Odd-aligned backslash runs would be
     // inverted (\\\ would be 010 instead of 101).
@@ -124,15 +130,25 @@ private:
     //
 
     // Escaped characters are characters following an escape.
-    uint64_t maybe_escaped = potential_escape << 1;
+    alignas(32) uint64_t valuesIn[4];
+    alignas(32) uint64_t valuesOut[4];
+    potential_escape.store(valuesIn);
+    static constexpr uint64_t shiftAmount{64 - 1};
+    valuesOut[0] = valuesIn[0] << 1;
+    valuesOut[1] = valuesIn[1] << 1 | valuesIn[0] >> (shiftAmount);
+    valuesOut[2] = valuesIn[2] << 1 | valuesIn[1] >> (shiftAmount);
+    valuesOut[3] = valuesIn[3] << 1 | valuesIn[2] >> (shiftAmount);
+    simd::simd8<uint8_t> maybe_escaped = simd::simd8<uint8_t>::load(valuesOut);
+    const simd::simd8<uint8_t> ODD_BITS{0xAA};
 
     // To distinguish odd from even escape sequences, therefore, we turn on any *starting*
     // escapes that are on an odd byte. (We actually bring in all odd bits, for speed.)
     // - Odd runs of backslashes are 0000, and the code at the end ("n" in \n or \\n) is 1.
     // - Odd runs of backslashes are 1111, and the code at the end ("n" in \n or \\n) is 0.
     // - All other odd bytes are 1, and even bytes are 0.
-    uint64_t maybe_escaped_and_odd_bits     = maybe_escaped | ODD_BITS;
-    uint64_t even_series_codes_and_odd_bits = maybe_escaped_and_odd_bits - potential_escape;
+    simd::simd8<uint8_t> maybe_escaped_and_odd_bits = maybe_escaped | ODD_BITS;
+    simd::simd8<uint8_t> even_series_codes_and_odd_bits =
+        maybe_escaped_and_odd_bits - potential_escape;
 
     // Now we flip all odd bytes back with xor. This:
     // - Makes odd runs of backslashes go from 0000 to 1010

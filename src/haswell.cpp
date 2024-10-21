@@ -40,7 +40,8 @@ using namespace simd;
 
 // This identifies structural characters (comma, colon, braces, brackets),
 // and ASCII white-space ('\r','\n','\t',' ').
-simdjson_inline json_character_block json_character_block::classify(const simd::simd8x64<uint8_t>& in) {
+simdjson_inline json_character_block
+json_character_block::classify(const simd::simd8x64<uint8_t>(& in)[4]) {
   // These lookups rely on the fact that anything < 127 will match the lower 4 bits, which is why
   // we can't use the generic lookup_16.
   const auto whitespace_table = simd8<uint8_t>::repeat_16(' ', 100, 100, 100, 17, 100, 113, 2, 100, '\t', '\n', 112, 100, '\r', 100, 100);
@@ -76,20 +77,22 @@ simdjson_inline json_character_block json_character_block::classify(const simd::
   // hope that useless computations will be omitted. This is namely case when
   // minifying (we only need whitespace).
 
-  const uint64_t whitespace = in.eq({
-    _mm256_shuffle_epi8(whitespace_table, in.chunks[0]),
-    _mm256_shuffle_epi8(whitespace_table, in.chunks[1])
-  });
-  // Turn [ and ] into { and }
-  const simd8x64<uint8_t> curlified{
-    in.chunks[0] | 0x20,
-    in.chunks[1] | 0x20
-  };
-  const uint64_t op = curlified.eq({
-    _mm256_shuffle_epi8(op_table, in.chunks[0]),
-    _mm256_shuffle_epi8(op_table, in.chunks[1])
-  });
+  alignas(32) uint64_t whitespace_pre[4];
+  for (size_t x = 0; x < 4; ++x) {
+    whitespace_pre[x] =
+        in[x].eq({_mm256_shuffle_epi8(whitespace_table, in[x].chunks[0]),
+                  _mm256_shuffle_epi8(whitespace_table, in[x].chunks[1])});
+  }
+  const simd8<uint8_t> whitespace{simd::simd8<uint8_t>::load(whitespace_pre)};
 
+  alignas(32) uint64_t op_pre[4];
+  for (size_t x = 0; x < 4; ++x) {
+    const simd8x64<uint8_t> curlified{in[x].chunks[0] | 0x20,
+                                      in[x].chunks[1] | 0x20};
+    op_pre[x] = curlified.eq({_mm256_shuffle_epi8(op_table, in[x].chunks[0]),
+                              _mm256_shuffle_epi8(op_table, in[x].chunks[1])});
+  }
+  const simd8<uint8_t> op{simd::simd8<uint8_t>::load(op_pre)};
   return { whitespace, op };
 }
 
@@ -126,13 +129,13 @@ namespace simdjson {
 namespace SIMDJSON_IMPLEMENTATION {
 
 simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
-  return haswell::stage1::json_minifier::minify<128>(buf, len, dst, dst_len);
+  return haswell::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
 simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return haswell::stage1::json_structural_indexer::index<128>(_buf, _len, *this, streaming);
+  return haswell::stage1::json_structural_indexer::index<256>(_buf, _len, *this, streaming);
 }
 
 simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {

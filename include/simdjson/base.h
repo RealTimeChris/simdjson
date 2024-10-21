@@ -29,7 +29,7 @@ constexpr size_t SIMDJSON_MAXSIZE_BYTES = 0xFFFFFFFF;
  * main loop and its behavior that abstracts over this
  * See https://github.com/simdjson/simdjson/issues/174
  */
-constexpr size_t SIMDJSON_PADDING = 64;
+constexpr size_t SIMDJSON_PADDING = 256;
 
 /**
  * By default, simdjson supports this many nested objects and arrays.
