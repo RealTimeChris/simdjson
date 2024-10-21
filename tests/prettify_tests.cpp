@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "cast_tester.h"
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_macros.h"
 
 const char *test_files[] = {
@@ -29,14 +29,14 @@ const char *test_files[] = {
 
 bool load_prettify(const char *filename) {
   std::cout << "Loading " << filename << std::endl;
-  simdjson::dom::parser parser;
-  simdjson::dom::element doc;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element doc;
   auto error = parser.load(filename).get(doc);
   if (error) { std::cerr << error << std::endl; return false; }
-  auto serial1 = simdjson::prettify(doc);
+  auto serial1 = simdjson2::prettify(doc);
   error = parser.parse(serial1).get(doc);
   if (error) { std::cerr << error << std::endl; return false; }
-  auto serial2 = simdjson::prettify(doc);
+  auto serial2 = simdjson2::prettify(doc);
   bool match = (serial1 == serial2);
   if (match) {
     std::cout << "Parsing prettify and calling prettify again results in the same "

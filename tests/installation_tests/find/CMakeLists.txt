@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(test_simdjson_install VERSION 0.1.0 LANGUAGES CXX)
+project(test_simdjson2_install VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(simdjson REQUIRED)
+find_package(simdjson2 REQUIRED)
 
 
 
 file(WRITE main.cpp "
-  #include \"simdjson.h\"
+  #include \"simdjson2.h\"
   #include <iostream>
   int main(void) {
     auto cars_json = R\"( [
@@ -19,8 +19,8 @@ file(WRITE main.cpp "
       { \"make\": \"Toyota\", \"model\": \"Tercel\", \"year\": 1999, \"tire_pressure\": [ 29.8, 30.0, 30.2, 30.5 ] }
     ] )\"_padded;
     std::cout << \"parsing : \" << cars_json << std::endl;
-    simdjson::dom::parser parser;
-    simdjson::dom::array obj;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::array obj;
     auto err = parser.parse(cars_json).get(obj);
     if (err) {
       std::cerr << \"Failed to parse json\" << std::endl;
@@ -34,4 +34,4 @@ file(WRITE main.cpp "
 
 
 add_executable(repro main.cpp)
-target_link_libraries(repro PUBLIC simdjson::simdjson)
+target_link_libraries(repro PUBLIC simdjson2::simdjson2)

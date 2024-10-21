@@ -43,10 +43,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef SIMDJSON_INTERNAL_ISADETECTION_H
-#define SIMDJSON_INTERNAL_ISADETECTION_H
+#ifndef SIMDJSON2_INTERNAL_ISADETECTION_H
+#define SIMDJSON2_INTERNAL_ISADETECTION_H
 
-#include "simdjson/internal/instruction_set.h"
+#include "simdjson2/internal/instruction_set.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cpuid.h>
 #endif
 
-namespace simdjson {
+namespace simdjson2 {
 namespace internal {
 
 #if defined(__PPC64__)
@@ -242,6 +242,6 @@ static inline uint32_t detect_supported_architectures() {
 #endif // end SIMD extension detection code
 
 } // namespace internal
-} // namespace simdjson
+} // namespace simdjson2
 
-#endif // SIMDJSON_INTERNAL_ISADETECTION_H
+#endif // SIMDJSON2_INTERNAL_ISADETECTION_H

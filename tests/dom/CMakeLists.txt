@@ -1,8 +1,8 @@
 
-link_libraries(simdjson)
+link_libraries(simdjson2)
 include_directories(..)
 
-if(NOT SIMDJSON_LEGACY_VISUAL_STUDIO AND NOT SIMDJSON_WINDOWS_DLL)
+if(NOT SIMDJSON2_LEGACY_VISUAL_STUDIO AND NOT SIMDJSON2_WINDOWS_DLL)
   add_cpp_test(random_string_number_tests LABELS dom acceptance per_implementation)
 endif()
 add_cpp_test(basictests                 LABELS dom acceptance per_implementation)
@@ -29,7 +29,7 @@ find_program(BASH bash)
 # required to make things work robustly. Simply put: bash is not quite portable.
 
 # Script tests
-if (BASH AND (NOT WIN32) AND SIMDJSON_BASH AND (TARGET json2json)) # The scripts are not robust enough to run under Windows even if bash is available
+if (BASH AND (NOT WIN32) AND SIMDJSON2_BASH AND (TARGET json2json)) # The scripts are not robust enough to run under Windows even if bash is available
   #
   # json2json test
   #
@@ -45,7 +45,7 @@ if (BASH AND (NOT WIN32) AND SIMDJSON_BASH AND (TARGET json2json)) # The scripts
   #
   # Competition parse test
   #
-  if ((SIMDJSON_COMPETITION) AND (!SIMDJSON_SANITIZE))
+  if ((SIMDJSON2_COMPETITION) AND (!SIMDJSON2_SANITIZE))
     # It looks like RapidJSON does not pass the sanitizer under some conditions (Clang 10)
     add_executable(allparserscheckfile allparserscheckfile.cpp)
     add_dependencies(competition_tests allparserscheckfile)
@@ -68,36 +68,36 @@ if (BASH AND (NOT WIN32) AND SIMDJSON_BASH AND (TARGET json2json)) # The scripts
   add_dependencies(per_implementation_tests json2json)
 
   #
-  # SIMDJSON_FORCE_IMPLEMENTATION tests: run json2json with SIMDJSON
+  # SIMDJSON2_FORCE_IMPLEMENTATION tests: run json2json with SIMDJSON2
   #
-  if (SIMDJSON_IMPLEMENTATION MATCHES "fallback")
+  if (SIMDJSON2_IMPLEMENTATION MATCHES "fallback")
     add_test(
-      NAME simdjson_force_implementation
+      NAME simdjson2_force_implementation
       COMMAND
         ${CMAKE_COMMAND} -E env
-        SIMDJSON_FORCE_IMPLEMENTATION=fallback
+        SIMDJSON2_FORCE_IMPLEMENTATION=fallback
         $<TARGET_FILE:checkimplementation>
     )
   endif()
   if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL x86_64 OR CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL amd64)
     add_test(
-      NAME simdjson_force_implementation_error
+      NAME simdjson2_force_implementation_error
       COMMAND
         ${CMAKE_COMMAND} -E env
-        SIMDJSON_FORCE_IMPLEMENTATION=doesnotexist
+        SIMDJSON2_FORCE_IMPLEMENTATION=doesnotexist
         $<TARGET_FILE:json2json> ${EXAMPLE_JSON}
     )
-    set_tests_properties(simdjson_force_implementation_error PROPERTIES WILL_FAIL TRUE)
+    set_tests_properties(simdjson2_force_implementation_error PROPERTIES WILL_FAIL TRUE)
   endif()
 endif()
 
 #
-# Compile-only tests with simdjson flags on
+# Compile-only tests with simdjson2 flags on
 #
 
 # Don't add the tests if we're on VS2017 or older; they don't succeed.
 if(NOT (MSVC AND MSVC_VERSION LESS 1920))
-  if(SIMDJSON_EXCEPTIONS)
+  if(SIMDJSON2_EXCEPTIONS)
     add_cpp_test(readme_examples COMPILE_ONLY LABELS acceptance)
     add_cpp_test(readme_examples11 COMPILE_ONLY LABELS acceptance SOURCES readme_examples.cpp)
     set_target_properties(readme_examples11 PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
@@ -110,14 +110,14 @@ if(NOT (MSVC AND MSVC_VERSION LESS 1920))
 
   # Compile tests that *should fail*
   add_cpp_test(readme_examples_will_fail_with_exceptions_off WILL_FAIL COMPILE_ONLY LABELS acceptance SOURCES readme_examples.cpp)
-  target_compile_definitions(readme_examples_will_fail_with_exceptions_off PRIVATE SIMDJSON_EXCEPTIONS=0)
+  target_compile_definitions(readme_examples_will_fail_with_exceptions_off PRIVATE SIMDJSON2_EXCEPTIONS=0)
 endif()
 
 
 if(MSVC AND BUILD_SHARED_LIBS)
   add_custom_command(TARGET basictests POST_BUILD        # Adds a post-build event
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake -E copy_if_different..."
-        "$<TARGET_FILE:simdjson>"      # <--this is in-file
+        "$<TARGET_FILE:simdjson2>"      # <--this is in-file
         "$<TARGET_FILE_DIR:basictests>")                 # <--this is out-file path
 endif()
 
@@ -125,14 +125,14 @@ if(NOT MSVC)
   ######
   # This tests is to guard us against ever again removing the soversion
   # number from the library. See Bug
-  # https://github.com/simdjson/simdjson/issues/1014
+  # https://github.com/simdjson2/simdjson2/issues/1014
   #####
-  get_target_property(REPORTED_SIMDJSON_SOVERSION simdjson SOVERSION)
-  if(NOT ${REPORTED_SIMDJSON_SOVERSION} STREQUAL ${SIMDJSON_LIB_SOVERSION})
+  get_target_property(REPORTED_SIMDJSON2_SOVERSION simdjson2 SOVERSION)
+  if(NOT ${REPORTED_SIMDJSON2_SOVERSION} STREQUAL ${SIMDJSON2_LIB_SOVERSION})
     message(FATAL_ERROR "The library target does not have the proper soversion information." )
   endif()
-  get_target_property(REPORTED_SIMDJSON_VERSION simdjson VERSION)
-  if(NOT ${REPORTED_SIMDJSON_VERSION} STREQUAL ${SIMDJSON_LIB_VERSION})
+  get_target_property(REPORTED_SIMDJSON2_VERSION simdjson2 VERSION)
+  if(NOT ${REPORTED_SIMDJSON2_VERSION} STREQUAL ${SIMDJSON2_LIB_VERSION})
     message(FATAL_ERROR "The library target does not have the proper version information." )
   endif()
 endif()

@@ -13,17 +13,17 @@ struct top_tweet_result {
   StringType screen_name{};
   StringType text{};
   template<typename OtherStringType>
-  simdjson_inline bool operator==(const top_tweet_result<OtherStringType> &other) const {
+  simdjson2_inline bool operator==(const top_tweet_result<OtherStringType> &other) const {
     return retweet_count == other.retweet_count &&
            screen_name == other.screen_name &&
            text == other.text;
   }
   template<typename OtherStringType>
-  simdjson_inline bool operator!=(const top_tweet_result<OtherStringType> &other) const { return !(*this == other); }
+  simdjson2_inline bool operator!=(const top_tweet_result<OtherStringType> &other) const { return !(*this == other); }
 };
 
 template<typename StringType>
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const top_tweet_result<StringType> &t) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const top_tweet_result<StringType> &t) {
   o << "retweet_count: " << t.retweet_count << std::endl;
   o << "screen_name: " << t.screen_name << std::endl;
   o << "text: " << t.text << std::endl;
@@ -58,10 +58,10 @@ struct runner : public file_runner<I> {
   }
 };
 
-struct simdjson_dom;
+struct simdjson2_dom;
 
-template<typename I> simdjson_inline static void top_tweet(benchmark::State &state) {
-  json_benchmark::run_json_benchmark<runner<I>, runner<simdjson_dom>>(state);
+template<typename I> simdjson2_inline static void top_tweet(benchmark::State &state) {
+  json_benchmark::run_json_benchmark<runner<I>, runner<simdjson2_dom>>(state);
 }
 
 } // namespace top_tweet

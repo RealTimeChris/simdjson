@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 #define NB_ITERATION 20
 #define MIN_BATCH_SIZE 10000
@@ -25,20 +25,20 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
   const char *filename = argv[1];
-  auto v = simdjson::padded_string::load(filename);
+  auto v = simdjson2::padded_string::load(filename);
   if (v.error()) {
     std::cerr << "Could not load the file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  const simdjson::padded_string& p = v.value_unsafe();
+  const simdjson2::padded_string& p = v.value_unsafe();
   if (test_baseline) {
     std::wclog << "Baseline: Getline + normal parse... " << std::endl;
     std::cout << "Gigabytes/second\t"
               << "Nb of documents parsed" << std::endl;
     for (auto i = 0; i < 3; i++) {
       // Actual test
-      simdjson::dom::parser parser;
-      simdjson::error_code alloc_error = parser.allocate(p.size());
+      simdjson2::dom::parser parser;
+      simdjson2::error_code alloc_error = parser.allocate(p.size());
       if (alloc_error) {
         std::cerr << alloc_error << std::endl;
         return EXIT_FAILURE;
@@ -48,9 +48,9 @@ int main(int argc, char *argv[]) {
       auto start = std::chrono::steady_clock::now();
       int count = 0;
       std::string line;
-      int parse_res = simdjson::SUCCESS;
+      int parse_res = simdjson2::SUCCESS;
       while (getline(ss, line)) {
-        // TODO we're likely triggering simdjson's padding reallocation here. Is
+        // TODO we're likely triggering simdjson2's padding reallocation here. Is
         // that intentional?
         parser.parse(line);
         count++;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
                           (static_cast<double>(secs.count()) * 1000000000.0);
       std::cout << speedinGBs << "\t\t\t\t" << count << std::endl;
 
-      if (parse_res != simdjson::SUCCESS) {
+      if (parse_res != simdjson2::SUCCESS) {
         std::cerr << "Parsing failed" << std::endl;
         exit(1);
       }
@@ -83,12 +83,12 @@ int main(int argc, char *argv[]) {
       int count;
       for (size_t j = 0; j < 5; j++) {
         // Actual test
-        simdjson::dom::parser parser;
-        simdjson::error_code error;
+        simdjson2::dom::parser parser;
+        simdjson2::error_code error;
 
         auto start = std::chrono::steady_clock::now();
         count = 0;
-        simdjson::dom::document_stream docs;
+        simdjson2::dom::document_stream docs;
         if ((error = parser.parse_many(p, i).get(docs))) {
           std::wcerr << "Parsing failed with: " << error << std::endl;
           exit(1);
@@ -135,12 +135,12 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < NB_ITERATION; i++) {
 
       // Actual test
-      simdjson::dom::parser parser;
-      simdjson::error_code error;
+      simdjson2::dom::parser parser;
+      simdjson2::error_code error;
 
       auto start = std::chrono::steady_clock::now();
       // This includes allocation of the parser
-      simdjson::dom::document_stream docs;
+      simdjson2::dom::document_stream docs;
       if ((error = parser.parse_many(p, optimal_batch_size).get(docs))) {
         std::wcerr << "Parsing failed with: " << error << std::endl;
         exit(1);
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Min:  " << min_result << " bytes read: " << p.size()
               << " Gigabytes/second: " << speedinGBs << std::endl;
   }
-#ifdef SIMDJSON_THREADS_ENABLED
+#ifdef SIMDJSON2_THREADS_ENABLED
   // Multithreading probably does not help matters for small files (less than 10
   // MB).
   if (p.size() < 10000000) {

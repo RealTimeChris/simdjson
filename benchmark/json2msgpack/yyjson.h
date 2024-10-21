@@ -1,5 +1,5 @@
 #pragma once
-#ifdef SIMDJSON_COMPETITION_YYJSON
+#ifdef SIMDJSON2_COMPETITION_YYJSON
 
 #include "json2msgpack.h"
 
@@ -87,16 +87,16 @@ void yyjson2msgpack::recursive_processor(yyjson_val *obj) {
       write_double(yyjson_get_real(obj));
       break;
     default:
-      SIMDJSON_UNREACHABLE();
+      SIMDJSON2_UNREACHABLE();
     }
     break;
   default:
-    SIMDJSON_UNREACHABLE();
+    SIMDJSON2_UNREACHABLE();
   }
 }
 
 struct yyjson : yyjson2msgpack {
-  bool run(simdjson::padded_string &json, char *buffer,
+  bool run(simdjson2::padded_string &json, char *buffer,
            std::string_view &result) {
     yyjson_doc *doc = yyjson_read(json.data(), json.size(), 0);
     result = to_msgpack(doc, reinterpret_cast<uint8_t*>(buffer));
@@ -106,9 +106,9 @@ struct yyjson : yyjson2msgpack {
 
 BENCHMARK_TEMPLATE(json2msgpack, yyjson)->UseManualTime();
 
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 struct yyjson_insitu : yyjson2msgpack {
-  bool run(simdjson::padded_string &json, char *buffer,
+  bool run(simdjson2::padded_string &json, char *buffer,
            std::string_view &result) {
     yyjson_doc *doc =
         yyjson_read_opts(json.data(), json.size(), YYJSON_READ_INSITU, 0, 0);
@@ -117,7 +117,7 @@ struct yyjson_insitu : yyjson2msgpack {
   }
 };
 BENCHMARK_TEMPLATE(json2msgpack, yyjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace json2msgpack
 
-#endif // SIMDJSON_COMPETITION_YYJSON
+#endif // SIMDJSON2_COMPETITION_YYJSON

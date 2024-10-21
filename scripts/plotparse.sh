@@ -11,7 +11,7 @@ os=$(uname)
 
 if [ "$os" = "Linux" ]; then
   echo "You are using linux."
-  echo "We are going to just parse using simdjson, and collect perf stats."
+  echo "We are going to just parse using simdjson2, and collect perf stats."
 
   make parse parse_noutf8validation parse_nonumberparsing parse_nostringparsing
   myfile=$plotdirectory"/parselinuxtable.txt"

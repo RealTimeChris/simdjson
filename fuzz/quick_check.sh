@@ -8,7 +8,7 @@
 # by the crontab github actions) unless a local out/ directory
 # already exists.
 #
-# Run it standing in the root of the simdjson repository.
+# Run it standing in the root of the simdjson2 repository.
 #
 # By Paul Dreik 20201003
 
@@ -23,9 +23,9 @@ done
 
 #download the corpus if it does not already exist
 if [ ! -d out ] ; then
-  # the corpus is also available for download from the artifacts page on https://github.com/simdjson/simdjson/actions/workflows/fuzzers.yml
+  # the corpus is also available for download from the artifacts page on https://github.com/simdjson2/simdjson2/actions/workflows/fuzzers.yml
   # but that requires being logged in so can not be easily done from this script.
-  wget -O - https://readonly:readonly@www.pauldreik.se/fuzzdata/index.php?project=simdjson |tar xzf -
+  wget -O - https://readonly:readonly@www.pauldreik.se/fuzzdata/index.php?project=simdjson2 |tar xzf -
 fi
 
 # By default, use the debug friendly variant since this script is intended

@@ -1,22 +1,22 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace misc_tests {
   using namespace std;
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   // user reported an asan error:
   bool issue2199() {
     TEST_START();
     static constexpr std::string_view kJsonString = R"( { "name": "name", "version": 100, } )";
     try {
-      simdjson::padded_string buffer{kJsonString};
-      simdjson::ondemand::parser parser;
-      simdjson::ondemand::document document = parser.iterate(buffer);
+      simdjson2::padded_string buffer{kJsonString};
+      simdjson2::ondemand::parser parser;
+      simdjson2::ondemand::document document = parser.iterate(buffer);
       (void)document;
-    } catch (simdjson::simdjson_error& /*error*/) {
-      std::cerr << "Caught simdjson_error" << std::endl;
+    } catch (simdjson2::simdjson2_error& /*error*/) {
+      std::cerr << "Caught simdjson2_error" << std::endl;
     }
     TEST_SUCCEED();
   }
@@ -448,7 +448,7 @@ namespace misc_tests {
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
     ASSERT_TRUE(doc.is_alive());
     size_t count{0};
-    for(simdjson_unused simdjson_result<ondemand::value> val : doc) {
+    for(simdjson2_unused simdjson2_result<ondemand::value> val : doc) {
       ASSERT_ERROR(val.error(), INCOMPLETE_ARRAY_OR_OBJECT);
       count++;
     }
@@ -469,7 +469,7 @@ namespace misc_tests {
     ondemand::array internal_arr;
     ASSERT_SUCCESS(obj["a"].get_array().get(internal_arr));
     size_t count{0};
-    for(simdjson_unused simdjson_result<ondemand::value> val : internal_arr) {
+    for(simdjson2_unused simdjson2_result<ondemand::value> val : internal_arr) {
       if(count < 3) {
         ASSERT_SUCCESS(val.error());
         ASSERT_TRUE(doc.is_alive());
@@ -508,7 +508,7 @@ namespace misc_tests {
     ASSERT_SUCCESS(doc.at(0).get_object().get(obj));
     ASSERT_TRUE(doc.is_alive());
     size_t count{0};
-    for(simdjson_unused simdjson_result<ondemand::field> val : obj) {
+    for(simdjson2_unused simdjson2_result<ondemand::field> val : obj) {
       if(count == 0) {
         ASSERT_SUCCESS(val.error());
         ASSERT_TRUE(doc.is_alive());
@@ -537,33 +537,33 @@ namespace misc_tests {
     TEST_SUCCEED();
   }
 
-  simdjson_warn_unused bool big_integer() {
+  simdjson2_warn_unused bool big_integer() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
+    simdjson2::ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
-    simdjson::ondemand::object o;
+    simdjson2::ondemand::object o;
     ASSERT_SUCCESS(doc.get_object().get(o));
     string_view token;
     ASSERT_SUCCESS(o["value"].raw_json_token().get(token));
     ASSERT_EQUAL(token, "12321323213213213213213213213211223");
     TEST_SUCCEED();
   }
-  simdjson_warn_unused bool big_integer_in_string() {
+  simdjson2_warn_unused bool big_integer_in_string() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
+    simdjson2::ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
-    simdjson::ondemand::object o;
+    simdjson2::ondemand::object o;
     ASSERT_SUCCESS(doc.get_object().get(o));
     string_view token;
     ASSERT_SUCCESS(o["value"].raw_json_token().get(token));
     ASSERT_EQUAL(token, "\"12321323213213213213213213213211223\"");
     TEST_SUCCEED();
   }
-  simdjson_warn_unused bool test_raw_json_token(string_view json, string_view expected_token, int expected_start_index = 0) {
+  simdjson2_warn_unused bool test_raw_json_token(string_view json, string_view expected_token, int expected_start_index = 0) {
     string title("'");
     title.append(json.data(), json.length());
     title += "'"s;
@@ -620,7 +620,7 @@ namespace misc_tests {
 
   bool run() {
     return
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            issue2199() &&
 #endif
            skipbom() &&

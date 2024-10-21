@@ -1,13 +1,13 @@
 #include <benchmark/benchmark.h>
 #include <iostream>
-#include "simdjson.h"
-using namespace simdjson;
+#include "simdjson2.h"
+using namespace simdjson2;
 using namespace benchmark;
 using namespace std;
 
 const padded_string EMPTY_ARRAY("[]", 2);
-const char *TWITTER_JSON = SIMDJSON_BENCHMARK_DATA_DIR "twitter.json";
-const char *GSOC_JSON = SIMDJSON_BENCHMARK_DATA_DIR "gsoc-2018.json";
+const char *TWITTER_JSON = SIMDJSON2_BENCHMARK_DATA_DIR "twitter.json";
+const char *GSOC_JSON = SIMDJSON2_BENCHMARK_DATA_DIR "gsoc-2018.json";
 
 
 
@@ -23,9 +23,9 @@ static void fast_minify_twitter(State& state) {
   std::unique_ptr<char[]> buffer{new char[docdata.size()]};
 
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     size_t new_length{}; // It will receive the minified length.
-    auto error = simdjson::minify(docdata.data(), docdata.size(), buffer.get(), new_length);
+    auto error = simdjson2::minify(docdata.data(), docdata.size(), buffer.get(), new_length);
     bytes += docdata.size();
     benchmark::DoNotOptimize(error);
   }
@@ -53,9 +53,9 @@ static void fast_minify_gsoc(State& state) {
   std::unique_ptr<char[]> buffer{new char[docdata.size()]};
 
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     size_t new_length{}; // It will receive the minified length.
-    auto error = simdjson::minify(docdata.data(), docdata.size(), buffer.get(), new_length);
+    auto error = simdjson2::minify(docdata.data(), docdata.size(), buffer.get(), new_length);
     bytes += docdata.size();
     benchmark::DoNotOptimize(error);
   }
@@ -84,8 +84,8 @@ static void unicode_validate_twitter(State& state) {
       return;
   }
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
-    bool is_ok = simdjson::validate_utf8(docdata.data(), docdata.size());
+  for (simdjson2_unused auto _ : state) {
+    bool is_ok = simdjson2::validate_utf8(docdata.data(), docdata.size());
     bytes += docdata.size();
     benchmark::DoNotOptimize(is_ok);
   }
@@ -114,7 +114,7 @@ static void parse_twitter(State& state) {
       return;
   }
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     dom::element doc;
     bytes += docdata.size();
     if ((error = parser.parse(docdata).get(doc))) {
@@ -149,7 +149,7 @@ static void parse_gsoc(State& state) {
       return;
   }
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     bytes += docdata.size();
     dom::element doc;
     if ((error = parser.parse(docdata).get(doc))) {
@@ -172,22 +172,22 @@ BENCHMARK(parse_gsoc)->Repetitions(10)->ComputeStatistics("max", [](const std::v
 static void parser_parse_error_code(State& state) {
   dom::parser parser;
   if (parser.allocate(EMPTY_ARRAY.length())) { return; }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     auto error = parser.parse(EMPTY_ARRAY).error();
     if (error) { return; }
   }
 }
 BENCHMARK(parser_parse_error_code);
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 static void parser_parse_exception(State& state) {
   dom::parser parser;
   if (parser.allocate(EMPTY_ARRAY.length())) { return; }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     try {
-      simdjson_unused dom::element doc = parser.parse(EMPTY_ARRAY);
-    } catch(simdjson_error &j) {
+      simdjson2_unused dom::element doc = parser.parse(EMPTY_ARRAY);
+    } catch(simdjson2_error &j) {
       cout << j.what() << endl;
       return;
     }
@@ -195,10 +195,10 @@ static void parser_parse_exception(State& state) {
 }
 BENCHMARK(parser_parse_exception);
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
 static void document_parse_error_code(State& state) {
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     dom::parser parser;
     auto error = parser.parse(EMPTY_ARRAY).error();
     if (error) { return; }
@@ -206,14 +206,14 @@ static void document_parse_error_code(State& state) {
 }
 BENCHMARK(document_parse_error_code);
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 static void document_parse_exception(State& state) {
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     try {
       dom::parser parser;
-      simdjson_unused dom::element doc = parser.parse(EMPTY_ARRAY);
-    } catch(simdjson_error &j) {
+      simdjson2_unused dom::element doc = parser.parse(EMPTY_ARRAY);
+    } catch(simdjson2_error &j) {
       cout << j.what() << endl;
       return;
     }
@@ -221,6 +221,6 @@ static void document_parse_exception(State& state) {
 }
 BENCHMARK(document_parse_exception);
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
 BENCHMARK_MAIN();

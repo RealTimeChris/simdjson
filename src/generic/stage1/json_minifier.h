@@ -1,19 +1,19 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE1_JSON_MINIFIER_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE1_JSON_MINIFIER_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE1_JSON_MINIFIER_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE1_JSON_MINIFIER_H
 #include <generic/stage1/base.h>
 #include <generic/stage1/json_scanner.h>
 #include <generic/stage1/buf_block_reader.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
 // This file contains the common code every implementation uses in stage1
 // It is intended to be included multiple times and compiled multiple times
 // We assume the file in which it is included already includes
-// "simdjson/stage1.h" (this simplifies amalgation)
+// "simdjson2/stage1.h" (this simplifies amalgation)
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage1 {
 
@@ -23,23 +23,23 @@ public:
   static error_code minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) noexcept;
 
 private:
-  simdjson_inline json_minifier(uint8_t *_dst)
+  simdjson2_inline json_minifier(uint8_t *_dst)
   : dst{_dst}
   {}
   template<size_t STEP_SIZE>
-  simdjson_inline void step(const uint8_t *block_buf, buf_block_reader<STEP_SIZE> &reader) noexcept;
-  simdjson_inline void next(const simd::simd8x64<uint8_t>& in, const json_block& block);
-  simdjson_inline error_code finish(uint8_t *dst_start, size_t &dst_len);
+  simdjson2_inline void step(const uint8_t *block_buf, buf_block_reader<STEP_SIZE> &reader) noexcept;
+  simdjson2_inline void next(const simd::simd8x64<uint8_t>& in, const json_block& block);
+  simdjson2_inline error_code finish(uint8_t *dst_start, size_t &dst_len);
   json_scanner scanner{};
   uint8_t *dst;
 };
 
-simdjson_inline void json_minifier::next(const simd::simd8x64<uint8_t>& in, const json_block& block) {
+simdjson2_inline void json_minifier::next(const simd::simd8x64<uint8_t>& in, const json_block& block) {
   simd::simd8<uint8_t> mask = block.whitespace();
   //dst += in.compress(mask, dst);
 }
 
-simdjson_inline error_code json_minifier::finish(uint8_t *dst_start, size_t &dst_len) {
+simdjson2_inline error_code json_minifier::finish(uint8_t *dst_start, size_t &dst_len) {
   error_code error = scanner.finish();
   if (error) { dst_len = 0; return error; }
   dst_len = dst - dst_start;
@@ -47,7 +47,7 @@ simdjson_inline error_code json_minifier::finish(uint8_t *dst_start, size_t &dst
 }
 
 template<>
-simdjson_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
+simdjson2_inline void json_minifier::step<256>(const uint8_t *block_buf, buf_block_reader<256> &reader) noexcept {
   simd::simd8x64<uint8_t> in_1(block_buf);
   simd::simd8x64<uint8_t> in_2(block_buf+64);
   // json_block block_1 = scanner.next(in_1);
@@ -90,7 +90,7 @@ error_code json_minifier::minify(const uint8_t *buf, size_t len, uint8_t *dst, s
 
 } // namespace stage1
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE1_JSON_MINIFIER_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE1_JSON_MINIFIER_H

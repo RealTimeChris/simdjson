@@ -38,11 +38,11 @@ template <typename I> struct runner : public file_runner<I> {
   }
 };
 
-struct simdjson_ondemand;
+struct simdjson2_ondemand;
 
 template <typename I>
-simdjson_inline static void json2msgpack(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_ondemand>>(state);
+simdjson2_inline static void json2msgpack(benchmark::State &state) {
+  run_json_benchmark<runner<I>, runner<simdjson2_ondemand>>(state);
 }
 
 } // namespace json2msgpack

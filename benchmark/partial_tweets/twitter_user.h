@@ -1,5 +1,5 @@
 #pragma once
-#include "simdjson.h"
+#include "simdjson2.h"
 
 namespace partial_tweets {
 

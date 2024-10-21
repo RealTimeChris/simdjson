@@ -1,14 +1,14 @@
-#ifndef SIMDJSON_SRC_FALLBACK_CPP
-#define SIMDJSON_SRC_FALLBACK_CPP
+#ifndef SIMDJSON2_SRC_FALLBACK_CPP
+#define SIMDJSON2_SRC_FALLBACK_CPP
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
 #include <base.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-#include <simdjson/fallback.h>
-#include <simdjson/fallback/implementation.h>
+#include <simdjson2/fallback.h>
+#include <simdjson2/fallback/implementation.h>
 
-#include <simdjson/fallback/begin.h>
+#include <simdjson2/fallback/begin.h>
 #include <generic/stage1/find_next_document_index.h>
 #include <generic/stage2/stringparsing.h>
 #include <generic/stage2/logger.h>
@@ -20,15 +20,15 @@
 // Stage 1
 //
 
-namespace simdjson {
+namespace simdjson2 {
 namespace fallback {
 
-simdjson_warn_unused error_code implementation::create_dom_parser_implementation(
+simdjson2_warn_unused error_code implementation::create_dom_parser_implementation(
   size_t capacity,
   size_t max_depth,
   std::unique_ptr<internal::dom_parser_implementation>& dst
 ) const noexcept {
-  dst.reset( new (std::nothrow) SIMDJSON_IMPLEMENTATION::dom_parser_implementation() );
+  dst.reset( new (std::nothrow) SIMDJSON2_IMPLEMENTATION::dom_parser_implementation() );
   if (!dst) { return MEMALLOC; }
   if (auto err = dst->set_capacity(capacity))
     return err;
@@ -43,7 +43,7 @@ namespace stage1 {
 class structural_scanner {
 public:
 
-simdjson_inline structural_scanner(dom_parser_implementation &_parser, stage1_mode _partial)
+simdjson2_inline structural_scanner(dom_parser_implementation &_parser, stage1_mode _partial)
   : buf{_parser.buf},
     next_structural_index{_parser.structural_indexes.get()},
     parser{_parser},
@@ -51,18 +51,18 @@ simdjson_inline structural_scanner(dom_parser_implementation &_parser, stage1_mo
     partial{_partial} {
 }
 
-simdjson_inline void add_structural() {
+simdjson2_inline void add_structural() {
   *next_structural_index = idx;
   next_structural_index++;
 }
 
-simdjson_inline bool is_continuation(uint8_t c) {
+simdjson2_inline bool is_continuation(uint8_t c) {
   return (c & 0xc0) == 0x80;
 }
 
-simdjson_inline void validate_utf8_character() {
+simdjson2_inline void validate_utf8_character() {
   // Continuation
-  if (simdjson_unlikely((buf[idx] & 0x40) == 0)) {
+  if (simdjson2_unlikely((buf[idx] & 0x40) == 0)) {
     // extra continuation
     error = UTF8_ERROR;
     idx++;
@@ -72,7 +72,7 @@ simdjson_inline void validate_utf8_character() {
   // 2-byte
   if ((buf[idx] & 0x20) == 0) {
     // missing continuation
-    if (simdjson_unlikely(idx+1 > len || !is_continuation(buf[idx+1]))) {
+    if (simdjson2_unlikely(idx+1 > len || !is_continuation(buf[idx+1]))) {
       if (idx+1 > len && is_streaming(partial)) { idx = len; return; }
       error = UTF8_ERROR;
       idx++;
@@ -87,7 +87,7 @@ simdjson_inline void validate_utf8_character() {
   // 3-byte
   if ((buf[idx] & 0x10) == 0) {
     // missing continuation
-    if (simdjson_unlikely(idx+2 > len || !is_continuation(buf[idx+1]) || !is_continuation(buf[idx+2]))) {
+    if (simdjson2_unlikely(idx+2 > len || !is_continuation(buf[idx+1]) || !is_continuation(buf[idx+2]))) {
       if (idx+2 > len && is_streaming(partial)) { idx = len; return; }
       error = UTF8_ERROR;
       idx++;
@@ -103,7 +103,7 @@ simdjson_inline void validate_utf8_character() {
 
   // 4-byte
   // missing continuation
-  if (simdjson_unlikely(idx+3 > len || !is_continuation(buf[idx+1]) || !is_continuation(buf[idx+2]) || !is_continuation(buf[idx+3]))) {
+  if (simdjson2_unlikely(idx+3 > len || !is_continuation(buf[idx+1]) || !is_continuation(buf[idx+2]) || !is_continuation(buf[idx+3]))) {
     if (idx+2 > len && is_streaming(partial)) { idx = len; return; }
     error = UTF8_ERROR;
     idx++;
@@ -122,12 +122,12 @@ simdjson_inline void validate_utf8_character() {
 }
 
 // Returns true if the string is unclosed.
-simdjson_inline bool validate_string() {
+simdjson2_inline bool validate_string() {
   idx++; // skip first quote
   while (idx < len && buf[idx] != '"') {
     if (buf[idx] == '\\') {
       idx += 2;
-    } else if (simdjson_unlikely(buf[idx] & 0x80)) {
+    } else if (simdjson2_unlikely(buf[idx] & 0x80)) {
       validate_utf8_character();
     } else {
       if (buf[idx] < 0x20) { error = UNESCAPED_CHARS; }
@@ -138,7 +138,7 @@ simdjson_inline bool validate_string() {
   return false;
 }
 
-simdjson_inline bool is_whitespace_or_operator(uint8_t c) {
+simdjson2_inline bool is_whitespace_or_operator(uint8_t c) {
   switch (c) {
     case '{': case '}': case '[': case ']': case ',': case ':':
     case ' ': case '\r': case '\n': case '\t':
@@ -151,7 +151,7 @@ simdjson_inline bool is_whitespace_or_operator(uint8_t c) {
 //
 // Parse the entire input in STEP_SIZE-byte chunks.
 //
-simdjson_inline error_code scan() {
+simdjson2_inline error_code scan() {
   bool unclosed_string = false;
   for (;idx<len;idx++) {
     switch (buf[idx]) {
@@ -178,18 +178,18 @@ simdjson_inline error_code scan() {
     }
   }
   // We pad beyond.
-  // https://github.com/simdjson/simdjson/issues/906
+  // https://github.com/simdjson2/simdjson2/issues/906
   // See json_structural_indexer.h for an explanation.
   *next_structural_index = len; // assumed later in partial == stage1_mode::streaming_final
   next_structural_index[1] = len;
   next_structural_index[2] = 0;
   parser.n_structural_indexes = uint32_t(next_structural_index - parser.structural_indexes.get());
-  if (simdjson_unlikely(parser.n_structural_indexes == 0)) { return EMPTY; }
+  if (simdjson2_unlikely(parser.n_structural_indexes == 0)) { return EMPTY; }
   parser.next_structural_index = 0;
   if (partial == stage1_mode::streaming_partial) {
     if(unclosed_string) {
       parser.n_structural_indexes--;
-      if (simdjson_unlikely(parser.n_structural_indexes == 0)) { return CAPACITY; }
+      if (simdjson2_unlikely(parser.n_structural_indexes == 0)) { return CAPACITY; }
     }
     // We truncate the input to the end of the last complete document (or zero).
     auto new_structural_indexes = find_next_document_index(parser);
@@ -244,7 +244,7 @@ private:
 } // namespace stage1
 } // unnamed namespace
 
-simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode partial) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode partial) noexcept {
   this->buf = _buf;
   this->len = _len;
   stage1::structural_scanner scanner(*this, partial);
@@ -286,7 +286,7 @@ static uint8_t jump_table[256 * 3] = {
     0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1,
 };
 
-simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
+simdjson2_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
   size_t i = 0, pos = 0;
   uint8_t quote = 0;
   uint8_t nonescape = 1;
@@ -308,7 +308,7 @@ simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_
 }
 
 // credit: based on code from Google Fuchsia (Apache Licensed)
-simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
+simdjson2_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
   const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
   uint64_t pos = 0;
   uint32_t code_point = 0;
@@ -371,40 +371,40 @@ simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t 
 }
 
 } // namespace fallback
-} // namespace simdjson
+} // namespace simdjson2
 
 //
 // Stage 2
 //
 
-namespace simdjson {
+namespace simdjson2 {
 namespace fallback {
 
-simdjson_warn_unused error_code dom_parser_implementation::stage2(dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage2(dom::document &_doc) noexcept {
   return stage2::tape_builder::parse_document<false>(*this, _doc);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage2_next(dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage2_next(dom::document &_doc) noexcept {
   return stage2::tape_builder::parse_document<true>(*this, _doc);
 }
 
-simdjson_warn_unused uint8_t *dom_parser_implementation::parse_string(const uint8_t *src, uint8_t *dst, bool replacement_char) const noexcept {
+simdjson2_warn_unused uint8_t *dom_parser_implementation::parse_string(const uint8_t *src, uint8_t *dst, bool replacement_char) const noexcept {
   return fallback::stringparsing::parse_string(src, dst, replacement_char);
 }
 
-simdjson_warn_unused uint8_t *dom_parser_implementation::parse_wobbly_string(const uint8_t *src, uint8_t *dst) const noexcept {
+simdjson2_warn_unused uint8_t *dom_parser_implementation::parse_wobbly_string(const uint8_t *src, uint8_t *dst) const noexcept {
   return fallback::stringparsing::parse_wobbly_string(src, dst);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::parse(const uint8_t *_buf, size_t _len, dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::parse(const uint8_t *_buf, size_t _len, dom::document &_doc) noexcept {
   auto error = stage1(_buf, _len, stage1_mode::regular);
   if (error) { return error; }
   return stage2(_doc);
 }
 
 } // namespace fallback
-} // namespace simdjson
+} // namespace simdjson2
 
-#include <simdjson/fallback/end.h>
+#include <simdjson2/fallback/end.h>
 
-#endif // SIMDJSON_SRC_FALLBACK_CPP
+#endif // SIMDJSON2_SRC_FALLBACK_CPP

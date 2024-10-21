@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "cast_tester.h"
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_macros.h"
 
 const char *test_files[] = {
@@ -28,14 +28,14 @@ const char *test_files[] = {
 
 bool load_to_string(const char *filename) {
   std::cout << "Loading " << filename << std::endl;
-  simdjson::dom::parser parser;
-  simdjson::dom::element doc;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element doc;
   auto error = parser.load(filename).get(doc);
   if (error) { std::cerr << error << std::endl; return false; }
-  auto serial1 = simdjson::to_string(doc);
+  auto serial1 = simdjson2::to_string(doc);
   error = parser.parse(serial1).get(doc);
   if (error) { std::cerr << error << std::endl; return false; }
-  auto serial2 = simdjson::to_string(doc);
+  auto serial2 = simdjson2::to_string(doc);
   bool match = (serial1 == serial2);
   if (match) {
     std::cout << "Parsing to_string and calling to_string again results in the "
@@ -49,14 +49,14 @@ bool load_to_string(const char *filename) {
 
 bool load_minify(const char *filename) {
   std::cout << "Loading " << filename << std::endl;
-  simdjson::dom::parser parser;
-  simdjson::dom::element doc;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element doc;
   auto error = parser.load(filename).get(doc);
   if (error) { std::cerr << error << std::endl; return false; }
-  auto serial1 = simdjson::minify(doc);
+  auto serial1 = simdjson2::minify(doc);
   error = parser.parse(serial1).get(doc);
   if (error) { std::cerr << error << std::endl; return false; }
-  auto serial2 = simdjson::minify(doc);
+  auto serial2 = simdjson2::minify(doc);
   bool match = (serial1 == serial2);
   if (match) {
     std::cout << "Parsing minify and calling minify again results in the same "

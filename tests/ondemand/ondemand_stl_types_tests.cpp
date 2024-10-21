@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
 #include <string>
@@ -11,16 +11,16 @@
 #include <unordered_set>
 #include <optional>
 
-#if SIMDJSON_SUPPORTS_DESERIALIZATION
+#if SIMDJSON2_SUPPORTS_DESERIALIZATION
 class Array : public std::vector<float> {};
-static_assert(simdjson::concepts::appendable_containers<Array>, "Array must be appendable_containers");
-static_assert(!simdjson::require_custom_serialization<Array>);
-namespace simdjson {
-// This tag_invoke MUST be inside simdjson namespace
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, Array& out) {
-    simdjson::ondemand::array arr;
-    SIMDJSON_TRY(val.get_array().get(arr));
+static_assert(simdjson2::concepts::appendable_containers<Array>, "Array must be appendable_containers");
+static_assert(!simdjson2::require_custom_serialization<Array>);
+namespace simdjson2 {
+// This tag_invoke MUST be inside simdjson2 namespace
+template <typename simdjson2_value>
+auto tag_invoke(deserialize_tag, simdjson2_value &val, Array& out) {
+    simdjson2::ondemand::array arr;
+    SIMDJSON2_TRY(val.get_array().get(arr));
     for (auto v : arr) {
       float temp;
       if (auto const err = v.get<float>().get(temp); err) {
@@ -31,26 +31,26 @@ auto tag_invoke(deserialize_tag, simdjson_value &val, Array& out) {
     }
     return error_code::SUCCESS;
 }
-} // namespace simdjson
+} // namespace simdjson2
 
 // require_custom_serialization
-#endif // SIMDJSON_SUPPORTS_DESERIALIZATION
+#endif // SIMDJSON2_SUPPORTS_DESERIALIZATION
 
 namespace stl_types {
-#if SIMDJSON_EXCEPTIONS && SIMDJSON_SUPPORTS_DESERIALIZATION
+#if SIMDJSON2_EXCEPTIONS && SIMDJSON2_SUPPORTS_DESERIALIZATION
 
 bool basic_general_madness() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "codes": [1,2,3,4,18,19] },
             { "codes": [1,3,4,111,1111] } ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   std::vector<uint16_t> codes;
   for (auto val : doc) {
-    simdjson::ondemand::object obj;
-    SIMDJSON_TRY(val.get_object().get(obj));
+    simdjson2::ondemand::object obj;
+    SIMDJSON2_TRY(val.get_object().get(obj));
     obj["codes"].get(codes); // append to it
   }
 
@@ -66,16 +66,16 @@ bool basic_general_madness() {
 
 bool basic_general_madness_vector() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "codes": [1.2, 3.4, 5.6, 7.8, 9.0] },
             { "codes": [2.2, 4.4, 6.6, 8.8, 10.0] } ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   std::vector<float> codes;
   for (auto val : doc) {
-    simdjson::ondemand::object obj;
-    SIMDJSON_TRY(val.get_object().get(obj));
+    simdjson2::ondemand::object obj;
+    SIMDJSON2_TRY(val.get_object().get(obj));
     obj["codes"].get(codes); // append to it
   }
 
@@ -91,16 +91,16 @@ bool basic_general_madness_vector() {
 
 bool basic_general_madness_list() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "codes": [1.2, 3.4, 5.6, 7.8, 9.0] },
             { "codes": [2.2, 4.4, 6.6, 8.8, 10.0] } ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   std::list<float> codes;
   for (auto val : doc) {
-    simdjson::ondemand::object obj;
-    SIMDJSON_TRY(val.get_object().get(obj));
+    simdjson2::ondemand::object obj;
+    SIMDJSON2_TRY(val.get_object().get(obj));
     obj["codes"].get(codes); // append to it
   }
 
@@ -118,16 +118,16 @@ bool basic_general_madness_list() {
 
 bool basic_general_madness_Array() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "codes": [1.2, 3.4, 5.6, 7.8, 9.0] },
             { "codes": [2.2, 4.4, 6.6, 8.8, 10.0] } ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   Array codes;
   for (auto val : doc) {
-    simdjson::ondemand::object obj;
-    SIMDJSON_TRY(val.get_object().get(obj));
+    simdjson2::ondemand::object obj;
+    SIMDJSON2_TRY(val.get_object().get(obj));
     obj["codes"].get(codes); // append to it
   }
   ASSERT_EQUAL(codes.size(), 20);
@@ -139,16 +139,16 @@ template <template <typename...> typename Container, typename ValT = float>
 bool basic_general_madness_container() {
   TYPED_TEST_START(Container<ValT>);
 
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "codes": [1.0, 3.4, 5.6, 7.8, 9.0] },
             { "codes": [2.2, 4.4, 6.6, 8.8, 10.0] } ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   Container<ValT> codes;
   for (auto val : doc) {
-    simdjson::ondemand::object obj;
-    SIMDJSON_TRY(val.get_object().get(obj));
+    simdjson2::ondemand::object obj;
+    SIMDJSON2_TRY(val.get_object().get(obj));
     obj["codes"].get(codes); // append to it
   }
 
@@ -184,10 +184,10 @@ bool basic_general_madness_container() {
 }
 
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 bool run() {
   return
-#if SIMDJSON_EXCEPTIONS && SIMDJSON_SUPPORTS_DESERIALIZATION
+#if SIMDJSON2_EXCEPTIONS && SIMDJSON2_SUPPORTS_DESERIALIZATION
       basic_general_madness() &&
       basic_general_madness_vector() &&
       basic_general_madness_list() &&
@@ -246,7 +246,7 @@ bool run() {
       basic_general_madness_container<std::unordered_set, std::optional<double>>() &&
       basic_general_madness_container<std::multiset, std::optional<double>>() &&
       basic_general_madness_container<std::unordered_multiset, std::optional<double>>() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
       true;
 }
 

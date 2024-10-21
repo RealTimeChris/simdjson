@@ -1,9 +1,9 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 #include <iostream>
 #include <vector>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 /**
  * A custom type that we want to parse.
@@ -27,11 +27,11 @@ std::ostream &operator<<(std::ostream &os, const Car &c) {
   return os;
 }
 
-#if !SIMDJSON_SUPPORTS_DESERIALIZATION
+#if !SIMDJSON2_SUPPORTS_DESERIALIZATION
 // This code is not necessary if you have a C++20 compliant system:
 template <>
-simdjson_inline simdjson_result<std::vector<double>>
-simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<std::vector<double>>
+simdjson2::ondemand::value::get() noexcept {
   ondemand::array array;
   auto error = get_array().get(array);
   if (error) {
@@ -51,7 +51,7 @@ simdjson::ondemand::value::get() noexcept {
 #endif
 
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::value::get() noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) {
@@ -75,8 +75,8 @@ simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
 }
 
 template <>
-simdjson_inline simdjson_result<Car>
-simdjson::ondemand::document::get() &noexcept {
+simdjson2_inline simdjson2_result<Car>
+simdjson2::ondemand::document::get() &noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) {
@@ -101,8 +101,8 @@ simdjson::ondemand::document::get() &noexcept {
 
 
 template <>
-simdjson_inline simdjson_result<Car>
-simdjson::ondemand::document_reference::get() &noexcept {
+simdjson2_inline simdjson2_result<Car>
+simdjson2::ondemand::document_reference::get() &noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) {
@@ -138,7 +138,7 @@ int main_should_compile(void) {
   ondemand::document doc;
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
   for (auto val : doc) {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     Car c(val); // an exception may be thrown
 #else
     Car c;
@@ -167,7 +167,7 @@ bool car_deserialize() {
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
   std::vector<Car> cars;
   for (auto val : doc) {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     Car c(val); // an exception may be thrown
 #else
     Car c;
@@ -197,7 +197,7 @@ bool car_doc_deserialize() {
   ondemand::parser parser;
   ondemand::document doc;
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   Car c(doc);   // an exception may be thrown
 #else
   Car c;
@@ -230,7 +230,7 @@ bool car_stream_deserialize() {
   }
   std::vector<Car> cars;
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   for(ondemand::document_reference doc : stream) {
     //Car c(doc);   // an exception may be thrown
     cars.push_back(Car(doc)); // an exception may be thrown

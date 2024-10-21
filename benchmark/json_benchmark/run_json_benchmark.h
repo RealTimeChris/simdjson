@@ -1,6 +1,6 @@
 #pragma once
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "event_counter.h"
 #include <iostream>
 
@@ -10,9 +10,9 @@ void maybe_display_implementation() {
   static bool displayed_implementation = false;
   if(!displayed_implementation) {
     displayed_implementation = true;
-    std::cout << "simdjson::dom implementation:      " << simdjson::get_active_implementation()->name() << std::endl;
-    std::cout << "simdjson::ondemand implementation (stage 1): " << simdjson::get_active_implementation()->name() << std::endl;
-    std::cout << "simdjson::ondemand implementation (stage 2): " << simdjson::builtin_implementation()->name() << std::endl;
+    std::cout << "simdjson2::dom implementation:      " << simdjson2::get_active_implementation()->name() << std::endl;
+    std::cout << "simdjson2::ondemand implementation (stage 1): " << simdjson2::get_active_implementation()->name() << std::endl;
+    std::cout << "simdjson2::ondemand implementation (stage 2): " << simdjson2::builtin_implementation()->name() << std::endl;
   }
 }
 
@@ -38,7 +38,7 @@ template<typename B, typename R> static void run_json_benchmark(benchmark::State
   }
 
   // Run the benchmark
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     if (!bench.before_run(state)) { state.SkipWithError("before_run failed"); };
     collector.start();
     if (!bench.run(state)) { state.SkipWithError("run failed"); return; }
@@ -58,7 +58,7 @@ template<typename B, typename R> static void run_json_benchmark(benchmark::State
   if (collector.has_events()) {
     state.counters["instructions"] = events.instructions();
     state.counters["cycles"]       = events.cycles();
-#if !SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if !SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     state.counters["branch_miss"]  = events.branch_misses();
     state.counters["cache_miss"]   = events.cache_misses();
     state.counters["cache_ref"]    = events.cache_references();
@@ -70,7 +70,7 @@ template<typename B, typename R> static void run_json_benchmark(benchmark::State
 
     state.counters["best_instructions"] = events.best.instructions();
     state.counters["best_cycles"]       = events.best.cycles();
-#if !SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if !SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     state.counters["best_branch_miss"]  = events.best.branch_misses();
     state.counters["best_cache_miss"]   = events.best.cache_misses();
     state.counters["best_cache_ref"]    = events.best.cache_references();
@@ -95,7 +95,7 @@ template<typename B, typename R> static void run_json_benchmark(benchmark::State
   if (collector.has_events()) {
     label << " instructions=" << setw(12) << uint64_t(events.best.instructions())     << setw(0);
     label << " cycles="       << setw(12) << uint64_t(events.best.cycles())           << setw(0);
-#if !SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if !SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     label << " branch_miss="  << setw(8)  << uint64_t(events.best.branch_misses())    << setw(0);
     label << " cache_miss="   << setw(8)  << uint64_t(events.best.cache_misses())     << setw(0);
     label << " cache_ref="    << setw(10) << uint64_t(events.best.cache_references()) << setw(0);

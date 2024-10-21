@@ -1,5 +1,5 @@
 #ifndef __GETOPT_H__
-/** This file has been modified by D. Lemire for use in simdjson. **/
+/** This file has been modified by D. Lemire for use in simdjson2. **/
 /* From https://github.com/skandhurkat/Getopt-for-Visual-Studio/blob/master/getopt.h */
 /**
  * DISCLAIMER

@@ -1,15 +1,15 @@
-#define SIMDJSON_VERBOSE_LOGGING 1
-#include "simdjson.h"
+#define SIMDJSON2_VERBOSE_LOGGING 1
+#include "simdjson2.h"
 
 #include <iostream>
 #include <vector>
 #include <string>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 
 int main() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   auto cars_json = R"( [
 		{ "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
 		{ "make": "Kia",    "model": "Soul",   "year": 2012, "tire_pressure": [ 30.1, 31.0, 28.6, 28.7 ] },
@@ -25,6 +25,6 @@ int main() {
   for(std::string& m : container) {
     std::cout << m << std::endl;
   }
-#endif // #if SIMDJSON_EXCEPTIONS
+#endif // #if SIMDJSON2_EXCEPTIONS
   return EXIT_SUCCESS;
 }

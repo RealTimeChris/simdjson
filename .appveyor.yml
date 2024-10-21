@@ -9,28 +9,28 @@ cache:
 
 environment:
   # Forward slash is used because this is used in CMake as is
-  simdjson_DEPENDENCY_CACHE_DIR: C:/dependencies
+  simdjson2_DEPENDENCY_CACHE_DIR: C:/dependencies
 
   matrix:
     - job_name: VS2019
       CMAKE_ARGS: -A %Platform%
     - job_name: VS2019ARM
-      CMAKE_ARGS: -A ARM64   -DSIMDJSON_DEVELOPER_MODE=ON -DCMAKE_CROSSCOMPILING=1 -D SIMDJSON_GOOGLE_BENCHMARKS=OFF # Does Google Benchmark builds under VS ARM?
+      CMAKE_ARGS: -A ARM64   -DSIMDJSON2_DEVELOPER_MODE=ON -DCMAKE_CROSSCOMPILING=1 -D SIMDJSON2_GOOGLE_BENCHMARKS=OFF # Does Google Benchmark builds under VS ARM?
     - job_name: VS2017 (Static, No Threads)
       image: Visual Studio 2017
-      CMAKE_ARGS: -A %Platform%   -DSIMDJSON_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=OFF -DSIMDJSON_ENABLE_THREADS=OFF
+      CMAKE_ARGS: -A %Platform%   -DSIMDJSON2_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=OFF -DSIMDJSON2_ENABLE_THREADS=OFF
       CTEST_ARGS: -LE explicitonly
     - job_name: VS2019 (Win32)
       platform: Win32
-      CMAKE_ARGS: -A %Platform%   -DSIMDJSON_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=ON -DSIMDJSON_ENABLE_THREADS=ON # This should be the default. Testing anyway.
+      CMAKE_ARGS: -A %Platform%   -DSIMDJSON2_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=ON -DSIMDJSON2_ENABLE_THREADS=ON # This should be the default. Testing anyway.
       CTEST_ARGS: -LE explicitonly
     - job_name: VS2019 (Win32, No Exceptions)
       platform: Win32
-      CMAKE_ARGS: -A %Platform%   -DSIMDJSON_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=ON -DSIMDJSON_ENABLE_THREADS=ON -DSIMDJSON_EXCEPTIONS=OFF
+      CMAKE_ARGS: -A %Platform%   -DSIMDJSON2_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=ON -DSIMDJSON2_ENABLE_THREADS=ON -DSIMDJSON2_EXCEPTIONS=OFF
       CTEST_ARGS: -LE explicitonly
     - job_name: VS2015
       image: Visual Studio 2015
-      CMAKE_ARGS: -A %Platform%   -DSIMDJSON_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=OFF -DSIMDJSON_ENABLE_THREADS=OFF
+      CMAKE_ARGS: -A %Platform%   -DSIMDJSON2_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=OFF -DSIMDJSON2_ENABLE_THREADS=OFF
       CTEST_ARGS: -LE explicitonly
 
 build_script:
@@ -50,7 +50,7 @@ for:
   test_script:
     - ctest --output-on-failure -C %Configuration% --verbose %CTEST_ARGS% --parallel
 
-clone_folder: c:\projects\simdjson
+clone_folder: c:\projects\simdjson2
 
 matrix:
   fast_finish: true

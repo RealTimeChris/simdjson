@@ -20,20 +20,20 @@ void found_float(double result, const uint8_t *buf);
 void found_integer(int64_t result, const uint8_t *buf);
 void found_unsigned_integer(uint64_t result, const uint8_t *buf);
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 
 
 /**
  * Some systems have bad floating-point parsing. We want to exclude them.
  */
-#if defined(SIMDJSON_REGULAR_VISUAL_STUDIO) || defined (__linux__) || defined (__APPLE__) || defined(__FreeBSD__)
+#if defined(SIMDJSON2_REGULAR_VISUAL_STUDIO) || defined (__linux__) || defined (__APPLE__) || defined(__FreeBSD__)
 // Ok. So under Visual Studio, linux, apple and freebsd systems, we have a good chance of having a decent
 // enough strtod. It is not certain, but it is maybe a good enough heuristics. We exclude systems like msys2
 // or cygwin.
 //
 // Finally, we want to exclude legacy 32-bit systems.
-#if SIMDJSON_IS_32BITS
+#if SIMDJSON2_IS_32BITS
 // we omit 32-bit tests
 #else
 // So we only run some of the floating-point tests under 64-bit linux, apple, regular visual studio, freebsd.
@@ -169,7 +169,7 @@ void found_float(double result, const uint8_t *buf) {
 }
 #endif
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 /**
  * Does the file filename ends with the given extension.
@@ -206,8 +206,8 @@ bool validate(const char *dirname) {
       } else {
         strcpy(fullpath + dirlen, name);
       }
-      simdjson::padded_string p;
-      auto error = simdjson::padded_string::load(fullpath).get(p);
+      simdjson2::padded_string p;
+      auto error = simdjson2::padded_string::load(fullpath).get(p);
       if (error) {
         std::cerr << "Could not load the file " << fullpath << std::endl;
         return EXIT_FAILURE;
@@ -216,9 +216,9 @@ bool validate(const char *dirname) {
       float_count = 0;
       int_count = 0;
       invalid_count = 0;
-      simdjson::dom::parser parser;
+      simdjson2::dom::parser parser;
       auto err = parser.parse(p).error();
-      bool isok = (err == simdjson::error_code::SUCCESS);
+      bool isok = (err == simdjson2::error_code::SUCCESS);
       if (int_count + float_count + invalid_count > 0) {
         printf("File %40s %s --- integers: %10zu floats: %10zu invalid: %10zu "
                "total numbers: %10zu \n",
@@ -244,12 +244,12 @@ int main(int argc, char *argv[]) {
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <directorywithjsonfiles>"
               << std::endl;
-#if defined(SIMDJSON_TEST_DATA_DIR) && defined(SIMDJSON_BENCHMARK_DATA_DIR)
+#if defined(SIMDJSON2_TEST_DATA_DIR) && defined(SIMDJSON2_BENCHMARK_DATA_DIR)
     std::cout << "We are going to assume you mean to use the '"
-              << SIMDJSON_TEST_DATA_DIR << "'  and  '"
-              << SIMDJSON_BENCHMARK_DATA_DIR << "'directories." << std::endl;
-    return validate(SIMDJSON_TEST_DATA_DIR) &&
-                   validate(SIMDJSON_BENCHMARK_DATA_DIR)
+              << SIMDJSON2_TEST_DATA_DIR << "'  and  '"
+              << SIMDJSON2_BENCHMARK_DATA_DIR << "'directories." << std::endl;
+    return validate(SIMDJSON2_TEST_DATA_DIR) &&
+                   validate(SIMDJSON2_BENCHMARK_DATA_DIR)
                ? EXIT_SUCCESS
                : EXIT_FAILURE;
 #else

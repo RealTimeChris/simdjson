@@ -16,7 +16,7 @@
 #else
 #include <dirent_portable.h>
 #endif
-#include "simdjson.h"
+#include "simdjson2.h"
 
 char *fullpath;
 
@@ -291,7 +291,7 @@ void found_string(const uint8_t *buf, const uint8_t *parsed_begin,
   }
 }
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 /**
  * Does the file filename ends with the given extension.
@@ -334,8 +334,8 @@ bool validate(const char *dirname) {
       } else {
         strcpy(fullpath + dirlen, name);
       }
-      simdjson::padded_string p;
-      auto error = simdjson::padded_string::load(fullpath).get(p);
+      simdjson2::padded_string p;
+      auto error = simdjson2::padded_string::load(fullpath).get(p);
       if (error) {
         std::cerr << "Could not load the file " << fullpath << std::endl;
         return EXIT_FAILURE;
@@ -349,9 +349,9 @@ bool validate(const char *dirname) {
       good_string = 0;
       total_string_length = 0;
       empty_string = 0;
-      simdjson::dom::parser parser;
+      simdjson2::dom::parser parser;
       auto err = parser.parse(p).error();
-      bool isok = (err == simdjson::error_code::SUCCESS);
+      bool isok = (err == simdjson2::error_code::SUCCESS);
       free(big_buffer);
       if (good_string > 0) {
         printf("File %40s %s --- bad strings: %10zu \tgood strings: %10zu\t "
@@ -384,12 +384,12 @@ int main(int argc, char *argv[]) {
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <directorywithjsonfiles>"
               << std::endl;
-#if defined(SIMDJSON_TEST_DATA_DIR) && defined(SIMDJSON_BENCHMARK_DATA_DIR)
+#if defined(SIMDJSON2_TEST_DATA_DIR) && defined(SIMDJSON2_BENCHMARK_DATA_DIR)
     std::cout << "We are going to assume you mean to use the '"
-              << SIMDJSON_TEST_DATA_DIR << "'  and  '"
-              << SIMDJSON_BENCHMARK_DATA_DIR << "'directories." << std::endl;
-    return validate(SIMDJSON_TEST_DATA_DIR) &&
-                   validate(SIMDJSON_BENCHMARK_DATA_DIR)
+              << SIMDJSON2_TEST_DATA_DIR << "'  and  '"
+              << SIMDJSON2_BENCHMARK_DATA_DIR << "'directories." << std::endl;
+    return validate(SIMDJSON2_TEST_DATA_DIR) &&
+                   validate(SIMDJSON2_BENCHMARK_DATA_DIR)
                ? EXIT_SUCCESS
                : EXIT_FAILURE;
 #else

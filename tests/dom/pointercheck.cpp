@@ -8,7 +8,7 @@
 #include <string>
 using namespace std::string_literals;
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_macros.h"
 
 // we define our own asserts to get around NDEBUG
@@ -21,10 +21,10 @@ using namespace std::string_literals;
 }
 #endif
 
-using namespace simdjson;
+using namespace simdjson2;
 
 bool demo() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "demo test" << std::endl;
   auto cars_json = R"( [
   { "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
@@ -39,7 +39,7 @@ bool demo() {
   std::vector<double> measured;
   for (dom::element car_element : cars) {
     dom::object car;
-    simdjson::error_code error;
+    simdjson2::error_code error;
     if ((error = car_element.get(car))) { std::cerr << error << std::endl; return false; }
     double x3 = car.at_pointer("/tire_pressure/1");
     measured.push_back(x3);
@@ -94,7 +94,7 @@ bool json_pointer_success_test(const padded_string & source, const char *json_po
   dom::element answer;
   error = doc.at_pointer(json_pointer).get(answer);
   if(error) { std::cerr << "cannot access pointer: " << error << std::endl; return false; }
-  std::string str_answer = simdjson::minify(answer);
+  std::string str_answer = simdjson2::minify(answer);
   if(str_answer != expected_value) {
     std::cerr << "They differ!!!" << std::endl;
     std::cerr << "   found    '" << str_answer << "'" << std::endl;
@@ -111,12 +111,12 @@ bool json_pointer_failure_test(const padded_string & source, const char *json_po
   return true;
 }
 
-#ifdef SIMDJSON_ENABLE_DEPRECATED_API
-SIMDJSON_PUSH_DISABLE_WARNINGS
-SIMDJSON_DISABLE_DEPRECATED_WARNING
+#ifdef SIMDJSON2_ENABLE_DEPRECATED_API
+SIMDJSON2_PUSH_DISABLE_WARNINGS
+SIMDJSON2_DISABLE_DEPRECATED_WARNING
 // for pre 0.4 users (not standard compliant)
 bool legacy_support() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "legacy test" << std::endl;
   auto legacy_json = R"({"key": "value", "array": [0, 1, 2]})"_padded;
   dom::parser parser;
@@ -134,12 +134,12 @@ bool legacy_support() {
 #endif
   return true;
 }
-SIMDJSON_POP_DISABLE_WARNINGS
-#endif // #if SIMDJSON_ENABLE_DEPRECATED_API
+SIMDJSON2_POP_DISABLE_WARNINGS
+#endif // #if SIMDJSON2_ENABLE_DEPRECATED_API
 
 // for 0.5 version and following (standard compliant)
 bool modern_support() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "modern test" << std::endl;
   auto example_json = R"({"key": "value", "array": [0, 1, 2]})"_padded;
   dom::parser parser;
@@ -158,15 +158,15 @@ bool modern_support() {
   return true;
 }
 bool issue1142() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "issue 1142" << std::endl;
   auto example_json = R"([1,2,{"1":"bla"}])"_padded;
   dom::parser parser;
   dom::element example = parser.parse(example_json);
   auto e0 = dom::array(example).at(0).at_pointer("");
-  ASSERT_EQUAL("1"s, simdjson::minify(e0))
+  ASSERT_EQUAL("1"s, simdjson2::minify(e0))
   auto o = dom::array(example).at(2).at_pointer("");
-  ASSERT_EQUAL(std::string(R"({"1":"bla"})"), simdjson::minify(o))
+  ASSERT_EQUAL(std::string(R"({"1":"bla"})"), simdjson2::minify(o))
   std::string_view s0 = dom::array(example).at(2).at_pointer("/1").at_pointer("");
   if(s0 != "bla") {
     std::cerr << s0 << std::endl;
@@ -180,19 +180,19 @@ bool issue1142() {
   }
   auto example_json3 = R"([])"_padded;
   dom::element example3 = parser.parse(example_json3).at_pointer("");
-  ASSERT_EQUAL(std::string(R"([])"), simdjson::minify(example3));
+  ASSERT_EQUAL(std::string(R"([])"), simdjson2::minify(example3));
 
   const char * input_array = "[]";
   size_t input_length = std::strlen(input_array);
   auto element4 = parser.parse(input_array, input_length).at_pointer("");;
-  ASSERT_EQUAL(std::string(R"([])"), simdjson::minify(element4));
+  ASSERT_EQUAL(std::string(R"([])"), simdjson2::minify(element4));
 
 #endif
   return true;
 }
 
 bool issue2154() { // mistakenly taking value as path should not raise INVALID_JSON_POINTER
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "issue 2154" << std::endl;
   auto example_json = R"__(
       {
@@ -225,7 +225,7 @@ int main() {
     && demo()
     && issue1142()
     && issue2154()
-#ifdef SIMDJSON_ENABLE_DEPRECATED_API
+#ifdef SIMDJSON2_ENABLE_DEPRECATED_API
     && legacy_support()
 #endif
     && modern_support()

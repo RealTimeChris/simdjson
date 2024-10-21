@@ -1,19 +1,19 @@
 #pragma once
 
-#if SIMDJSON_COMPETITION_NLOHMANN_JSON
+#if SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "top_tweet.h"
 
 namespace top_tweet {
 
-using namespace simdjson;
+using namespace simdjson2;
 
 struct nlohmann_json {
   using StringType=std::string;
 
   dom::parser parser{};
 
-  bool run(simdjson::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
+  bool run(simdjson2::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
     result.retweet_count = -1;
     nlohmann::json top_tweet{};
 
@@ -36,4 +36,4 @@ BENCHMARK_TEMPLATE(top_tweet, nlohmann_json)->UseManualTime();
 
 } // namespace top_tweet
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

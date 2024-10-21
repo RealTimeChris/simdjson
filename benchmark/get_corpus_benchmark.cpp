@@ -1,15 +1,15 @@
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <chrono>
 #include <cstring>
 #include <iostream>
 
 // Gigabyte: https://en.wikipedia.org/wiki/Gigabyte
-simdjson_never_inline
-double bench(std::string filename, simdjson::padded_string& p) {
+simdjson2_never_inline
+double bench(std::string filename, simdjson2::padded_string& p) {
   std::chrono::time_point<std::chrono::steady_clock> start_clock =
       std::chrono::steady_clock::now();
-  simdjson::padded_string::load(filename).value_unsafe().swap(p);
+  simdjson2::padded_string::load(filename).value_unsafe().swap(p);
   std::chrono::time_point<std::chrono::steady_clock> end_clock =
       std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed = end_clock - start_clock;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     std::cerr << "warning: ignoring everything after " << argv[optind + 1]
               << std::endl;
   }
-  simdjson::padded_string p;
+  simdjson2::padded_string p;
   bench(filename, p);
   double meanval = 0;
   double maxval = 0;

@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <iostream>
 
 
@@ -19,15 +19,15 @@ int main(int argc, char *argv[]) {
   }
 
   const char *filename = argv[1];
-  simdjson::dom::parser parser;
-  simdjson::dom::element doc;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element doc;
   auto error = parser.load(filename).get(doc);
   if (error) { std::cerr << "Error parsing " << filename << ": " << error << std::endl; }
 
   std::cout << "[" << std::endl;
   for (int idx = 2; idx < argc; idx++) {
     const char *json_pointer = argv[idx];
-    simdjson::dom::element value;
+    simdjson2::dom::element value;
     std::cout << "{\"jsonpath\": \"" << json_pointer << "\"";
     if ((error = doc[json_pointer].get(value))) {
       std::cout << ",\"error\":\"" << error << "\"";

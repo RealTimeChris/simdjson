@@ -1,13 +1,13 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE1_JSON_ESCAPE_SCANNER_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE1_JSON_ESCAPE_SCANNER_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE1_JSON_ESCAPE_SCANNER_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE1_JSON_ESCAPE_SCANNER_H
 #include <generic/stage1/base.h>
 #include <generic/stage1/buf_block_reader.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage1 {
 
@@ -40,6 +40,51 @@ struct json_escape_scanner {
      */
     simd::simd8<uint8_t> escape;
   };
+  alignas(32) uint64_t values[4 * 2];
+
+  simdjson2_really_inline simd8<uint8_t> 
+  opSub(const simd8<uint8_t> &value,
+                                             const simd8<uint8_t> &other) noexcept {
+    value.store(values);
+    other.store(values + 4);
+    bool carryInNew{};
+    values[4] = values[0] - values[4] -
+                                   static_cast<uint64_t>(carryInNew);
+    carryInNew = values[4] > values[0];
+    values[1 + 4] = values[1] -
+                                       values[1 + 4] -
+                                       static_cast<uint64_t>(carryInNew);
+    carryInNew = values[1 + 4] > values[1];
+    if constexpr (4 > 2) {
+      values[2 + 4] = values[2] -
+                                         values[2 + 4] -
+                                         static_cast<uint64_t>(carryInNew);
+      carryInNew = values[2 + 4] > values[2];
+      values[3 + 4] = values[3] -
+                                         values[3 + 4] -
+                                         static_cast<uint64_t>(carryInNew);
+      carryInNew = values[3 + 4] > values[3];
+    }
+    if constexpr (4 > 4) {
+      values[4 + 4] = values[4] -
+                                         values[4 + 4] -
+                                         static_cast<uint64_t>(carryInNew);
+      carryInNew = values[4 + 4] > values[4];
+      values[5 + 4] = values[5] -
+                                         values[5 + 4] -
+                                         static_cast<uint64_t>(carryInNew);
+      carryInNew = values[5 + 4] > values[5];
+      values[6 + 4] = values[6] -
+                                         values[6 + 4] -
+                                         static_cast<uint64_t>(carryInNew);
+      carryInNew = values[6 + 4] > values[6];
+      values[7 + 4] = values[7] -
+                                         values[7 + 4] -
+                                         static_cast<uint64_t>(carryInNew);
+      carryInNew = values[7 + 4] > values[7];
+    }
+    return simd8<uint8_t>::load(values + 4);
+  }
 
   /**
    * Get a mask of both escape and escaped characters (the characters following a backslash).
@@ -47,9 +92,9 @@ struct json_escape_scanner {
    * @param potential_escape A mask of the character that can escape others (but could be
    *        escaped itself). e.g. block.eq('\\')
    */
-  simdjson_really_inline escaped_and_escape next(simd::simd8<uint8_t> backslash) noexcept {
+  simdjson2_really_inline escaped_and_escape next(const simd::simd8<uint8_t>& backslash) noexcept {
 
-#if !SIMDJSON_SKIP_BACKSLASH_SHORT_CIRCUIT
+#if !SIMDJSON2_SKIP_BACKSLASH_SHORT_CIRCUIT
     if (!backslash.test()) {
       return {next_escaped_without_backslashes(), simd::simd8<uint8_t>{}};
     }
@@ -66,17 +111,18 @@ struct json_escape_scanner {
     // | first_is_escaped               | `\                                 `   | 7 (*) | 9 (escape >> 63) ()
     //                                                                               (*) this is not needed until the next iteration
     simd::simd8<uint8_t> escape_and_terminal_code =
-        next_escape_and_terminal_code(backslash & ~this->next_is_escaped);
+        next_escape_and_terminal_code(
+            backslash.bit_andnot(this->next_is_escaped));
     simd::simd8<uint8_t> escaped =
         escape_and_terminal_code ^ (backslash | this->next_is_escaped);
     simd::simd8<uint8_t> escape = escape_and_terminal_code & backslash;
-    this->next_is_escaped = this->next_is_escaped.set_lsb(escape.get_msb());
+    this->next_is_escaped.set_lsb(escape.get_msb());
     return {escaped, escape};
   }
 
 private:
 
-  simdjson_really_inline simd::simd8<uint8_t>
+  simdjson2_really_inline simd::simd8<uint8_t>
   next_escaped_without_backslashes() noexcept {
     simd::simd8<uint8_t> escaped = this->next_is_escaped;
     this->next_is_escaped = this->next_is_escaped.zero();
@@ -97,9 +143,9 @@ private:
    * & the result with potential_escape to get just the escape characters.
    * ^ the result with (potential_escape | first_is_escaped) to get escaped characters.
    */
-  static simdjson_really_inline simd::simd8<uint8_t>
+  simdjson2_really_inline simd::simd8<uint8_t>
   next_escape_and_terminal_code(
-      simd::simd8<uint8_t> potential_escape) noexcept {
+      const simd::simd8<uint8_t>& potential_escape) noexcept {
     // If we were to just shift and mask out any odd bits, we'd actually get a *half* right answer:
     // any even-aligned backslash runs would be correct! Odd-aligned backslash runs would be
     // inverted (\\\ would be 010 instead of 101).
@@ -130,15 +176,28 @@ private:
     //
 
     // Escaped characters are characters following an escape.
-    alignas(32) uint64_t valuesIn[4];
-    alignas(32) uint64_t valuesOut[4];
-    potential_escape.store(valuesIn);
+    potential_escape.store(values);
     static constexpr uint64_t shiftAmount{64 - 1};
-    valuesOut[0] = valuesIn[0] << 1;
-    valuesOut[1] = valuesIn[1] << 1 | valuesIn[0] >> (shiftAmount);
-    valuesOut[2] = valuesIn[2] << 1 | valuesIn[1] >> (shiftAmount);
-    valuesOut[3] = valuesIn[3] << 1 | valuesIn[2] >> (shiftAmount);
-    simd::simd8<uint8_t> maybe_escaped = simd::simd8<uint8_t>::load(valuesOut);
+    values[4] = values[0] << 1;
+    values[1 + 4] =
+        values[1] << 1 | values[1 - 1] >> (shiftAmount);
+    if constexpr (4 > 2) {
+      values[2 + 4] =
+          values[2] << 1 | values[2 - 1] >> (shiftAmount);
+      values[3 + 4] =
+          values[3] << 1 | values[3 - 1] >> (shiftAmount);
+    }
+    if constexpr (4 > 4) {
+      values[4 + 4] =
+          values[4] << 1 | values[4 - 1] >> (shiftAmount);
+      values[5 + 4] =
+          values[5] << 1 | values[5 - 1] >> (shiftAmount);
+      values[6 + 4] =
+          values[6] << 1 | values[6 - 1] >> (shiftAmount);
+      values[7 + 4] =
+          values[7] << 1 | values[7 - 1] >> (shiftAmount);
+    }
+    simd::simd8<uint8_t> maybe_escaped = simd::simd8<uint8_t>::load(values + 4);
     const simd::simd8<uint8_t> ODD_BITS{0xAA};
 
     // To distinguish odd from even escape sequences, therefore, we turn on any *starting*
@@ -148,7 +207,7 @@ private:
     // - All other odd bytes are 1, and even bytes are 0.
     simd::simd8<uint8_t> maybe_escaped_and_odd_bits = maybe_escaped | ODD_BITS;
     simd::simd8<uint8_t> even_series_codes_and_odd_bits =
-        maybe_escaped_and_odd_bits - potential_escape;
+        opSub(maybe_escaped_and_odd_bits, potential_escape);
 
     // Now we flip all odd bytes back with xor. This:
     // - Makes odd runs of backslashes go from 0000 to 1010
@@ -161,7 +220,7 @@ private:
 
 } // namespace stage1
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE1_JSON_STRING_SCANNER_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE1_JSON_STRING_SCANNER_H

@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-TMPDIR1=$(mktemp -d -t simdjsonXXXXXXXX)
-TMPDIR2=$(mktemp -d -t simdjsonXXXXXXXX)
+TMPDIR1=$(mktemp -d -t simdjson2XXXXXXXX)
+TMPDIR2=$(mktemp -d -t simdjson2XXXXXXXX)
 trap "exit 1"         HUP INT PIPE QUIT TERM
 trap "rm -rf $TMPDIR1 $TMPDIR2" EXIT
 
 echo "running json2json on jsonexamples and jsonchecker files (prints test successful on success) ..."
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-DATADIR="$1/_deps/simdjson-data"
+DATADIR="$1/_deps/simdjson2-data"
 
 JSONEXAMPLES=$DATADIR/jsonexamples
 JSONCHECKER=$DATADIR/jsonchecker

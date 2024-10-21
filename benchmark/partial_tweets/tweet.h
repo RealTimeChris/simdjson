@@ -1,6 +1,6 @@
 #pragma once
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "twitter_user.h"
 
 namespace partial_tweets {
@@ -32,7 +32,7 @@ struct tweet {
   uint64_t retweet_count{};
   uint64_t favorite_count{};
   template<typename OtherStringType>
-  simdjson_inline bool operator==(const tweet<OtherStringType> &other) const {
+  simdjson2_inline bool operator==(const tweet<OtherStringType> &other) const {
     return created_at == other.created_at &&
            id == other.id &&
            result == other.result &&
@@ -42,11 +42,11 @@ struct tweet {
            favorite_count == other.favorite_count;
   }
   template<typename OtherStringType>
-  simdjson_inline bool operator!=(const tweet<OtherStringType> &other) const { return !(*this == other); }
+  simdjson2_inline bool operator!=(const tweet<OtherStringType> &other) const { return !(*this == other); }
 };
 
 template<typename StringType>
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const tweet<StringType> &t) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const tweet<StringType> &t) {
   o << "created_at: " << t.created_at << std::endl;
   o << "id: " << t.id << std::endl;
   o << "result: " << t.result << std::endl;

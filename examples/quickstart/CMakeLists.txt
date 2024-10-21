@@ -13,7 +13,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   include(add_quickstart_test.cmake)
 
   # DOM Quick Start
-  if (SIMDJSON_EXCEPTIONS)
+  if (SIMDJSON2_EXCEPTIONS)
     add_quickstart_test(quickstart   quickstart.cpp LABELS acceptance)
     add_quickstart_test(quickstart11 quickstart.cpp CXX_STANDARD c++11 LABELS acceptance)
     add_quickstart_test(quickstart14 quickstart.cpp CXX_STANDARD c++14)
@@ -26,7 +26,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   add_quickstart_test(quickstart2_noexceptions11 quickstart2_noexceptions.cpp NO_EXCEPTIONS CXX_STANDARD c++11)
 
   # On-Demand Quick Start
-  if (SIMDJSON_EXCEPTIONS)
+  if (SIMDJSON2_EXCEPTIONS)
     add_quickstart_test(quickstart_ondemand   quickstart_ondemand.cpp LABELS quickstart_ondemand acceptance)
     add_quickstart_test(quickstart_ondemand11 quickstart_ondemand.cpp CXX_STANDARD c++11 LABELS quickstart_ondemand acceptance)
     add_quickstart_test(quickstart_ondemand14 quickstart_ondemand.cpp CXX_STANDARD c++14 LABELS quickstart_ondemand)

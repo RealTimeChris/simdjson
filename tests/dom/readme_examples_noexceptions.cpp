@@ -1,11 +1,11 @@
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 using namespace std;
-using namespace simdjson;
+using namespace simdjson2;
 
-#ifdef SIMDJSON_CPLUSPLUS17
-SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
+#ifdef SIMDJSON2_CPLUSPLUS17
+SIMDJSON2_PUSH_DISABLE_ALL_WARNINGS
 void basics_error_1() {
   dom::parser parser;
   auto json = "1"_padded;
@@ -15,7 +15,7 @@ void basics_error_1() {
   if (error) { cerr << error << endl; exit(1); }
   // Use document here now that we've checked for the error
 }
-SIMDJSON_POP_DISABLE_WARNINGS
+SIMDJSON2_POP_DISABLE_WARNINGS
 #endif
 
 void basics_error_2() {
@@ -107,7 +107,7 @@ void basics_error_4() {
 
 
 
-#ifdef SIMDJSON_CPLUSPLUS17
+#ifdef SIMDJSON2_CPLUSPLUS17
 void basics_error_2_cpp17() {
   auto cars_json = R"( [
     { "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
@@ -155,8 +155,8 @@ void basics_error_2_cpp17() {
 }
 #endif
 
-// See https://github.com/miloyip/nativejson-benchmark/blob/master/src/tests/simdjsontest.cpp
-simdjson::dom::parser parser{};
+// See https://github.com/miloyip/nativejson-benchmark/blob/master/src/tests/simdjson2test.cpp
+simdjson2::dom::parser parser{};
 
 bool parse_double(const char *j, double &d) {
   auto error = parser.parse(j, std::strlen(j))

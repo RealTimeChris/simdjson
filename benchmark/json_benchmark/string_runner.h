@@ -1,17 +1,17 @@
 #pragma once
 
 #include "runner_base.h"
-#include "simdjson.h"
+#include "simdjson2.h"
 
 namespace json_benchmark {
 
 template<typename I>
 struct string_runner : public runner_base<I> {
-  const simdjson::padded_string &original_json;
-  simdjson::padded_string json;
-  string_runner(const simdjson::padded_string &_json) : original_json{_json}, json(original_json.data(), original_json.size()) {}
+  const simdjson2::padded_string &original_json;
+  simdjson2::padded_string json;
+  string_runner(const simdjson2::padded_string &_json) : original_json{_json}, json(original_json.data(), original_json.size()) {}
 
-  simdjson_warn_unused bool before_run(benchmark::State &state) {
+  simdjson2_warn_unused bool before_run(benchmark::State &state) {
     if (!runner_base<I>::after_run(state)) { return false; };
     // Copy the original JSON in case we did *in situ*
     std::memcpy(json.data(), original_json.data(), original_json.size());

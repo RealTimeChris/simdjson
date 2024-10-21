@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_YYJSON
+#ifdef SIMDJSON2_COMPETITION_YYJSON
 
 #include "find_tweet.h"
 
@@ -35,19 +35,19 @@ struct yyjson_base {
 };
 
 struct yyjson : yyjson_base {
-  bool run(simdjson::padded_string &json, uint64_t find_id, std::string_view &result) {
+  bool run(simdjson2::padded_string &json, uint64_t find_id, std::string_view &result) {
     return yyjson_base::run(yyjson_read(json.data(), json.size(), 0), find_id, result);
   }
 };
 BENCHMARK_TEMPLATE(find_tweet, yyjson)->UseManualTime();
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 struct yyjson_insitu : yyjson_base {
-  bool run(simdjson::padded_string &json, uint64_t find_id, std::string_view &result) {
+  bool run(simdjson2::padded_string &json, uint64_t find_id, std::string_view &result) {
     return yyjson_base::run(yyjson_read_opts(json.data(), json.size(), YYJSON_READ_INSITU, 0, 0), find_id, result);
   }
 };
 BENCHMARK_TEMPLATE(find_tweet, yyjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace find_tweet
 
-#endif // SIMDJSON_COMPETITION_YYJSON
+#endif // SIMDJSON2_COMPETITION_YYJSON

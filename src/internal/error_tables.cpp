@@ -1,13 +1,13 @@
-#ifndef SIMDJSON_SRC_ERROR_TABLES_CPP
-#define SIMDJSON_SRC_ERROR_TABLES_CPP
+#ifndef SIMDJSON2_SRC_ERROR_TABLES_CPP
+#define SIMDJSON2_SRC_ERROR_TABLES_CPP
 
-#include <simdjson/internal/jsoncharutils_tables.h>
-#include <simdjson/error-inl.h>
+#include <simdjson2/internal/jsoncharutils_tables.h>
+#include <simdjson2/error-inl.h>
 
-namespace simdjson {
+namespace simdjson2 {
 namespace internal {
 
-  SIMDJSON_DLLIMPORTEXPORT const error_code_info error_codes[] {
+  SIMDJSON2_DLLIMPORTEXPORT const error_code_info error_codes[] {
     { SUCCESS, "SUCCESS: No error" },
     { CAPACITY, "CAPACITY: This parser can't support a document that big" },
     { MEMALLOC, "MEMALLOC: Error allocating memory, we're most likely out of memory" },
@@ -24,7 +24,7 @@ namespace internal {
     { EMPTY, "EMPTY: no JSON found" },
     { UNESCAPED_CHARS, "UNESCAPED_CHARS: Within strings, some characters must be escaped, we found unescaped characters" },
     { UNCLOSED_STRING, "UNCLOSED_STRING: A string is opened, but never closed." },
-    { UNSUPPORTED_ARCHITECTURE, "UNSUPPORTED_ARCHITECTURE: simdjson does not have an implementation supported by this CPU architecture. Please report this error to the core team as it should never happen." },
+    { UNSUPPORTED_ARCHITECTURE, "UNSUPPORTED_ARCHITECTURE: simdjson2 does not have an implementation supported by this CPU architecture. Please report this error to the core team as it should never happen." },
     { INCORRECT_TYPE, "INCORRECT_TYPE: The JSON element does not have the requested type." },
     { NUMBER_OUT_OF_RANGE, "NUMBER_OUT_OF_RANGE: The JSON number is too large or too small to fit within the requested type." },
     { INDEX_OUT_OF_BOUNDS, "INDEX_OUT_OF_BOUNDS: Attempted to access an element of a JSON array that is beyond its length." },
@@ -32,10 +32,10 @@ namespace internal {
     { IO_ERROR, "IO_ERROR: Error reading the file." },
     { INVALID_JSON_POINTER, "INVALID_JSON_POINTER: Invalid JSON pointer syntax." },
     { INVALID_URI_FRAGMENT, "INVALID_URI_FRAGMENT: Invalid URI fragment syntax." },
-    { UNEXPECTED_ERROR, "UNEXPECTED_ERROR: Unexpected error, consider reporting this problem as you may have found a bug in simdjson" },
+    { UNEXPECTED_ERROR, "UNEXPECTED_ERROR: Unexpected error, consider reporting this problem as you may have found a bug in simdjson2" },
     { PARSER_IN_USE, "PARSER_IN_USE: Cannot parse a new document while a document is still in use." },
     { OUT_OF_ORDER_ITERATION, "OUT_OF_ORDER_ITERATION: Objects and arrays can only be iterated when they are first encountered." },
-    { INSUFFICIENT_PADDING, "INSUFFICIENT_PADDING: simdjson requires the input JSON string to have at least SIMDJSON_PADDING extra bytes allocated, beyond the string's length. Consider using the simdjson::padded_string class if needed." },
+    { INSUFFICIENT_PADDING, "INSUFFICIENT_PADDING: simdjson2 requires the input JSON string to have at least SIMDJSON2_PADDING extra bytes allocated, beyond the string's length. Consider using the simdjson2::padded_string class if needed." },
     { INCOMPLETE_ARRAY_OR_OBJECT, "INCOMPLETE_ARRAY_OR_OBJECT: JSON document ended early in the middle of an object or array." },
     { SCALAR_DOCUMENT_AS_VALUE, "SCALAR_DOCUMENT_AS_VALUE: A JSON document made of a scalar (number, Boolean, null or string) is treated as a value. Use get_bool(), get_double(), etc. on the document instead. "},
     { OUT_OF_BOUNDS, "OUT_OF_BOUNDS: Attempt to access location outside of document."},
@@ -43,6 +43,6 @@ namespace internal {
   }; // error_messages[]
 
 } // namespace internal
-} // namespace simdjson
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_ERROR_TABLES_CPP
+#endif // SIMDJSON2_SRC_ERROR_TABLES_CPP

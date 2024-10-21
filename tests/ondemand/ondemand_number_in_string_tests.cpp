@@ -1,8 +1,8 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 #include <string>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace number_in_string_tests {
     const padded_string CRYPTO_JSON = R"(

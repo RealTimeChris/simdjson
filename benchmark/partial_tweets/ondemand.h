@@ -1,12 +1,12 @@
 #pragma once
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 #include "partial_tweets.h"
 
 namespace partial_tweets {
 
-using namespace simdjson;
+using namespace simdjson2;
 
 
 class OnDemand {
@@ -17,27 +17,27 @@ public:
       displayed_implementation = true;
     }
   }
-  simdjson_inline bool Run(const padded_string &json);
-  simdjson_inline const std::vector<tweet> &Result() { return tweets; }
-  simdjson_inline size_t ItemCount() { return tweets.size(); }
+  simdjson2_inline bool Run(const padded_string &json);
+  simdjson2_inline const std::vector<tweet> &Result() { return tweets; }
+  simdjson2_inline size_t ItemCount() { return tweets.size(); }
 
 private:
   ondemand::parser parser{};
   std::vector<tweet> tweets{};
 
-  simdjson_inline uint64_t nullable_int(ondemand::value value) {
+  simdjson2_inline uint64_t nullable_int(ondemand::value value) {
     if (value.is_null()) { return 0; }
     return value;
   }
 
-  simdjson_inline twitter_user read_user(ondemand::object user) {
+  simdjson2_inline twitter_user read_user(ondemand::object user) {
     return { user.find_field("id"), user.find_field("screen_name") };
   }
 
   static inline bool displayed_implementation = false;
 };
 
-simdjson_inline bool OnDemand::Run(const padded_string &json) {
+simdjson2_inline bool OnDemand::Run(const padded_string &json) {
   tweets.clear();
 
   // Walk the document, parsing the tweets as we go
@@ -60,4 +60,4 @@ BENCHMARK_TEMPLATE(PartialTweets, OnDemand);
 
 } // namespace partial_tweets
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS

@@ -1,13 +1,13 @@
 
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 int main() {
     auto json = "{\"a\":1}"_padded;
     ondemand::parser parser;
-    auto f = [](ondemand::parser& p, simdjson::padded_string& jsons) -> ondemand::document {
+    auto f = [](ondemand::parser& p, simdjson2::padded_string& jsons) -> ondemand::document {
         ondemand::document doc;
         auto error = p.iterate(jsons).get(doc);
         if(error) { std::abort(); }

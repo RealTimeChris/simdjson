@@ -6,7 +6,7 @@
 #include <string>
 using namespace std::string_literals;
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_macros.h"
 
 // we define our own asserts to get around NDEBUG
@@ -20,10 +20,10 @@ using namespace std::string_literals;
   }
 #endif
 
-using namespace simdjson;
+using namespace simdjson2;
 
 bool demo() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "demo test" << std::endl;
   auto cars_json = R"( [
   { "make": "Toyota", "model": "Camry",  "year": 2018, "tire_pressure": [ 40.1, 39.9, 37.7, 40.4 ] },
@@ -39,7 +39,7 @@ bool demo() {
   std::vector<double> measured;
   for (dom::element car_element : cars) {
     dom::object car;
-    simdjson::error_code error;
+    simdjson2::error_code error;
     if ((error = car_element.get(car))) {
       std::cerr << error << std::endl;
       return false;
@@ -105,7 +105,7 @@ bool run_success_test(const padded_string &source, const char *json_path,
     std::cerr << "cannot access pointer: " << error << std::endl;
     return false;
   }
-  std::string str_answer = simdjson::minify(answer);
+  std::string str_answer = simdjson2::minify(answer);
   if (str_answer != expected_value) {
     std::cerr << "They differ!!!" << std::endl;
     std::cerr << "   found    '" << str_answer << "'" << std::endl;
@@ -294,7 +294,7 @@ bool json_path_invalidation() {
 }
 // for 0.5 version and following (standard compliant)
 bool modern_support() {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::cout << "modern test" << std::endl;
   auto example_json = R"({"key": "value", "array": [0, 1, 2]})"_padded;
   dom::parser parser;

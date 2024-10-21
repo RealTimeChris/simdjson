@@ -30,13 +30,13 @@
 #include <libgen.h>
 #endif
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 #include <functional>
 
 #include "benchmarker.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -97,9 +97,9 @@ struct option_struct {
         verbose = true;
         break;
       case 'a': {
-          auto impl = simdjson::get_available_implementations()[optarg];
+          auto impl = simdjson2::get_available_implementations()[optarg];
           if(impl && impl->supported_by_runtime_system()) {
-            simdjson::get_active_implementation() = impl;
+            simdjson2::get_active_implementation() = impl;
           } else {
             std::cerr << "implementation " << optarg << " not found or not supported " << std::endl;
           }
@@ -147,24 +147,24 @@ struct feature_benchmarker {
   benchmarker struct23_miss;
 
   feature_benchmarker(event_collector& collector) :
-    utf8               (SIMDJSON_BENCHMARK_DATA_DIR "generated/utf-8.json", collector),
-    utf8_miss          (SIMDJSON_BENCHMARK_DATA_DIR "generated/utf-8-miss.json", collector),
-    escape               (SIMDJSON_BENCHMARK_DATA_DIR "generated/escape.json", collector),
-    escape_miss          (SIMDJSON_BENCHMARK_DATA_DIR "generated/escape-miss.json", collector),
-    empty              (SIMDJSON_BENCHMARK_DATA_DIR "generated/0-structurals.json", collector),
-    empty_miss         (SIMDJSON_BENCHMARK_DATA_DIR "generated/0-structurals-miss.json", collector),
-    struct7           (SIMDJSON_BENCHMARK_DATA_DIR "generated/7-structurals.json", collector),
-    struct7_miss      (SIMDJSON_BENCHMARK_DATA_DIR "generated/7-structurals-miss.json", collector),
-    struct7_full       (SIMDJSON_BENCHMARK_DATA_DIR "generated/7-structurals-full.json", collector),
-    struct15     (SIMDJSON_BENCHMARK_DATA_DIR "generated/15-structurals.json", collector),
-    struct15_miss(SIMDJSON_BENCHMARK_DATA_DIR "generated/15-structurals-miss.json", collector),
-    struct23     (SIMDJSON_BENCHMARK_DATA_DIR "generated/23-structurals.json", collector),
-    struct23_miss(SIMDJSON_BENCHMARK_DATA_DIR "generated/23-structurals-miss.json", collector)
+    utf8               (SIMDJSON2_BENCHMARK_DATA_DIR "generated/utf-8.json", collector),
+    utf8_miss          (SIMDJSON2_BENCHMARK_DATA_DIR "generated/utf-8-miss.json", collector),
+    escape               (SIMDJSON2_BENCHMARK_DATA_DIR "generated/escape.json", collector),
+    escape_miss          (SIMDJSON2_BENCHMARK_DATA_DIR "generated/escape-miss.json", collector),
+    empty              (SIMDJSON2_BENCHMARK_DATA_DIR "generated/0-structurals.json", collector),
+    empty_miss         (SIMDJSON2_BENCHMARK_DATA_DIR "generated/0-structurals-miss.json", collector),
+    struct7           (SIMDJSON2_BENCHMARK_DATA_DIR "generated/7-structurals.json", collector),
+    struct7_miss      (SIMDJSON2_BENCHMARK_DATA_DIR "generated/7-structurals-miss.json", collector),
+    struct7_full       (SIMDJSON2_BENCHMARK_DATA_DIR "generated/7-structurals-full.json", collector),
+    struct15     (SIMDJSON2_BENCHMARK_DATA_DIR "generated/15-structurals.json", collector),
+    struct15_miss(SIMDJSON2_BENCHMARK_DATA_DIR "generated/15-structurals-miss.json", collector),
+    struct23     (SIMDJSON2_BENCHMARK_DATA_DIR "generated/23-structurals.json", collector),
+    struct23_miss(SIMDJSON2_BENCHMARK_DATA_DIR "generated/23-structurals-miss.json", collector)
   {
 
   }
 
-  simdjson_inline void run_iterations(size_t iterations, bool stage1_only=false) {
+  simdjson2_inline void run_iterations(size_t iterations, bool stage1_only=false) {
     struct7.run_iterations(iterations, stage1_only);
     struct7_miss.run_iterations(iterations, stage1_only);
     struct7_full.run_iterations(iterations, stage1_only);
@@ -204,7 +204,7 @@ struct feature_benchmarker {
   }
   // Rate of 1-7-structural misses per 8-structural flip
   double struct1_7_miss_rate(BenchmarkStage stage) const {
-#if SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     return 1;
 #else
     if (!has_events()) { return 1; }
@@ -221,7 +221,7 @@ struct feature_benchmarker {
   }
   // Rate of 8-15-structural misses per 8-structural flip
   double struct8_15_miss_rate(BenchmarkStage stage) const {
-#if SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     return 1;
 #else
     if (!has_events()) { return 1; }
@@ -239,7 +239,7 @@ struct feature_benchmarker {
   }
   // Rate of 16-structural misses per 16-structural flip
   double struct16_miss_rate(BenchmarkStage stage) const {
-#if SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     return 1;
 #else
     if (!has_events()) { return 1; }
@@ -258,7 +258,7 @@ struct feature_benchmarker {
   }
   // Rate of UTF-8 misses per UTF-8 flip
   double utf8_miss_rate(BenchmarkStage stage) const {
-#if SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     return 1;
 #else
     if (!has_events()) { return 1; }
@@ -275,7 +275,7 @@ struct feature_benchmarker {
   }
   // Rate of escape misses per escape flip
   double escape_miss_rate(BenchmarkStage stage) const {
-#if SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
     return 1;
 #else
     if (!has_events()) { return 1; }
@@ -378,7 +378,7 @@ struct feature_benchmarker {
   }
 };
 
-#if SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
 void print_file_effectiveness(BenchmarkStage stage, const char* filename, const benchmarker& results, const feature_benchmarker& features) {
   double actual = results[stage].best.elapsed_ns() / double(results.stats->blocks);
   double calc = features.calc_expected(stage, results);
@@ -433,9 +433,9 @@ int main(int argc, char *argv[]) {
 
   // Set up benchmarkers by reading all files
   feature_benchmarker features(collector);
-  benchmarker gsoc_2018(SIMDJSON_BENCHMARK_DATA_DIR "gsoc-2018.json", collector);
-  benchmarker twitter(SIMDJSON_BENCHMARK_DATA_DIR "twitter.json", collector);
-  benchmarker random(SIMDJSON_BENCHMARK_DATA_DIR "random.json", collector);
+  benchmarker gsoc_2018(SIMDJSON2_BENCHMARK_DATA_DIR "gsoc-2018.json", collector);
+  benchmarker twitter(SIMDJSON2_BENCHMARK_DATA_DIR "twitter.json", collector);
+  benchmarker random(SIMDJSON2_BENCHMARK_DATA_DIR "random.json", collector);
 
   // Run the benchmarks
   progress_bar progress(options.iterations, 100);

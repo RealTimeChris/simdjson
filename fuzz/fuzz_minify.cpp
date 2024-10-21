@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "FuzzUtils.h"
 #include <cstddef>
 #include <cstdint>
@@ -13,12 +13,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     auto end = begin + Size;
 
     std::string str(begin, end);
-    simdjson::dom::parser parser;
-    simdjson::dom::element elem;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::element elem;
     auto error = parser.parse(str).get(elem);
     if (error) { return 0; }
 
-    std::string minified=simdjson::minify(elem);
+    std::string minified=simdjson2::minify(elem);
     (void)minified;
     return 0;
 }

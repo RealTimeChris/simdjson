@@ -1,5 +1,5 @@
-# All remaining tests link with simdjson proper
-link_libraries(simdjson)
+# All remaining tests link with simdjson2 proper
+link_libraries(simdjson2)
 include_directories(..)
 add_subdirectory(compilation_failure_tests)
 add_cpp_test(ondemand_car_tag_invoke_deserialization LABELS ondemand acceptance per_implementation)
@@ -33,7 +33,7 @@ add_cpp_test(ondemand_iterate_many_csv               LABELS ondemand acceptance 
 add_cpp_test(ondemand_custom_types_tests             LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_custom_types_document_tests    LABELS ondemand acceptance per_implementation)
 add_cpp_test(ondemand_stl_types_tests                LABELS ondemand acceptance per_implementation)
-if(NOT SIMDJSON_SANITIZE)
+if(NOT SIMDJSON2_SANITIZE)
   add_cpp_test(ondemand_cacheline              LABELS ondemand acceptance per_implementation)
 endif()
 
@@ -41,10 +41,10 @@ if(HAVE_POSIX_FORK AND HAVE_POSIX_WAIT) # assert tests use fork and wait, which 
   add_cpp_test(ondemand_assert_out_of_order_values LABELS assert per_implementation explicitonly ondemand)
 endif()
 
-# Copy the simdjson dll into the tests directory
+# Copy the simdjson2 dll into the tests directory
 if(MSVC AND BUILD_SHARED_LIBS)
   add_custom_command(TARGET ondemand_parse_api_tests POST_BUILD        # Adds a post-build event
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake -E copy_if_different..."
-        "$<TARGET_FILE:simdjson>"      # <--this is in-file
+        "$<TARGET_FILE:simdjson2>"      # <--this is in-file
         "$<TARGET_FILE_DIR:ondemand_parse_api_tests>")                 # <--this is out-file path
 endif(MSVC AND BUILD_SHARED_LIBS)

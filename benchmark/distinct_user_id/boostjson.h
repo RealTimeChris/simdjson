@@ -1,13 +1,13 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_BOOSTJSON
+#ifdef SIMDJSON2_COMPETITION_BOOSTJSON
 
 #include "distinct_user_id.h"
 
 namespace distinct_user_id {
 
 struct boostjson {
-  bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
 
     auto root = boost::json::parse(json);
     for (const auto &tweet : root.at("statuses").as_array()) {
@@ -26,4 +26,4 @@ BENCHMARK_TEMPLATE(distinct_user_id, boostjson)->UseManualTime();
 
 } // namespace distinct_user_id
 
-#endif // SIMDJSON_COMPETITION_BOOSTJSON
+#endif // SIMDJSON2_COMPETITION_BOOSTJSON

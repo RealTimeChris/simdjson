@@ -1,14 +1,14 @@
-#ifndef SIMDJSON_SRC_HASWELL_CPP
-#define SIMDJSON_SRC_HASWELL_CPP
+#ifndef SIMDJSON2_SRC_HASWELL_CPP
+#define SIMDJSON2_SRC_HASWELL_CPP
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
 #include <base.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-#include <simdjson/haswell.h>
-#include <simdjson/haswell/implementation.h>
+#include <simdjson2/haswell.h>
+#include <simdjson2/haswell/implementation.h>
 
-#include <simdjson/haswell/begin.h>
+#include <simdjson2/haswell/begin.h>
 #include <generic/amalgamated.h>
 #include <generic/stage1/amalgamated.h>
 #include <generic/stage2/amalgamated.h>
@@ -17,10 +17,10 @@
 // Stage 1
 //
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 
-simdjson_warn_unused error_code implementation::create_dom_parser_implementation(
+simdjson2_warn_unused error_code implementation::create_dom_parser_implementation(
   size_t capacity,
   size_t max_depth,
   std::unique_ptr<internal::dom_parser_implementation>& dst
@@ -40,8 +40,8 @@ using namespace simd;
 
 // This identifies structural characters (comma, colon, braces, brackets),
 // and ASCII white-space ('\r','\n','\t',' ').
-simdjson_inline json_character_block
-json_character_block::classify(const simd::simd8x64<uint8_t>(& in)[4]) {
+simdjson2_really_inline json_character_block
+json_character_block::classify(const simd::simd8<uint8_t> (&in)[8]) {
   // These lookups rely on the fact that anything < 127 will match the lower 4 bits, which is why
   // we can't use the generic lookup_16.
   const auto whitespace_table = simd8<uint8_t>::repeat_16(' ', 100, 100, 100, 17, 100, 113, 2, 100, '\t', '\n', 112, 100, '\r', 100, 100);
@@ -77,30 +77,28 @@ json_character_block::classify(const simd::simd8x64<uint8_t>(& in)[4]) {
   // hope that useless computations will be omitted. This is namely case when
   // minifying (we only need whitespace).
 
-  alignas(32) uint64_t whitespace_pre[4];
-  for (size_t x = 0; x < 4; ++x) {
-    whitespace_pre[x] =
-        in[x].eq({_mm256_shuffle_epi8(whitespace_table, in[x].chunks[0]),
-                  _mm256_shuffle_epi8(whitespace_table, in[x].chunks[1])});
+  alignas(32) uint32_t whitespace_pre[8];
+  for (size_t x = 0; x < 8; ++x) {
+    whitespace_pre[x] = _mm256_movemask_epi8(
+        in[x].eq({_mm256_shuffle_epi8(whitespace_table, in[x])}));
   }
   const simd8<uint8_t> whitespace{simd::simd8<uint8_t>::load(whitespace_pre)};
 
-  alignas(32) uint64_t op_pre[4];
-  for (size_t x = 0; x < 4; ++x) {
-    const simd8x64<uint8_t> curlified{in[x].chunks[0] | 0x20,
-                                      in[x].chunks[1] | 0x20};
-    op_pre[x] = curlified.eq({_mm256_shuffle_epi8(op_table, in[x].chunks[0]),
-                              _mm256_shuffle_epi8(op_table, in[x].chunks[1])});
+  alignas(32) uint32_t op_pre[8];
+  for (size_t x = 0; x < 8; ++x) {
+    const simd8<uint8_t> curlified{in[x] | 0x20};
+    op_pre[x] = _mm256_movemask_epi8(
+        curlified.eq({_mm256_shuffle_epi8(op_table, in[x])}));
   }
   const simd8<uint8_t> op{simd::simd8<uint8_t>::load(op_pre)};
   return { whitespace, op };
 }
 
-simdjson_inline bool is_ascii(const simd8x64<uint8_t>& input) {
+simdjson2_really_inline bool is_ascii(const simd8x64<uint8_t>& input) {
   return input.reduce_or().is_ascii();
 }
 
-simdjson_unused simdjson_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
+simdjson2_unused simdjson2_really_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
   simd8<uint8_t> is_second_byte = prev1.saturating_sub(0xc0u-1); // Only 11______ will be > 0
   simd8<uint8_t> is_third_byte  = prev2.saturating_sub(0xe0u-1); // Only 111_____ will be > 0
   simd8<uint8_t> is_fourth_byte = prev3.saturating_sub(0xf0u-1); // Only 1111____ will be > 0
@@ -108,15 +106,15 @@ simdjson_unused simdjson_inline simd8<bool> must_be_continuation(const simd8<uin
   return simd8<int8_t>(is_second_byte | is_third_byte | is_fourth_byte) > int8_t(0);
 }
 
-simdjson_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
+simdjson2_really_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
   simd8<uint8_t> is_third_byte  = prev2.saturating_sub(0xe0u-0x80); // Only 111_____ will be >= 0x80
   simd8<uint8_t> is_fourth_byte = prev3.saturating_sub(0xf0u-0x80); // Only 1111____ will be >= 0x80
   return is_third_byte | is_fourth_byte;
 }
 
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
 //
 // Stage 2
@@ -125,48 +123,49 @@ simdjson_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> pre
 //
 // Implementation-specific overrides
 //
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 
-simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
+simdjson2_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
   return haswell::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return haswell::stage1::json_structural_indexer::index<256>(_buf, _len, *this, streaming);
+  haswell::stage1::json_structural_indexer indexer{};
+  return indexer.index<256>(_buf, _len, *this, streaming);
 }
 
-simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
+simdjson2_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
   return haswell::stage1::generic_validate_utf8(buf,len);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage2(dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage2(dom::document &_doc) noexcept {
   return stage2::tape_builder::parse_document<false>(*this, _doc);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage2_next(dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage2_next(dom::document &_doc) noexcept {
   return stage2::tape_builder::parse_document<true>(*this, _doc);
 }
 
-simdjson_warn_unused uint8_t *dom_parser_implementation::parse_string(const uint8_t *src, uint8_t *dst, bool replacement_char) const noexcept {
+simdjson2_warn_unused uint8_t *dom_parser_implementation::parse_string(const uint8_t *src, uint8_t *dst, bool replacement_char) const noexcept {
   return haswell::stringparsing::parse_string(src, dst, replacement_char);
 }
 
-simdjson_warn_unused uint8_t *dom_parser_implementation::parse_wobbly_string(const uint8_t *src, uint8_t *dst) const noexcept {
+simdjson2_warn_unused uint8_t *dom_parser_implementation::parse_wobbly_string(const uint8_t *src, uint8_t *dst) const noexcept {
   return haswell::stringparsing::parse_wobbly_string(src, dst);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::parse(const uint8_t *_buf, size_t _len, dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::parse(const uint8_t *_buf, size_t _len, dom::document &_doc) noexcept {
   auto error = stage1(_buf, _len, stage1_mode::regular);
   if (error) { return error; }
   return stage2(_doc);
 }
 
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#include <simdjson/haswell/end.h>
+#include <simdjson2/haswell/end.h>
 
-#endif // SIMDJSON_SRC_HASWELL_CPP
+#endif // SIMDJSON2_SRC_HASWELL_CPP

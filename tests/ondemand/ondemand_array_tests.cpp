@@ -1,11 +1,11 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace array_tests {
   using namespace std;
-  using simdjson::ondemand::json_type;
+  using simdjson2::ondemand::json_type;
 
   bool document_is_array_treated_as_object() {
     TEST_START();
@@ -89,19 +89,19 @@ namespace array_tests {
       for (auto value : array) {
         ondemand::object current_object;
         ASSERT_SUCCESS( value.get_object().get(current_object) );
-        simdjson::ondemand::array rotation;
+        simdjson2::ondemand::array rotation;
         if(expected_value[i][0]) {
           ASSERT_SUCCESS( current_object["rotation"].get(rotation) );
         } else {
           ASSERT_ERROR( current_object["rotation"].get(rotation), NO_SUCH_FIELD );
         }
-        simdjson::ondemand::array scale;
+        simdjson2::ondemand::array scale;
         if(expected_value[i][1]) {
           ASSERT_SUCCESS( current_object["scale"].get(scale) );
         } else {
           ASSERT_ERROR( current_object["scale"].get(scale), NO_SUCH_FIELD );
         }
-        simdjson::ondemand::array translation;
+        simdjson2::ondemand::array translation;
         if(expected_value[i][2]) {
           ASSERT_SUCCESS( current_object["translation"].get(translation) );
         } else {
@@ -114,13 +114,13 @@ namespace array_tests {
     }));
     SUBTEST("ondemand::issue1588::originalcode", test_ondemand_doc(json, [&](auto doc_result) {
       int count_nodes = 0;
-      simdjson::ondemand::array doc_nodes;
+      simdjson2::ondemand::array doc_nodes;
       auto error = doc_result["nodes"].get(doc_nodes);
       ASSERT_SUCCESS( error );
       for (auto node_iterator : doc_nodes) {
         ondemand::object node_obj;
         ASSERT_SUCCESS( node_iterator.get_object().get(node_obj) );
-        simdjson::ondemand::array rotation;
+        simdjson2::ondemand::array rotation;
         std::cout << "checking rotation" << std::endl;
         if(expected_value[count_nodes][0]) {
           ASSERT_SUCCESS( node_obj["rotation"].get(rotation) );
@@ -128,7 +128,7 @@ namespace array_tests {
           ASSERT_ERROR( node_obj["rotation"].get(rotation), NO_SUCH_FIELD );
         }
 
-        simdjson::ondemand::array scale;
+        simdjson2::ondemand::array scale;
         std::cout << "checking scale" << std::endl;
         if(expected_value[count_nodes][1]) {
           ASSERT_SUCCESS( node_obj["scale"].get(scale) );
@@ -136,7 +136,7 @@ namespace array_tests {
           ASSERT_ERROR( node_obj["scale"].get(scale), NO_SUCH_FIELD );
         }
 
-        simdjson::ondemand::array translation;
+        simdjson2::ondemand::array translation;
         std::cout << "checking translation" << std::endl;
         if (!error) { std::cout << "translation!\n"; }
          if(expected_value[count_nodes][2]) {
@@ -186,13 +186,13 @@ namespace array_tests {
     ASSERT_SUCCESS(firstmyarray.count_elements().get(count));
     ASSERT_EQUAL(count, 0);
     size_t new_count{0};
-    for(simdjson_unused auto elem: firstmyarray) { new_count++; }
+    for(simdjson2_unused auto elem: firstmyarray) { new_count++; }
     ASSERT_EQUAL(new_count, 0);
     ASSERT_SUCCESS(doc.find_field("test").get_array().get(secondmyarray));
     ASSERT_SUCCESS(secondmyarray.count_elements().get(count));
     ASSERT_EQUAL(count, 2);
     new_count = 0;
-    for(simdjson_unused auto elem: secondmyarray) { new_count++; }
+    for(simdjson2_unused auto elem: secondmyarray) { new_count++; }
     ASSERT_EQUAL(count, new_count);
     TEST_SUCCEED();
   }
@@ -330,7 +330,7 @@ namespace array_tests {
     TEST_START();
     padded_string bad_jsons[2] = {R"( [1, 10 1000] )"_padded, R"( [1.23, 2.34 )"_padded};
     std::string names[2] = {"missing_comma", "missing_bracket"};
-    simdjson::error_code errors[2] = {TAPE_ERROR, INCOMPLETE_ARRAY_OR_OBJECT};
+    simdjson2::error_code errors[2] = {TAPE_ERROR, INCOMPLETE_ARRAY_OR_OBJECT};
     size_t count{0};
 
     for (auto name : names) {
@@ -415,11 +415,11 @@ namespace array_tests {
       }
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::array>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::array> array = doc_result.get_array();
+    SUBTEST("simdjson2_result<ondemand::array>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::array> array = doc_result.get_array();
       ASSERT_RESULT( doc_result.type(), json_type::array );
       size_t i=0;
-      for (simdjson_unused auto value : array) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
+      for (simdjson2_unused auto value : array) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
       ASSERT_EQUAL(i*sizeof(uint64_t), sizeof(expected_value));
       return true;
     }));
@@ -429,14 +429,14 @@ namespace array_tests {
       ASSERT_SUCCESS( std::move(doc_result).get(doc) );
       ASSERT_RESULT( doc.type(), json_type::array );
       size_t i=0;
-      for (simdjson_unused auto value : doc) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
+      for (simdjson2_unused auto value : doc) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
       ASSERT_EQUAL(i*sizeof(uint64_t), sizeof(expected_value));
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       size_t i=0;
       ASSERT_RESULT( doc_result.type(), json_type::array );
-      for (simdjson_unused auto value : doc_result) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
+      for (simdjson2_unused auto value : doc_result) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
       ASSERT_EQUAL(i*sizeof(uint64_t), sizeof(expected_value));
       return true;
     }));
@@ -450,16 +450,16 @@ namespace array_tests {
     ASSERT_SUCCESS(parser.iterate(json).get(doc));
     ondemand::array arr;
     ASSERT_SUCCESS(doc.get_array().get(arr));
-    for(simdjson_unused auto i : arr) {
+    for(simdjson2_unused auto i : arr) {
       TEST_FAIL("should be empty?");
     }
     arr.reset();
-    for(simdjson_unused auto i : arr) {
+    for(simdjson2_unused auto i : arr) {
       TEST_FAIL("should be empty?");
     }
     TEST_SUCCEED();
   }
-  bool count_empty(simdjson::ondemand::array arr) {
+  bool count_empty(simdjson2::ondemand::array arr) {
     size_t count{};
     ASSERT_SUCCESS(arr.count_elements().get(count));
     ASSERT_EQUAL(count, 0);
@@ -486,10 +486,10 @@ namespace array_tests {
     ondemand::parser parser;
     ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(json).get(doc));
-    simdjson::ondemand::array data;
+    simdjson2::ondemand::array data;
     ASSERT_SUCCESS(doc["result"]["data"].get_array().get(data));
     for (auto d : data) {
-      simdjson::ondemand::array arr;
+      simdjson2::ondemand::array arr;
       ASSERT_SUCCESS(d.get_array().get(arr));
       size_t count{};
       ASSERT_SUCCESS(arr.count_elements().get(count));
@@ -498,11 +498,11 @@ namespace array_tests {
     TEST_SUCCEED();
   }
 
-  bool value_to_array(simdjson::ondemand::value val) {
+  bool value_to_array(simdjson2::ondemand::value val) {
     ondemand::json_type t;
     ASSERT_SUCCESS(val.type().get(t));
     ASSERT_EQUAL(t, ondemand::json_type::array);
-    simdjson::ondemand::array arr;
+    simdjson2::ondemand::array arr;
     ASSERT_SUCCESS(val.get_array().get(arr));
     if(count_empty(arr) != true) { return false; }
     return true;
@@ -518,11 +518,11 @@ namespace array_tests {
     if(!value_to_array(val)) { return false; }
     TEST_SUCCEED();
   }
-#if SIMDJSON_EXCEPTIONS
-  bool value_to_array_except(simdjson::ondemand::value val) {
+#if SIMDJSON2_EXCEPTIONS
+  bool value_to_array_except(simdjson2::ondemand::value val) {
     ondemand::json_type t = val.type();
     ASSERT_EQUAL(t, ondemand::json_type::array);
-    if(count_empty(simdjson::ondemand::array(val)) != true) { return false; }
+    if(count_empty(simdjson2::ondemand::array(val)) != true) { return false; }
     return true;
   }
   bool empty_rewind_convoluted_with_exceptions() {
@@ -544,7 +544,7 @@ namespace array_tests {
 
     SUBTEST("ondemand::array", test_ondemand_doc(json, [&](auto doc_result) {
       bool found = false;
-      for (simdjson_result<ondemand::value> array_result : doc_result) {
+      for (simdjson2_result<ondemand::value> array_result : doc_result) {
         ASSERT_TRUE(!found); found = true;
 
         ondemand::array array;
@@ -564,9 +564,9 @@ namespace array_tests {
       return true;
     }));
 
-    SUBTEST("simdjson_result<ondemand::array>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::array>", test_ondemand_doc(json, [&](auto doc_result) {
       bool found = false;
-      for (simdjson_result<ondemand::value> array_result : doc_result) {
+      for (simdjson2_result<ondemand::value> array_result : doc_result) {
         ASSERT_TRUE(!found); found = true;
 
         ondemand::array array;
@@ -574,7 +574,7 @@ namespace array_tests {
         ASSERT_SUCCESS( array_result.get(array) );
 
         size_t i=0;
-        for (simdjson_unused auto value : array) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
+        for (simdjson2_unused auto value : array) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
         ASSERT_EQUAL(i*sizeof(uint64_t), sizeof(expected_value));
       }
       ASSERT_TRUE(found);
@@ -583,27 +583,27 @@ namespace array_tests {
 
     SUBTEST("ondemand::value", test_ondemand_doc(json, [&](auto doc_result) {
       bool found = false;
-      for (simdjson_result<ondemand::value> array_result : doc_result) {
+      for (simdjson2_result<ondemand::value> array_result : doc_result) {
         ASSERT_TRUE(!found); found = true;
 
         ondemand::value array;
         ASSERT_SUCCESS( std::move(array_result).get(array) );
         ASSERT_RESULT( array.type(), json_type::array );
         size_t i=0;
-        for (simdjson_unused auto value : array) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
+        for (simdjson2_unused auto value : array) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
         ASSERT_EQUAL(i*sizeof(uint64_t), sizeof(expected_value));
       }
       ASSERT_TRUE(found);
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
       bool found = false;
-      for (simdjson_result<ondemand::value> array_result : doc_result) {
+      for (simdjson2_result<ondemand::value> array_result : doc_result) {
         ASSERT_TRUE(!found); found = true;
 
         size_t i=0;
         ASSERT_RESULT( array_result.type(), json_type::array );
-        for (simdjson_unused auto value : array_result) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
+        for (simdjson2_unused auto value : array_result) { int64_t actual; ASSERT_SUCCESS( value.get(actual) ); ASSERT_EQUAL(actual, expected_value[i]); i++; }
         ASSERT_EQUAL(i*sizeof(uint64_t), sizeof(expected_value));
       }
       ASSERT_TRUE(found);
@@ -629,7 +629,7 @@ namespace array_tests {
         10
       ]
     )"_padded;
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       size_t i = 0;
       for (auto value : doc_result) {
         ASSERT_SUCCESS(value);
@@ -756,22 +756,22 @@ namespace array_tests {
     SUBTEST("ondemand::array", test_ondemand_doc(json, [&](auto doc_result) {
       ondemand::array array;
       ASSERT_SUCCESS( doc_result.get(array) );
-      for (simdjson_unused auto value : array) { TEST_FAIL("Unexpected value"); }
+      for (simdjson2_unused auto value : array) { TEST_FAIL("Unexpected value"); }
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::array>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::array> array_result = doc_result.get_array();
-      for (simdjson_unused auto value : array_result) { TEST_FAIL("Unexpected value"); }
+    SUBTEST("simdjson2_result<ondemand::array>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::array> array_result = doc_result.get_array();
+      for (simdjson2_unused auto value : array_result) { TEST_FAIL("Unexpected value"); }
       return true;
     }));
     SUBTEST("ondemand::document", test_ondemand_doc(json, [&](auto doc_result) {
       ondemand::document doc;
       ASSERT_SUCCESS( std::move(doc_result).get(doc) );
-      for (simdjson_unused auto value : doc) { TEST_FAIL("Unexpected value"); }
+      for (simdjson2_unused auto value : doc) { TEST_FAIL("Unexpected value"); }
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
-      for (simdjson_unused auto value : doc_result) { TEST_FAIL("Unexpected value"); }
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+      for (simdjson2_unused auto value : doc_result) { TEST_FAIL("Unexpected value"); }
       return true;
     }));
     SUBTEST("ondemand::array-document-rewind", test_ondemand_doc(json, [&](auto doc_result) {
@@ -809,7 +809,7 @@ namespace array_tests {
     TEST_SUCCEED();
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   bool iterate_array_exception() {
     TEST_START();
@@ -830,7 +830,7 @@ namespace array_tests {
     auto json = R"({})"_padded;
 
     ASSERT_TRUE(test_ondemand_doc(json, [&](auto doc_result) {
-      for (simdjson_unused ondemand::field field : doc_result.get_object()) {
+      for (simdjson2_unused ondemand::field field : doc_result.get_object()) {
         TEST_FAIL("Unexpected field");
       }
       return true;
@@ -844,14 +844,14 @@ namespace array_tests {
     auto json = "[]"_padded;
 
     ASSERT_TRUE(test_ondemand_doc(json, [&](auto doc_result) {
-      for (simdjson_unused ondemand::value value : doc_result) { TEST_FAIL("Unexpected value"); }
+      for (simdjson2_unused ondemand::value value : doc_result) { TEST_FAIL("Unexpected value"); }
       return true;
     }));
 
     TEST_SUCCEED();
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool run() {
     return
@@ -873,10 +873,10 @@ namespace array_tests {
            iterate_document_array() &&
            iterate_empty_array() &&
            iterate_array_partial_children() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            empty_rewind_convoluted_with_exceptions() &&
            iterate_array_exception() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            true;
   }
 

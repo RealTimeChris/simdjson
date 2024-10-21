@@ -1,10 +1,10 @@
 #include <set>
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 // bogus functions for compilation tests
 void process1(int64_t ) {}
@@ -75,7 +75,7 @@ void compilation_test_4() {
   (void) x4;
   (void) x;
 }
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
 int main(void) {
   return 0;

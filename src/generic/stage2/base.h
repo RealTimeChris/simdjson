@@ -1,12 +1,12 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE2_BASE_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE2_BASE_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE2_BASE_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE2_BASE_H
 #include <generic/base.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage2 {
 
@@ -17,7 +17,7 @@ struct tape_writer;
 
 } // namespace stage2
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE2_BASE_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE2_BASE_H

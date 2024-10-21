@@ -1,17 +1,17 @@
 #pragma once
 
-#if SIMDJSON_COMPETITION_BOOSTJSON
+#if SIMDJSON2_COMPETITION_BOOSTJSON
 
 #include "top_tweet.h"
 
 namespace top_tweet {
 
-using namespace simdjson;
+using namespace simdjson2;
 
 struct boostjson {
   using StringType=std::string;
 
-  bool run(simdjson::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
+  bool run(simdjson2::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
     result.retweet_count = -1;
     boost::json::value top_tweet{};
 
@@ -34,4 +34,4 @@ BENCHMARK_TEMPLATE(top_tweet, boostjson)->UseManualTime();
 
 } // namespace top_tweet
 
-#endif // SIMDJSON_COMPETITION_BOOSTJSON
+#endif // SIMDJSON2_COMPETITION_BOOSTJSON

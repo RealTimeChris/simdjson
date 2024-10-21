@@ -1,10 +1,10 @@
-#include "simdjson.h"
-#include "simdjson.cpp"
+#include "simdjson2.h"
+#include "simdjson2.cpp"
 
 bool error_messages_in_correct_order() {
   std::cout << "Running " << __func__ << std::endl;
-  using namespace simdjson;
-  using namespace simdjson::internal;
+  using namespace simdjson2;
+  using namespace simdjson2::internal;
   using namespace std;
   if ((sizeof(error_codes)/sizeof(error_code_info)) != NUM_ERROR_CODES) {
     cerr << "error_codes does not have all codes in error_code enum (or too many)" << endl;

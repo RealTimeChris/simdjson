@@ -1,6 +1,6 @@
 #pragma once
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <vector>
 #include <cstdlib>
 
@@ -14,10 +14,10 @@
  * should always be there for us!)
  * @return
  */
-std::vector<const simdjson::implementation*>
+std::vector<const simdjson2::implementation*>
 get_runtime_supported_implementations() {
-    std::vector<const simdjson::implementation*> ret;
-    for(auto& e: simdjson::get_available_implementations()) {
+    std::vector<const simdjson2::implementation*> ret;
+    for(auto& e: simdjson2::get_available_implementations()) {
         if(e->supported_by_runtime_system()) {
             ret.emplace_back(e);
         }

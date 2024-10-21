@@ -1,7 +1,7 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE2_DEPENDENCIES_H
-#define SIMDJSON_SRC_GENERIC_STAGE2_DEPENDENCIES_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE2_DEPENDENCIES_H
+#define SIMDJSON2_SRC_GENERIC_STAGE2_DEPENDENCIES_H
 
-#include <simdjson/dom/document.h>
-#include <simdjson/internal/tape_type.h>
+#include <simdjson2/dom/document.h>
+#include <simdjson2/internal/tape_type.h>
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE2_DEPENDENCIES_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE2_DEPENDENCIES_H

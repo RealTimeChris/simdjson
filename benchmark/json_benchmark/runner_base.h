@@ -12,18 +12,18 @@ namespace json_benchmark {
 template<typename I>
 struct runner_base {
   /** Run once, before all iterations. */
-  simdjson_warn_unused bool setup(benchmark::State &) { return true; }
+  simdjson2_warn_unused bool setup(benchmark::State &) { return true; }
 
   /** Run on each iteration. This is what gets benchmarked. */
-  simdjson_warn_unused bool run(benchmark::State &state) {
+  simdjson2_warn_unused bool run(benchmark::State &state) {
     return implementation.run(state);
   }
 
   /** Called before each iteration, to clear / set up state. */
-  simdjson_warn_unused bool before_run(benchmark::State &state) { return true; }
+  simdjson2_warn_unused bool before_run(benchmark::State &state) { return true; }
 
   /** Called after each iteration, to tear down / massage state. */
-  simdjson_warn_unused bool after_run(benchmark::State &) { return true; }
+  simdjson2_warn_unused bool after_run(benchmark::State &) { return true; }
 
   /** Get the total number of bytes processed in each iteration. Used for metrics like bytes/second. */
   size_t bytes_per_iteration();

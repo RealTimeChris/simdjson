@@ -16,7 +16,7 @@ endfunction(add_dual_compile_test)
 
 add_dual_compile_test(example_compiletest)
 # These don't compile with exceptions off
-if (SIMDJSON_EXCEPTIONS)
+if (SIMDJSON2_EXCEPTIONS)
   add_dual_compile_test(bad_array_count)
   add_dual_compile_test(dangling_parser_load)
   add_dual_compile_test(dangling_parser_parse_uint8)

@@ -1,7 +1,7 @@
 
 
 #pragma once
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "json2msgpack.h"
 
@@ -112,7 +112,7 @@ struct rapidjson_base {
 
   rapidjson2msgpack<parseflag> parser{};
 
-  bool run(simdjson::padded_string &json, char *buffer,
+  bool run(simdjson2::padded_string &json, char *buffer,
            std::string_view &result) {
     result =
         parser.to_msgpack(json.data(), reinterpret_cast<uint8_t *>(buffer));
@@ -126,17 +126,17 @@ using rapidjson = rapidjson_base<kParseValidateEncodingFlag|kParseFullPrecisionF
 
 BENCHMARK_TEMPLATE(json2msgpack, rapidjson)->UseManualTime();
 
-#if SIMDJSON_COMPETITION_ONDEMAND_APPROX
+#if SIMDJSON2_COMPETITION_ONDEMAND_APPROX
 using rapidjson_approx = rapidjson_base<kParseValidateEncodingFlag>;
 
 BENCHMARK_TEMPLATE(json2msgpack, rapidjson_approx)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_APPROX
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_APPROX
 
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 using rapidjson_insitu = rapidjson_base<kParseValidateEncodingFlag|kParseInsituFlag>;
 
 BENCHMARK_TEMPLATE(json2msgpack, rapidjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace json2msgpack
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

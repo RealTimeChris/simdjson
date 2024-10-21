@@ -1,14 +1,14 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE1_JSON_SCANNER_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE1_JSON_SCANNER_H
 #include <bitset>
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE1_JSON_SCANNER_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE1_JSON_SCANNER_H
 #include <generic/stage1/base.h>
 #include <generic/json_character_block.h>
 #include <generic/stage1/json_string_scanner.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage1 {
 
@@ -25,43 +25,43 @@ namespace stage1 {
  *
  * To identify the scalar pseudo-structural characters, we must look at what comes
  * before them: it must be a space, a quote or a structural characters.
- * Starting with simdjson v0.3, we identify them by
+ * Starting with simdjson2 v0.3, we identify them by
  * negation: we identify everything that is followed by a non-quote scalar,
  * and we negate that. Whatever remains must be a 'scalar pseudo-structural character'.
  */
 struct json_block {
 public:
   // We spell out the constructors in the hope of resolving inlining issues with Visual Studio 2017
-  simdjson_inline
+  simdjson2_inline
   json_block(json_string_block &&string, json_character_block characters,
-             simd::simd8<uint8_t> follows_potential_nonquote_scalar)
+             simd::simd8<uint8_t>& follows_potential_nonquote_scalar)
       :
   _string(std::move(string)), _characters(characters), _follows_potential_nonquote_scalar(follows_potential_nonquote_scalar) {}
-  simdjson_inline
+  simdjson2_inline
   json_block(json_string_block string, json_character_block characters,
-             simd::simd8<uint8_t> follows_potential_nonquote_scalar)
+             simd::simd8<uint8_t>& follows_potential_nonquote_scalar)
       :
   _string(string), _characters(characters), _follows_potential_nonquote_scalar(follows_potential_nonquote_scalar) {}
 
   /**
    * The start of structurals.
-   * In simdjson prior to v0.3, these were called the pseudo-structural characters.
+   * In simdjson2 prior to v0.3, these were called the pseudo-structural characters.
    **/
-  simdjson_inline simd::simd8<uint8_t> structural_start() const noexcept {
-    return potential_structural_start() & ~_string.string_tail();
+  simdjson2_really_inline simd::simd8<uint8_t> structural_start() const noexcept {
+    return potential_structural_start().bit_andnot(_string.string_tail());
   }
   /** All JSON whitespace (i.e. not in a string) */
-  simdjson_inline simd::simd8<uint8_t> whitespace() const noexcept { return non_quote_outside_string(_characters.whitespace()); }
+  simdjson2_really_inline simd::simd8<uint8_t> whitespace() const noexcept { return non_quote_outside_string(_characters.whitespace()); }
 
   // Helpers
 
   /** Whether the given characters are inside a string (only works on non-quotes) */
-  simdjson_inline simd::simd8<uint8_t>
+  simdjson2_really_inline simd::simd8<uint8_t>
   non_quote_inside_string(uint64_t mask) const noexcept {
     return _string.non_quote_inside_string(mask);
   }
   /** Whether the given characters are outside a string (only works on non-quotes) */
-  simdjson_inline simd::simd8<uint8_t> non_quote_outside_string(simd::simd8<uint8_t> mask) const noexcept { return _string.non_quote_outside_string(mask); }
+  simdjson2_really_inline simd::simd8<uint8_t> non_quote_outside_string(const simd::simd8<uint8_t>& mask) const noexcept { return _string.non_quote_outside_string(mask); }
 
   // string and escape characters
   json_string_block _string;
@@ -77,7 +77,7 @@ private:
    * structural elements ([,],{,},:, comma) plus scalar starts like 123, true and "abc".
    * They may reside inside a string.
    **/
-  simdjson_inline simd::simd8<uint8_t>
+  simdjson2_really_inline simd::simd8<uint8_t>
   potential_structural_start() const noexcept {
     return _characters.op() | potential_scalar_start();
   }
@@ -85,18 +85,18 @@ private:
    * The start of non-operator runs, like 123, true and "abc".
    * It main reside inside a string.
    **/
-  simdjson_inline simd::simd8<uint8_t> potential_scalar_start() const noexcept {
+  simdjson2_really_inline simd::simd8<uint8_t> potential_scalar_start() const noexcept {
     // The term "scalar" refers to anything except structural characters and white space
     // (so letters, numbers, quotes).
     // Whenever it is preceded by something that is not a structural element ({,},[,],:, ") nor a white-space
     // then we know that it is irrelevant structurally.
-    return _characters.scalar() & ~follows_potential_scalar();
+    return _characters.scalar().bit_andnot(follows_potential_scalar());
   }
   /**
    * Whether the given character is immediately after a non-operator like 123, true.
    * The characters following a quote are not included.
    */
-  simdjson_inline simd::simd8<uint8_t> follows_potential_scalar() const noexcept {
+  simdjson2_really_inline simd::simd8<uint8_t> follows_potential_scalar() const noexcept {
     // _follows_potential_nonquote_scalar: is defined as marking any character that follows a character
     // that is not a structural element ({,},[,],:, comma) nor a quote (") and that is not a
     // white space.
@@ -121,9 +121,9 @@ private:
 class json_scanner {
 public:
   json_scanner() = default;
-  simdjson_inline json_block next(const simd::simd8x64<uint8_t> (&in)[4]);
+  simdjson2_really_inline json_block next(const simd::simd8<uint8_t> (&in)[8]);
   // Returns either UNCLOSED_STRING or SUCCESS
-  simdjson_inline error_code finish();
+  simdjson2_really_inline error_code finish();
 
 private:
   // Whether the last character of the previous iteration is part of a scalar token
@@ -140,33 +140,28 @@ private:
 //
 //     const uint64_t backslashed_quote = in.eq('"') & immediately_follows(in.eq('\'), prev_backslash);
 //
-simdjson_inline simd::simd8<uint8_t> follows(const simd::simd8<uint8_t> match,
+
+alignas(32) uint64_t values[4 * 2];
+simdjson2_really_inline simd::simd8<uint8_t> follows(const simd::simd8<uint8_t>& match,
                                                 bool &overflow) {
   bool oldOverflow = overflow;
   overflow = match.get_msb();
   simd::simd8<uint8_t> result;
-  alignas(32) uint64_t valuesIn[4];
-  alignas(32) uint64_t valuesOut[4];
-  match.store(valuesIn);
+  match.store(values);
   static constexpr uint64_t shiftAmount{64 - 1};
-  valuesOut[3] = valuesIn[0] << 1;
-  valuesOut[0] = valuesIn[1] << 1 | valuesIn[1] >> (shiftAmount);
-  valuesOut[1] = valuesIn[2] << 1 | valuesIn[2] >> (shiftAmount);
-  valuesOut[2] = valuesIn[3] << 1 | valuesIn[3] >> (shiftAmount);
-  result = simd::simd8<uint8_t>::load(valuesOut);
-  return result.set_lsb(oldOverflow);
+  values[4] = values[0] << 1;
+  values[1 + 4] = values[1] << 1 | values[1 - 1] >> (shiftAmount);
+  values[2 + 4] = values[2] << 1 | values[2 - 1] >> (shiftAmount);
+  values[3 + 4] = values[3] << 1 | values[3 - 1] >> (shiftAmount);
+  result = simd::simd8<uint8_t>::load(values + 4);
+  result.set_lsb(oldOverflow);
+  return result;
 }
 
-simdjson_inline json_block json_scanner::next(const simd::simd8x64<uint8_t>(&in)[4]) {
+simdjson2_really_inline json_block json_scanner::next(const simd::simd8<uint8_t>(&in)[8]) {
   json_string_block strings = string_scanner.next(in);
   // identifies the white-space and the structural characters
   json_character_block characters = json_character_block::classify(in);
-  uint64_t values[4]{};
-  characters.op().store(values);
-  for (size_t x = 0; x < 4; ++x) {
-    std::cout << "CURRENT OP BITS (IN): "
-              << std::bitset<64>{reverse_bits(values[x])} << std::endl;
-  }
   // The term "scalar" refers to anything except structural characters and white space
   // (so letters, numbers, quotes).
   // We want follows_scalar to mark anything that follows a non-quote scalar (so letters and numbers).
@@ -178,7 +173,7 @@ simdjson_inline json_block json_scanner::next(const simd::simd8x64<uint8_t>(&in)
   //
   // Performance: there are many ways to skin this cat.
   const simd::simd8<uint8_t> nonquote_scalar =
-      characters.scalar() & ~strings.quote();
+      characters.scalar().bit_andnot(strings.quote());
   simd::simd8<uint8_t> follows_nonquote_scalar =
       follows(nonquote_scalar, prev_scalar);
   // We are returning a function-local object so either we get a move constructor
@@ -190,13 +185,13 @@ simdjson_inline json_block json_scanner::next(const simd::simd8x64<uint8_t>(&in)
   );
 }
 
-simdjson_inline error_code json_scanner::finish() {
+simdjson2_really_inline error_code json_scanner::finish() {
   return string_scanner.finish();
 }
 
 } // namespace stage1
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE1_JSON_SCANNER_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE1_JSON_SCANNER_H

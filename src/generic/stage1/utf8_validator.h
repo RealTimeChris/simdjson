@@ -1,14 +1,14 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE1_UTF8_VALIDATOR_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE1_UTF8_VALIDATOR_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE1_UTF8_VALIDATOR_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE1_UTF8_VALIDATOR_H
 #include <generic/stage1/base.h>
 #include <generic/stage1/buf_block_reader.h>
 #include <generic/stage1/utf8_lookup4_algorithm.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage1 {
 
@@ -39,7 +39,7 @@ bool generic_validate_utf8(const char * input, size_t length) {
 
 } // namespace stage1
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE1_UTF8_VALIDATOR_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE1_UTF8_VALIDATOR_H

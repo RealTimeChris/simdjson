@@ -14,8 +14,8 @@ If:
         - include/.*
         - src/.*
     PathExclude:
-        - include/simdjson.h
-        - src/simdjson.cpp
+        - include/simdjson2.h
+        - src/simdjson2.cpp
 CompileFlags:
     Add:
         - -Wno-unneeded-internal-declaration
@@ -39,7 +39,7 @@ Diagnostics:
 # clang has a bad time detecting the push/pop together in src/ for some reason
 If:
     PathMatch:
-        - include/simdjson/.*/end.h
+        - include/simdjson2/.*/end.h
         - src/(arm64|fallback|haswell|icelake|ppc64|westmere).cpp
 Diagnostics:
     Suppress:

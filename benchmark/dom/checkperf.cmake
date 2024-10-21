@@ -5,12 +5,12 @@
 # checkperf-repo: initialize and sync reference repository (first time only)
 # TEST checkperf: runs the actual checkperf test
 
-option(SIMDJSON_ENABLE_DOM_CHECKPERF "Enable DOM performance comparison with main branch" OFF)
+option(SIMDJSON2_ENABLE_DOM_CHECKPERF "Enable DOM performance comparison with main branch" OFF)
 
 
 # Clone the repository if it's not there
 find_package(Git QUIET)
-if (SIMDJSON_ENABLE_DOM_CHECKPERF AND Git_FOUND AND (GIT_VERSION_STRING VERSION_GREATER  "2.1.4") AND (NOT CMAKE_GENERATOR MATCHES Ninja) AND (NOT MSVC) ) # We use "-C" which requires a recent git
+if (SIMDJSON2_ENABLE_DOM_CHECKPERF AND Git_FOUND AND (GIT_VERSION_STRING VERSION_GREATER  "2.1.4") AND (NOT CMAKE_GENERATOR MATCHES Ninja) AND (NOT MSVC) ) # We use "-C" which requires a recent git
   message(STATUS "Git is available and it is recent. We are enabling checkperf targets.")
   # sync_git_repository(myrepo ...) creates two targets:
   # myrepo - if the repo does not exist, creates and syncs it against the origin branch
@@ -45,48 +45,48 @@ if (SIMDJSON_ENABLE_DOM_CHECKPERF AND Git_FOUND AND (GIT_VERSION_STRING VERSION_
     )
   endfunction(sync_git_repository)
 
-  set(SIMDJSON_CHECKPERF_REMOTE origin CACHE STRING "Remote repository to compare performance against")
-  set(SIMDJSON_CHECKPERF_BRANCH master CACHE STRING "Branch to compare performance against")
-  set(SIMDJSON_CHECKPERF_DIR ${CMAKE_CURRENT_BINARY_DIR}/checkperf-reference/${SIMDJSON_CHECKPERF_BRANCH} CACHE STRING "Location to put checkperf performance comparison repository")
-  set(SIMDJSON_CHECKPERF_ARGS ${EXAMPLE_JSON} CACHE STRING "Arguments to pass to parse during checkperf")
-  sync_git_repository(checkperf-repo ${SIMDJSON_CHECKPERF_DIR} ${SIMDJSON_CHECKPERF_REMOTE} ${SIMDJSON_CHECKPERF_BRANCH} ${SIMDJSON_GITHUB_REPOSITORY})
+  set(SIMDJSON2_CHECKPERF_REMOTE origin CACHE STRING "Remote repository to compare performance against")
+  set(SIMDJSON2_CHECKPERF_BRANCH master CACHE STRING "Branch to compare performance against")
+  set(SIMDJSON2_CHECKPERF_DIR ${CMAKE_CURRENT_BINARY_DIR}/checkperf-reference/${SIMDJSON2_CHECKPERF_BRANCH} CACHE STRING "Location to put checkperf performance comparison repository")
+  set(SIMDJSON2_CHECKPERF_ARGS ${EXAMPLE_JSON} CACHE STRING "Arguments to pass to parse during checkperf")
+  sync_git_repository(checkperf-repo ${SIMDJSON2_CHECKPERF_DIR} ${SIMDJSON2_CHECKPERF_REMOTE} ${SIMDJSON2_CHECKPERF_BRANCH} ${SIMDJSON2_GITHUB_REPOSITORY})
 
   # Commands to cause cmake on benchmark/checkperf-master/build/
   # - first, copy CMakeCache.txt
   add_custom_command(
-    OUTPUT ${SIMDJSON_CHECKPERF_DIR}/build/CMakeCache.txt
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${SIMDJSON_CHECKPERF_DIR}/build
-    COMMAND ${CMAKE_COMMAND} -E copy ${SIMDJSON_USER_CMAKECACHE} ${SIMDJSON_CHECKPERF_DIR}/build/CMakeCache.txt
-    DEPENDS checkperf-repo simdjson-user-cmakecache
+    OUTPUT ${SIMDJSON2_CHECKPERF_DIR}/build/CMakeCache.txt
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${SIMDJSON2_CHECKPERF_DIR}/build
+    COMMAND ${CMAKE_COMMAND} -E copy ${SIMDJSON2_USER_CMAKECACHE} ${SIMDJSON2_CHECKPERF_DIR}/build/CMakeCache.txt
+    DEPENDS checkperf-repo simdjson2-user-cmakecache
   )
   # - second, cmake ..
   add_custom_command(
-    OUTPUT ${SIMDJSON_CHECKPERF_DIR}/build/cmake_install.cmake # We make many things but this seems the most cross-platform one we can depend on
+    OUTPUT ${SIMDJSON2_CHECKPERF_DIR}/build/cmake_install.cmake # We make many things but this seems the most cross-platform one we can depend on
     COMMAND
     ${CMAKE_COMMAND} -E env CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}
     ${CMAKE_COMMAND}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-    -DSIMDJSON_GOOGLE_BENCHMARKS=OFF
-    -DSIMDJSON_COMPETITION=OFF
-    -DSIMDJSON_DEVELOPER_MODE=YES
+    -DSIMDJSON2_GOOGLE_BENCHMARKS=OFF
+    -DSIMDJSON2_COMPETITION=OFF
+    -DSIMDJSON2_DEVELOPER_MODE=YES
     -G ${CMAKE_GENERATOR}
     ..
-    WORKING_DIRECTORY ${SIMDJSON_CHECKPERF_DIR}/build
-    DEPENDS ${SIMDJSON_CHECKPERF_DIR}/build/CMakeCache.txt
+    WORKING_DIRECTORY ${SIMDJSON2_CHECKPERF_DIR}/build
+    DEPENDS ${SIMDJSON2_CHECKPERF_DIR}/build/CMakeCache.txt
   )
 
   # - third, build parse.
   if (CMAKE_CONFIGURATION_TYPES)
-    set(CHECKPERF_PARSE ${SIMDJSON_CHECKPERF_DIR}/build/benchmark/$<CONFIGURATION>/parse)
+    set(CHECKPERF_PARSE ${SIMDJSON2_CHECKPERF_DIR}/build/benchmark/$<CONFIGURATION>/parse)
   else()
-    set(CHECKPERF_PARSE ${SIMDJSON_CHECKPERF_DIR}/build/benchmark/dom/parse)
+    set(CHECKPERF_PARSE ${SIMDJSON2_CHECKPERF_DIR}/build/benchmark/dom/parse)
   endif()
   add_custom_target(
     checkperf-parse ALL # TODO is ALL necessary?
     # Build parse
     COMMAND ${CMAKE_COMMAND} --build . --target parse --config $<CONFIGURATION>
-    WORKING_DIRECTORY ${SIMDJSON_CHECKPERF_DIR}/build
-    DEPENDS ${SIMDJSON_CHECKPERF_DIR}/build/cmake_install.cmake # We make many things but this seems the most cross-platform one we can depend on
+    WORKING_DIRECTORY ${SIMDJSON2_CHECKPERF_DIR}/build
+    DEPENDS ${SIMDJSON2_CHECKPERF_DIR}/build/cmake_install.cmake # We make many things but this seems the most cross-platform one we can depend on
   )
 
   # Target to build everything needed for the checkperf test
@@ -95,11 +95,11 @@ if (SIMDJSON_ENABLE_DOM_CHECKPERF AND Git_FOUND AND (GIT_VERSION_STRING VERSION_
   # Add the actual checkperf test
   add_test(
     NAME checkperf
-    # COMMAND ECHO $<TARGET_FILE:perfdiff> \"$<TARGET_FILE:parse> -t ${SIMDJSON_CHECKPERF_ARGS}\" \"${CHECKPERF_PARSE} -t ${SIMDJSON_CHECKPERF_ARGS}\" }
-    COMMAND $<TARGET_FILE:perfdiff> $<TARGET_FILE:parse> ${CHECKPERF_PARSE} -H -t ${SIMDJSON_CHECKPERF_ARGS}
+    # COMMAND ECHO $<TARGET_FILE:perfdiff> \"$<TARGET_FILE:parse> -t ${SIMDJSON2_CHECKPERF_ARGS}\" \"${CHECKPERF_PARSE} -t ${SIMDJSON2_CHECKPERF_ARGS}\" }
+    COMMAND $<TARGET_FILE:perfdiff> $<TARGET_FILE:parse> ${CHECKPERF_PARSE} -H -t ${SIMDJSON2_CHECKPERF_ARGS}
   )
   set_property(TEST checkperf APPEND PROPERTY LABELS per_implementation explicitonly)
-  set_property(TEST checkperf APPEND PROPERTY DEPENDS parse perfdiff ${SIMDJSON_USER_CMAKECACHE})
+  set_property(TEST checkperf APPEND PROPERTY DEPENDS parse perfdiff ${SIMDJSON2_USER_CMAKECACHE})
   set_property(TEST checkperf PROPERTY RUN_SERIAL TRUE)
   add_dependencies(per_implementation_tests checkperf)
   add_dependencies(explicitonly_tests checkperf)

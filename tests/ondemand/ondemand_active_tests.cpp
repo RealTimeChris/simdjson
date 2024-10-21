@@ -1,11 +1,11 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace active_tests {
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   bool parser_child() {
     TEST_START();
@@ -45,22 +45,22 @@ namespace active_tests {
     try {
       int64_t k2 = doc["key2"];
       (void) k2;
-    } catch (simdjson::simdjson_error &) {
+    } catch (simdjson2::simdjson2_error &) {
       return true; // we expect to fail.
     }
     (void) k1;
     return false;
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool run() {
     return
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
       parser_child() &&
       parser_doc_correct() &&
       // parser_doc_limits() && // Failure is dependent on build type here ...
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
       true;
   }
 

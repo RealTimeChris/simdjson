@@ -1,0 +1,7 @@
+include(CMakeFindDependencyMacro)
+if("@SIMDJSON2_ENABLE_THREADS@")
+  find_dependency(Threads)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/simdjson2Targets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/simdjson2_staticTargets.cmake" OPTIONAL)

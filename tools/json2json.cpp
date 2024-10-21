@@ -1,13 +1,13 @@
 #include <iostream>
 #include <unistd.h>
-#include "simdjson.h"
+#include "simdjson2.h"
 
-SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
+SIMDJSON2_PUSH_DISABLE_ALL_WARNINGS
 #ifndef __cpp_exceptions
 #define CXXOPTS_NO_EXCEPTIONS
 #endif
 #include "cxxopts.hpp"
-SIMDJSON_POP_DISABLE_WARNINGS
+SIMDJSON2_POP_DISABLE_WARNINGS
 
 #if CXXOPTS__VERSION_MAJOR < 3
 int main(int argc, char *argv[]) {
@@ -20,9 +20,9 @@ int main(int argc, const char *argv[]) {
   std::string progName = "json2json";
 
   std::string progUsage = "json2json version ";
-  progUsage += SIMDJSON_VERSION;
+  progUsage += SIMDJSON2_VERSION;
   progUsage += " (";
-  progUsage += simdjson::get_active_implementation()->name();
+  progUsage += simdjson2::get_active_implementation()->name();
   progUsage += ")\n";
   progUsage += "Reads json in, out the result of the parsing.\n";
   progUsage += argv[0];
@@ -56,19 +56,19 @@ int main(int argc, const char *argv[]) {
 
   const char *filename = result["file"].as<std::string>().c_str();
   if(ondemand) {
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata;
-    auto error = simdjson::padded_string::load(filename).get(docdata);
-    if(error != simdjson::SUCCESS) { std::cout << error << std::endl; return EXIT_FAILURE; }
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata;
+    auto error = simdjson2::padded_string::load(filename).get(docdata);
+    if(error != simdjson2::SUCCESS) { std::cout << error << std::endl; return EXIT_FAILURE; }
+    simdjson2::ondemand::document doc;
     error = parser.iterate(docdata).get(doc);
-    if(error != simdjson::SUCCESS) { std::cout << error << std::endl; return EXIT_FAILURE; }
+    if(error != simdjson2::SUCCESS) { std::cout << error << std::endl; return EXIT_FAILURE; }
     // This locates the document and captures a string_view instance, it does
     // not validate the document:
     std::cout << doc;
     // check if there is more content
     const char * endofstream;
-    if(doc.current_location().get(endofstream) == simdjson::SUCCESS) {
+    if(doc.current_location().get(endofstream) == simdjson2::SUCCESS) {
       // there is more content !
       // let us find what it is:
       size_t len = docdata.data() + docdata.size() - endofstream;
@@ -78,8 +78,8 @@ int main(int argc, const char *argv[]) {
     }
     return EXIT_SUCCESS;
   }
-  simdjson::dom::parser parser;
-  simdjson::dom::element doc;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element doc;
   auto error = parser.load(filename).get(doc); // do the parsing, return false on error
   if (error) {
     std::cerr << " Parsing failed. Error is '" << error << "'." << std::endl;

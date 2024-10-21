@@ -2,7 +2,7 @@
 #define __BENCHMARKER_H
 
 #include "event_counter.h"
-#include "simdjson.h"
+#include "simdjson2.h"
 
 #include <cassert>
 #include <cctype>
@@ -32,11 +32,11 @@
 #ifdef __linux__
 #include <libgen.h>
 #endif
-#include "simdjson.h"
+#include "simdjson2.h"
 
 #include <functional>
 
-using namespace simdjson;
+using namespace simdjson2;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -230,7 +230,7 @@ struct progress_bar {
  * It depends on the OS and the runtime library. It is subject to various
  * system-specific knobs. It is not something that we can reasonably
  * benchmark with crude timings.
- * If someone wants to optimize how simdjson allocate memory, then it will
+ * If someone wants to optimize how simdjson2 allocate memory, then it will
  * almost surely require a distinct benchmarking tool. What is meant by
  * "memory allocation" also requires a definition. Doing "new char[size]" can
  * do many different things depending on the system.
@@ -308,7 +308,7 @@ struct benchmarker {
     return all_stages_without_allocation.iterations;
   }
 
-  simdjson_inline void run_iteration(bool stage1_only, bool hotbuffers=false) {
+  simdjson2_inline void run_iteration(bool stage1_only, bool hotbuffers=false) {
     // Allocate dom::parser
     collector.start();
     dom::parser parser;
@@ -384,7 +384,7 @@ struct benchmarker {
     loop << all_loop_count;
   }
 
-  simdjson_inline void run_iterations(size_t iterations, bool stage1_only, bool hotbuffers=false) {
+  simdjson2_inline void run_iterations(size_t iterations, bool stage1_only, bool hotbuffers=false) {
     for (size_t i = 0; i<iterations; i++) {
       run_iteration(stage1_only, hotbuffers);
     }
@@ -423,7 +423,7 @@ struct benchmarker {
         stage.instructions() / static_cast<double>(stats->structurals),
         stage.instructions() / static_cast<double>(stage.cycles())
       );
-#if !SIMDJSON_SIMPLE_PERFORMANCE_COUNTERS
+#if !SIMDJSON2_SIMPLE_PERFORMANCE_COUNTERS
       // NOTE: removed cycles/miss because it is a somewhat misleading stat
       printf("%s%-13s: %7.0f branch misses (%6.2f%%) - %.0f cache misses (%6.2f%%) - %.2f cache references\n",
         prefix,
@@ -448,10 +448,10 @@ struct benchmarker {
   void print(bool tabbed_output, bool stage1_only) const {
     if (tabbed_output) {
       char* filename_copy = reinterpret_cast<char*>(malloc(strlen(filename)+1));
-      SIMDJSON_PUSH_DISABLE_WARNINGS
-      SIMDJSON_DISABLE_DEPRECATED_WARNING // Validated CRT_SECURE safe here
+      SIMDJSON2_PUSH_DISABLE_WARNINGS
+      SIMDJSON2_DISABLE_DEPRECATED_WARNING // Validated CRT_SECURE safe here
       strcpy(filename_copy, filename);
-      SIMDJSON_POP_DISABLE_WARNINGS
+      SIMDJSON2_POP_DISABLE_WARNINGS
 
       #if defined(__linux__)
       char* base = ::basename(filename_copy);

@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "find_tweet.h"
 #include <string.h>
@@ -56,7 +56,7 @@ struct Handler {
         bool EndArray(SizeType elementCount) { return true; }
     }; // handler
 
-  bool run(simdjson::padded_string &json, uint64_t find_id, std::string_view &result) {
+  bool run(simdjson2::padded_string &json, uint64_t find_id, std::string_view &result) {
         Reader reader;
         Handler handler(result,find_id);
         InsituStringStream ss(json.data());
@@ -67,4 +67,4 @@ struct Handler {
 BENCHMARK_TEMPLATE(find_tweet, rapidjson_sax)->UseManualTime();
 } // namespace find_tweet
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

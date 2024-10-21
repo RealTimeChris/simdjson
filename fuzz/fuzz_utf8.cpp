@@ -4,10 +4,10 @@
  * indicate inconsistency. Also, it gets the non-default backend
  * some fuzzing love.
  *
- * Copyright Paul Dreik 20200912 for the simdjson project.
+ * Copyright Paul Dreik 20200912 for the simdjson2 project.
  */
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
@@ -38,7 +38,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     static const auto supported_implementations=get_runtime_supported_implementations();
 
 
-    auto utf8verify=[Data,Size](const simdjson::implementation* impl) -> bool {
+    auto utf8verify=[Data,Size](const simdjson2::implementation* impl) -> bool {
         return impl->validate_utf8((const char*)Data,Size);
     };
 

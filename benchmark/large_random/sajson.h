@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_SAJSON
+#ifdef SIMDJSON2_COMPETITION_SAJSON
 
 #include "large_random.h"
 
@@ -13,7 +13,7 @@ struct sajson {
   size_t *ast_buffer{nullptr};
   ~sajson() { free(ast_buffer); }
 
-  simdjson_inline double get_double(const ::sajson::value &obj, std::string_view key) {
+  simdjson2_inline double get_double(const ::sajson::value &obj, std::string_view key) {
     using namespace sajson;
 
     auto val = obj.get_value_of_key({key.data(), key.length()});
@@ -26,7 +26,7 @@ struct sajson {
     }
   }
 
-  bool run(simdjson::padded_string &json, std::vector<point> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<point> &result) {
     using namespace sajson;
 
     if (!ast_buffer) {
@@ -60,5 +60,5 @@ BENCHMARK_TEMPLATE(large_random, sajson)->UseManualTime();
 
 } // namespace large_random
 
-#endif // SIMDJSON_COMPETITION_SAJSON
+#endif // SIMDJSON2_COMPETITION_SAJSON
 

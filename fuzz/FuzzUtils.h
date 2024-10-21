@@ -1,5 +1,5 @@
-#ifndef SIMDJSON_FUZZUTILS_H
-#define SIMDJSON_FUZZUTILS_H
+#ifndef SIMDJSON2_FUZZUTILS_H
+#define SIMDJSON2_FUZZUTILS_H
 
 #include <cstdint>
 #include <vector>
@@ -163,4 +163,4 @@ struct FuzzData {
 };
 
 
-#endif // SIMDJSON_FUZZUTILS_H
+#endif // SIMDJSON2_FUZZUTILS_H

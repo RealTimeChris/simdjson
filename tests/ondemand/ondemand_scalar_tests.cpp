@@ -1,11 +1,11 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace scalar_tests {
   using namespace std;
-  using simdjson::ondemand::json_type;
+  using simdjson2::ondemand::json_type;
 
   template<typename T> json_type expected_json_type();
   template<> json_type expected_json_type<std::string_view>() { return json_type::string; }
@@ -17,7 +17,7 @@ namespace scalar_tests {
   template<typename T>
   bool test_scalar_value(const padded_string &json, const T &expected, bool test_twice=true) {
     std::cout << "- JSON: " << json << endl;
-    SUBTEST( "simdjson_result<document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST( "simdjson2_result<document>", test_ondemand_doc(json, [&](auto doc_result) {
       T actual{};
       ASSERT_RESULT( doc_result.type(), expected_json_type<T>() );
       ASSERT_SUCCESS( doc_result.get(actual) );
@@ -49,7 +49,7 @@ namespace scalar_tests {
     {
       padded_string whitespace_json = std::string(json) + " ";
       std::cout << "- JSON: " << whitespace_json << endl;
-      SUBTEST( "simdjson_result<document>", test_ondemand_doc(whitespace_json, [&](auto doc_result) {
+      SUBTEST( "simdjson2_result<document>", test_ondemand_doc(whitespace_json, [&](auto doc_result) {
         T actual{};
         ASSERT_RESULT( doc_result.type(), expected_json_type<T>() );
         ASSERT_SUCCESS( doc_result.get(actual) );
@@ -82,9 +82,9 @@ namespace scalar_tests {
     {
       padded_string array_json = "["s + std::string(json) + "]";
       std::cout << "- JSON: " << array_json << endl;
-      SUBTEST( "simdjson_result<value>", test_ondemand_doc(array_json, [&](auto doc_result) {
+      SUBTEST( "simdjson2_result<value>", test_ondemand_doc(array_json, [&](auto doc_result) {
         int count = 0;
-        for (simdjson_result<ondemand::value> val_result : doc_result) {
+        for (simdjson2_result<ondemand::value> val_result : doc_result) {
           T actual{};
           ASSERT_RESULT( val_result.type(), expected_json_type<T>() );
           ASSERT_SUCCESS( val_result.get(actual) );
@@ -102,7 +102,7 @@ namespace scalar_tests {
       }));
       SUBTEST( "value", test_ondemand_doc(array_json, [&](auto doc_result) {
         int count = 0;
-        for (simdjson_result<ondemand::value> val_result : doc_result) {
+        for (simdjson2_result<ondemand::value> val_result : doc_result) {
           ondemand::value val;
           ASSERT_SUCCESS( val_result.get(val) );
           T actual{};
@@ -126,9 +126,9 @@ namespace scalar_tests {
       padded_string whitespace_array_json = "["s + std::string(json) + " ]";
       std::cout << "- JSON: " << whitespace_array_json << endl;
 
-      SUBTEST( "simdjson_result<value>", test_ondemand_doc(whitespace_array_json, [&](auto doc_result) {
+      SUBTEST( "simdjson2_result<value>", test_ondemand_doc(whitespace_array_json, [&](auto doc_result) {
         int count = 0;
-        for (simdjson_result<ondemand::value> val_result : doc_result) {
+        for (simdjson2_result<ondemand::value> val_result : doc_result) {
           T actual{};
           ASSERT_RESULT( val_result.type(), expected_json_type<T>() );
           ASSERT_SUCCESS( val_result.get(actual) );
@@ -147,7 +147,7 @@ namespace scalar_tests {
 
       SUBTEST( "value", test_ondemand_doc(whitespace_array_json, [&](auto doc_result) {
         int count = 0;
-        for (simdjson_result<ondemand::value> val_result : doc_result) {
+        for (simdjson2_result<ondemand::value> val_result : doc_result) {
           ondemand::value val;
           ASSERT_SUCCESS( val_result.get(val) );
           T actual{};
@@ -211,7 +211,7 @@ namespace scalar_tests {
       ASSERT_EQUAL( is_null_value, true );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       bool is_null_value;
       ASSERT_SUCCESS( doc_result.is_null().get(is_null_value) );
       ASSERT_EQUAL( is_null_value, true );
@@ -231,7 +231,7 @@ namespace scalar_tests {
       ASSERT_EQUAL( count, 1 );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
       int count = 0;
       for (auto value_result : doc_result) {
         bool is_null_value;
@@ -245,7 +245,7 @@ namespace scalar_tests {
     return true;
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   template<typename T>
   bool test_scalar_value_exception(const padded_string &json, const T &expected) {
@@ -295,7 +295,7 @@ namespace scalar_tests {
     TEST_SUCCEED();
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool string_with_trailing() {
     TEST_START();
@@ -396,11 +396,11 @@ namespace scalar_tests {
            numeric_values() &&
            boolean_values() &&
            null_value() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            string_value_exception() &&
            numeric_values_exception() &&
            boolean_values_exception() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            true;
   }
 

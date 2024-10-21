@@ -3,16 +3,16 @@
 #include <unistd.h>
 using namespace std::string_literals;
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_macros.h"
 
 namespace document_tests {
   bool issue938() {
     std::vector<std::string> json_strings{"[true,false]", "[1,2,3,null]",
                                         R"({"yay":"json!"})"};
-    simdjson::dom::parser parser1;
-    for (simdjson::padded_string str : json_strings) {
-      simdjson::dom::element element;
+    simdjson2::dom::parser parser1;
+    for (simdjson2::padded_string str : json_strings) {
+      simdjson2::dom::element element;
       ASSERT_SUCCESS( parser1.parse(str).get(element) );
       std::cout << element << std::endl;
     }
@@ -21,15 +21,15 @@ namespace document_tests {
       TWITTER_TIMELINE_JSON, REPEAT_JSON,         SMALLDEMO_JSON,
       TRUENULL_JSON};
     for (auto path : file_paths) {
-      simdjson::dom::parser parser2;
-      simdjson::dom::element element;
+      simdjson2::dom::parser parser2;
+      simdjson2::dom::element element;
       std::cout << "file: " << path << std::endl;
       ASSERT_SUCCESS( parser2.load(path).get(element) );
       std::cout << element.type() << std::endl;
     }
-    simdjson::dom::parser parser3;
+    simdjson2::dom::parser parser3;
     for (auto path : file_paths) {
-      simdjson::dom::element element;
+      simdjson2::dom::element element;
       std::cout << "file: " << path << std::endl;
       ASSERT_SUCCESS( parser3.load(path).get(element) );
       std::cout << element.type() << std::endl;
@@ -37,19 +37,19 @@ namespace document_tests {
     return true;
   }
 
-  // adversarial example that once triggered overruns, see https://github.com/simdjson/simdjson/issues/345
+  // adversarial example that once triggered overruns, see https://github.com/simdjson2/simdjson2/issues/345
   bool bad_example() {
     std::cout << __func__ << std::endl;
-    simdjson::padded_string badjson = "[7,7,7,7,6,7,7,7,6,7,7,6,[7,7,7,7,6,7,7,7,6,7,7,6,7,7,7,7,7,7,6"_padded;
-    simdjson::dom::parser parser;
-    ASSERT_ERROR( parser.parse(badjson), simdjson::TAPE_ERROR );
+    simdjson2::padded_string badjson = "[7,7,7,7,6,7,7,7,6,7,7,6,[7,7,7,7,6,7,7,7,6,7,7,6,7,7,7,7,7,7,6"_padded;
+    simdjson2::dom::parser parser;
+    ASSERT_ERROR( parser.parse(badjson), simdjson2::TAPE_ERROR );
     return true;
   }
   bool count_array_example() {
     std::cout << __func__ << std::endl;
-    simdjson::padded_string smalljson = "[1,2,3]"_padded;
-    simdjson::dom::parser parser;
-    simdjson::dom::array array;
+    simdjson2::padded_string smalljson = "[1,2,3]"_padded;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::array array;
     ASSERT_SUCCESS( parser.parse(smalljson).get(array) );
     ASSERT_EQUAL( array.size(), 3 );
     ASSERT_EQUAL( *array.begin() < *array.end(), true );
@@ -60,9 +60,9 @@ namespace document_tests {
   }
   bool count_object_example() {
     std::cout << __func__ << std::endl;
-    simdjson::padded_string smalljson = "{\"1\":1,\"2\":1,\"3\":1}"_padded;
-    simdjson::dom::parser parser;
-    simdjson::dom::object object;
+    simdjson2::padded_string smalljson = "{\"1\":1,\"2\":1,\"3\":1}"_padded;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::object object;
     ASSERT_SUCCESS( parser.parse(smalljson).get(object) );
     ASSERT_EQUAL( object.size(), 3 );
     ASSERT_EQUAL( (*object.begin()).value < (*object.end()).value, true );
@@ -73,9 +73,9 @@ namespace document_tests {
   }
   bool padded_with_open_bracket() {
     std::cout << __func__ << std::endl;
-    simdjson::dom::parser parser;
+    simdjson2::dom::parser parser;
     // This is an invalid document padded with open braces.
-    ASSERT_ERROR( parser.parse("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[", 2, false), simdjson::TAPE_ERROR);
+    ASSERT_ERROR( parser.parse("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[", 2, false), simdjson2::TAPE_ERROR);
     // This is a valid document padded with open braces.
     ASSERT_SUCCESS( parser.parse("[][[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[", 2, false) );
     return true;
@@ -83,7 +83,7 @@ namespace document_tests {
   // returns true if successful
   bool stable_test() {
     std::cout << __func__ << std::endl;
-    simdjson::padded_string json = "{"
+    simdjson2::padded_string json = "{"
           "\"Image\":{"
               "\"Width\":800,"
               "\"Height\":600,"
@@ -97,13 +97,13 @@ namespace document_tests {
               "\"IDs\":[116,943.3,234,38793]"
             "}"
         "}"_padded;
-    simdjson::dom::parser parser;
+    simdjson2::dom::parser parser;
     std::ostringstream myStream;
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     myStream << parser.parse(json);
 #else
-    simdjson::dom::element doc;
-    simdjson_unused auto error = parser.parse(json).get(doc);
+    simdjson2::dom::element doc;
+    simdjson2_unused auto error = parser.parse(json).get(doc);
     myStream << doc;
 #endif
     std::string newjson = myStream.str();
@@ -148,7 +148,7 @@ namespace document_tests {
       if (maxsize < s.size())
         maxsize = s.size();
     }
-    simdjson::dom::parser parser;
+    simdjson2::dom::parser parser;
     size_t counter = 0;
     for (auto &rec : data) {
       if ((counter % 10000) == 0) {
@@ -157,15 +157,15 @@ namespace document_tests {
       }
       counter++;
       auto error = parser.parse(rec.c_str(), rec.length()).error();
-      if (error != simdjson::error_code::SUCCESS) {
+      if (error != simdjson2::error_code::SUCCESS) {
         printf("Something is wrong in skyprophet_test: %s.\n", rec.c_str());
-        printf("Parsing failed. Error is %s\n", simdjson::error_message(error));
+        printf("Parsing failed. Error is %s\n", simdjson2::error_message(error));
         return false;
       }
       error = parser.parse(rec.c_str(), rec.length()).error();
-      if (error != simdjson::error_code::SUCCESS) {
+      if (error != simdjson2::error_code::SUCCESS) {
         printf("Something is wrong in skyprophet_test: %s.\n", rec.c_str());
-        printf("Parsing failed. Error is %s\n", simdjson::error_message(error));
+        printf("Parsing failed. Error is %s\n", simdjson2::error_message(error));
         return false;
       }
     }
@@ -180,9 +180,9 @@ namespace document_tests {
     for(size_t i = 0; i < 200; i++) {
       input += "]";
     }
-    simdjson::dom::parser parser;
+    simdjson2::dom::parser parser;
     auto error = parser.parse(input).error();
-    if (error) { std::cerr << "Error: " << simdjson::error_message(error) << std::endl; return false; }
+    if (error) { std::cerr << "Error: " << simdjson2::error_message(error) << std::endl; return false; }
     return true;
   }
   bool run() {
@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
   while ((c = getopt(argc, argv, "a:")) != -1) {
     switch (c) {
     case 'a': {
-      const simdjson::implementation *impl = simdjson::get_available_implementations()[optarg];
+      const simdjson2::implementation *impl = simdjson2::get_available_implementations()[optarg];
       if (!impl) {
         fprintf(stderr, "Unsupported architecture value -a %s\n", optarg);
         return EXIT_FAILURE;
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "The selected implementation does not match your current CPU: -a %s\n", optarg);
         return EXIT_FAILURE;
       }
-      simdjson::get_active_implementation() = impl;
+      simdjson2::get_active_implementation() = impl;
       break;
     }
     default:
@@ -226,12 +226,12 @@ int main(int argc, char *argv[]) {
 
   // this is put here deliberately to check that the documentation is correct (README),
   // should this fail to compile, you should update the documentation:
-  if (simdjson::get_active_implementation()->name() == "unsupported") {
+  if (simdjson2::get_active_implementation()->name() == "unsupported") {
     printf("unsupported CPU\n");
   }
   // We want to know what we are testing.
-  std::cout << "Running tests against this implementation: " << simdjson::get_active_implementation()->name();
-  std::cout << " (" << simdjson::get_active_implementation()->description() << ")" << std::endl;
+  std::cout << "Running tests against this implementation: " << simdjson2::get_active_implementation()->name();
+  std::cout << " (" << simdjson2::get_active_implementation()->description() << ")" << std::endl;
   std::cout << "------------------------------------------------------------" << std::endl;
 
   std::cout << "Running document tests." << std::endl;

@@ -29,13 +29,13 @@
 #include <libgen.h>
 #endif
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 #include <functional>
 
 #include "benchmarker.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -66,7 +66,7 @@ void print_usage(ostream& out) {
   out << "-H           - Make the buffers hot (reduce page allocation and related OS tasks during parsing) [default]" << endl;
   out << "-a IMPL      - Use the given parser implementation. By default, detects the most advanced" << endl;
   out << "               implementation supported on the host machine." << endl;
-  for (auto impl : simdjson::get_available_implementations()) {
+  for (auto impl : simdjson2::get_available_implementations()) {
     if(impl->supported_by_runtime_system()) {
       out << "-a " << std::left << std::setw(9) << impl->name() << " - Use the " << impl->description() << " parser implementation." << endl;
     }
@@ -94,7 +94,7 @@ struct option_struct {
    * memory allocation at the OS level. This may lead to apparently odd results
    * such that higher speed under the Windows Subsystem for Linux than under the
    * regular Windows, for the same machine. It is arguably misleading to benchmark
-   * how the OS allocates memory, when we really want to just benchmark simdjson.
+   * how the OS allocates memory, when we really want to just benchmark simdjson2.
    */
   bool hotbuffers = true;
 
@@ -116,10 +116,10 @@ struct option_struct {
         verbose = true;
         break;
       case 'a': {
-        const implementation *impl = simdjson::get_available_implementations()[optarg];
+        const implementation *impl = simdjson2::get_available_implementations()[optarg];
         if ((!impl) || (!impl->supported_by_runtime_system())) {
           std::string exit_message = string("Unsupported option value -a ") + optarg + ": expected -a  with one of ";
-          for (auto imple : simdjson::get_available_implementations()) {
+          for (auto imple : simdjson2::get_available_implementations()) {
             if(imple->supported_by_runtime_system()) {
               exit_message += imple->name();
               exit_message += " ";
@@ -127,7 +127,7 @@ struct option_struct {
           }
           exit_usage(exit_message);
         }
-        simdjson::get_active_implementation() = impl;
+        simdjson2::get_active_implementation() = impl;
         break;
       }
       case 'C':
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
   option_struct options(argc, argv);
   if (options.verbose) {
     verbose_stream = &cout;
-    verbose() << "Implementation: " << simdjson::get_active_implementation()->name() << endl;
+    verbose() << "Implementation: " << simdjson2::get_active_implementation()->name() << endl;
   }
 
   // Start collecting events. We put this early so if it prints an error message, it's the

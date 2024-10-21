@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "distinct_user_id.h"
 #include <string.h>
@@ -46,7 +46,7 @@ struct rapidjson_sax {
         bool EndArray(SizeType elementCount) { return true; }
     }; // handler
 
-    bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+    bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
         Reader reader;
         Handler handler(result);
         InsituStringStream ss(json.data());
@@ -58,4 +58,4 @@ struct rapidjson_sax {
 BENCHMARK_TEMPLATE(distinct_user_id, rapidjson_sax)->UseManualTime();
 } // namespace distinct_user_id
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

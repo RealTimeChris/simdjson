@@ -1,5 +1,5 @@
 #pragma once
-#ifdef SIMDJSON_COMPETITION_SAJSON
+#ifdef SIMDJSON2_COMPETITION_SAJSON
 
 #include "json2msgpack.h"
 
@@ -115,7 +115,7 @@ struct sajson {
 
   sajson2msgpack parser{};
 
-  bool run(simdjson::padded_string &json, char *buffer,
+  bool run(simdjson2::padded_string &json, char *buffer,
            std::string_view &result) {
     result =
         parser.to_msgpack(json.data(), json.size(), reinterpret_cast<uint8_t *>(buffer));
@@ -128,4 +128,4 @@ BENCHMARK_TEMPLATE(json2msgpack, sajson)->UseManualTime();
 
 } // namespace json2msgpack
 
-#endif // SIMDJSON_COMPETITION_SAJSON
+#endif // SIMDJSON2_COMPETITION_SAJSON

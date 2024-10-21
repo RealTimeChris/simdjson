@@ -1,5 +1,5 @@
-#ifndef SIMDJSON_SRC_TO_CHARS_CPP
-#define SIMDJSON_SRC_TO_CHARS_CPP
+#ifndef SIMDJSON2_SRC_TO_CHARS_CPP
+#define SIMDJSON2_SRC_TO_CHARS_CPP
 
 #include <base.h>
 
@@ -8,7 +8,7 @@
 #include <array>
 #include <cmath>
 
-namespace simdjson {
+namespace simdjson2 {
 namespace internal {
 /*!
 implements the Grisu2 algorithm for binary to decimal floating-point
@@ -949,6 +949,6 @@ char *to_chars(char *first, const char *last, double value) {
                                   kMaxExp);
 }
 } // namespace internal
-} // namespace simdjson
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_TO_CHARS_CPP
+#endif // SIMDJSON2_SRC_TO_CHARS_CPP

@@ -1,11 +1,11 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace object_tests {
   using namespace std;
-  using simdjson::ondemand::json_type;
+  using simdjson2::ondemand::json_type;
 
   bool object_index() {
     TEST_START();
@@ -22,8 +22,8 @@ namespace object_tests {
       ASSERT_ERROR( object["d"], NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::object> object;
+    SUBTEST("simdjson2_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::object> object;
       object = doc_result.get_object();
 
       ASSERT_EQUAL( object["a"].get_uint64().value_unsafe(), 1 );
@@ -51,7 +51,7 @@ namespace object_tests {
       ASSERT_ERROR( doc["d"], NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       ASSERT_EQUAL( doc_result["a"].get_uint64().value_unsafe(), 1 );
       ASSERT_EQUAL( doc_result["b"].get_uint64().value_unsafe(), 2 );
       ASSERT_EQUAL( doc_result["c/d"].get_uint64().value_unsafe(), 3 );
@@ -77,8 +77,8 @@ namespace object_tests {
       ASSERT_ERROR( object["d"], NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::value> object = doc_result["outer"];
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::value> object = doc_result["outer"];
       ASSERT_EQUAL( object["a"].get_uint64().value_unsafe(), 1 );
       ASSERT_EQUAL( object["b"].get_uint64().value_unsafe(), 2 );
       ASSERT_EQUAL( object["c/d"].get_uint64().value_unsafe(), 3 );
@@ -93,7 +93,7 @@ namespace object_tests {
   bool document_nested_object_index() {
     TEST_START();
     auto json = R"({ "x": { "y": { "z": 2 } } }})"_padded;
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       ASSERT_EQUAL( doc_result["x"]["y"]["z"].get_uint64().value_unsafe(), 2 );
       return true;
     }));
@@ -109,8 +109,8 @@ namespace object_tests {
   bool nested_object_index() {
     TEST_START();
     auto json = R"({ "x": { "y": { "z": 2 } } }})"_padded;
-    SUBTEST("simdjson_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::object> object = doc_result.get_object();
+    SUBTEST("simdjson2_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::object> object = doc_result.get_object();
       ASSERT_EQUAL( object["x"]["y"]["z"].get_uint64().value_unsafe(), 2 );
       return true;
     }));
@@ -126,8 +126,8 @@ namespace object_tests {
   bool value_nested_object_index() {
     TEST_START();
     auto json = R"({ "x": { "y": { "z": 2 } } }})"_padded;
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::value> x = doc_result["x"];
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::value> x = doc_result["x"];
       ASSERT_EQUAL( x["y"]["z"].get_uint64().value_unsafe(), 2 );
       return true;
     }));
@@ -269,7 +269,7 @@ namespace object_tests {
       return true;
     }));
 
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       ASSERT_SUCCESS( doc_result["scalar_ignore"] );
       std::cout << "  - After ignoring empty scalar ..." << std::endl;
 
@@ -381,7 +381,7 @@ namespace object_tests {
     return true;
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   bool object_index_exception() {
     TEST_START();
@@ -400,14 +400,14 @@ namespace object_tests {
   bool nested_object_index_exception() {
     TEST_START();
     auto json = R"({ "x": { "y": { "z": 2 } } }})"_padded;
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       ASSERT_EQUAL( uint64_t(doc_result["x"]["y"]["z"]), 2 );
       return true;
     }));
     TEST_SUCCEED();
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool run() {
     return
@@ -418,10 +418,10 @@ namespace object_tests {
            document_nested_object_index() &&
            value_nested_object_index() &&
            object_index_partial_children() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            object_index_exception() &&
            nested_object_index_exception() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            true;
   }
 

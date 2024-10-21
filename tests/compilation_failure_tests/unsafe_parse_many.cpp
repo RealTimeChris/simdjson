@@ -2,12 +2,12 @@
 #include <vector>
 #include <iostream>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 bool single_document() {
     std::cout << "Running " << __func__ << std::endl;
-    simdjson::dom::parser parser;
-    simdjson::dom::document_stream stream;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::document_stream stream;
 
 #if COMPILATION_TEST_USE_FAILING_CODE
     auto error = parser.parse_many(json).get(R"({"hello": "world"})"_padded);
@@ -26,13 +26,13 @@ bool single_document() {
           return false;
         }
         std::string expected = R"({"hello":"world"})";
-        simdjson::dom::element this_document;
+        simdjson2::dom::element this_document;
         error = doc.get(this_document);
         if(error) {
           std::cerr << error << std::endl;
           return false;
         }
-        std::string answer = simdjson::minify(this_document);
+        std::string answer = simdjson2::minify(this_document);
         if(answer != expected) {
           std::cout << this_document << std::endl;
           return false;

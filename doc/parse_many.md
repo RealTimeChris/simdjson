@@ -41,7 +41,7 @@ Performance
 -----------
 
 The following is a chart comparing the speed of the different alternatives to parse a multiline JSON.
-The simdjson library provides a threaded and non-threaded `parse_many()` implementation.  As the
+The simdjson2 library provides a threaded and non-threaded `parse_many()` implementation.  As the
 figure below shows, if you can, use threads, but if you cannot, the unthreaded mode is still fast!
 [![Chart.png](/doc/Multiline_JSON_Parse_Competition.png)](/doc/Multiline_JSON_Parse_Competition.png)
 
@@ -50,7 +50,7 @@ How it works
 
 ### Context
 
-The parsing in simdjson is divided into 2 stages.  First, in stage 1, we parse the document and find
+The parsing in simdjson2 is divided into 2 stages.  First, in stage 1, we parse the document and find
 all the structural indexes (`{`, `}`, `]`, `[`, `,`, `"`, ...) and validate UTF8.  Then, in stage 2,
 we go through the document again and build the tape using structural indexes found during stage 1.
 Although stage 1 finds the structural indexes, it has no knowledge of the structure of the document
@@ -61,7 +61,7 @@ Prior to parse_many, most people who had to parse a multiline JSON file would pr
 file line by line, using a utility function like `std::getline` or equivalent, and would then use
 the `parse` on each of those lines.  From a performance point of view, this process is highly
 inefficient,  in that it requires a lot of unnecessary memory allocation and makes use of the
-`getline` function, which is fundamentally slow, slower than the act of parsing with simdjson
+`getline` function, which is fundamentally slow, slower than the act of parsing with simdjson2
 [(more on this here)](https://lemire.me/blog/2019/06/18/how-fast-is-getline-in-c/).
 
 Unlike the popular parser RapidJson, our DOM does not require the buffer once the parsing job is
@@ -103,12 +103,12 @@ cases, remove almost entirely its cost and replaces it by the overhead of a thre
 of magnitude cheaper. Ain't that awesome!
 
 Thread support is only active if thread supported is detected in which case the macro
-SIMDJSON_THREADS_ENABLED is set.  You can also manually pass `SIMDJSON_THREADS_ENABLED=1` flag
+SIMDJSON2_THREADS_ENABLED is set.  You can also manually pass `SIMDJSON2_THREADS_ENABLED=1` flag
 to the library. Otherwise the library runs in single-thread mode.
 
-You should be consistent. If you link against the simdjson library built for multithreading
-(i.e., with `SIMDJSON_THREADS_ENABLED`), then you should build your application with multithreading
-system (setting `SIMDJSON_THREADS_ENABLED=1` and linking against a thread library).
+You should be consistent. If you link against the simdjson2 library built for multithreading
+(i.e., with `SIMDJSON2_THREADS_ENABLED`), then you should build your application with multithreading
+system (setting `SIMDJSON2_THREADS_ENABLED=1` and linking against a thread library).
 
 A `document_stream` instance uses at most two threads: there is a main thread and a worker thread.
 You should expect the main thread to be fully occupied while the worker thread is partially busy
@@ -186,8 +186,8 @@ Let us illustrate the idea with code:
 
 ```C++
     auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} [1,2,3]  )"_padded;
-    simdjson::dom::parser parser;
-    simdjson::dom::document_stream stream;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::document_stream stream;
     auto error = parser.parse_many(json).get(stream);
     if (error) { /* do something */ }
     auto i = stream.begin();
@@ -220,15 +220,15 @@ got full document at 29
 Incomplete streams
 -----------
 
-Some users may need to work with truncated streams. The simdjson may truncate documents at the very end of the stream that cannot possibly be valid JSON (e.g., they contain unclosed strings, unmatched brackets, unmatched braces). After iterating through the stream, you may query the `truncated_bytes()` method which tells you how many bytes were truncated. If the stream is made of full (whole) documents, then you should expect `truncated_bytes()` to return zero.
+Some users may need to work with truncated streams. The simdjson2 may truncate documents at the very end of the stream that cannot possibly be valid JSON (e.g., they contain unclosed strings, unmatched brackets, unmatched braces). After iterating through the stream, you may query the `truncated_bytes()` method which tells you how many bytes were truncated. If the stream is made of full (whole) documents, then you should expect `truncated_bytes()` to return zero.
 
 
 Consider the following example where a truncated document (`{"key":"intentionally unclosed string  `) containing 39 bytes has been left within the stream. In such cases, the first two whole documents are parsed and returned, and the `truncated_bytes()` method returns 39.
 
 ```C++
     auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} {"key":"intentionally unclosed string  )"_padded;
-    simdjson::dom::parser parser;
-    simdjson::dom::document_stream stream;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::document_stream stream;
     auto error = parser.parse_many(json,json.size()).get(stream);
     if (error) { std::cerr << error << std::endl; return; }
     for(auto doc : stream) {

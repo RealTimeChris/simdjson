@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "partial_tweets.h"
 #include <string.h>
@@ -150,7 +150,7 @@ struct rapidjson_sax {
         bool EndArray(SizeType elementCount) { return true; }
     }; // handler
 
-    bool run(simdjson::padded_string &json, std::vector<tweet<std::string_view>> &result) {
+    bool run(simdjson2::padded_string &json, std::vector<tweet<std::string_view>> &result) {
         Reader reader;
         Handler handler(result);
         InsituStringStream ss(json.data());
@@ -162,4 +162,4 @@ struct rapidjson_sax {
 BENCHMARK_TEMPLATE(partial_tweets, rapidjson_sax)->UseManualTime();
 } // namespace partial_tweets
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

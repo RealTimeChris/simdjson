@@ -1,5 +1,5 @@
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 #include <cstdlib>
 
@@ -7,7 +7,7 @@
 // otherwise
 static void testNullString() {
   std::string_view empty;
-  simdjson::padded_string blah(empty);
+  simdjson2::padded_string blah(empty);
 }
 
 int main() {

@@ -18,17 +18,17 @@ jobs:
         run: |
           mkdir builddebug &&
           cd builddebug &&
-          cmake -DCMAKE_BUILD_TYPE=Debug -DSIMDJSON_GOOGLE_BENCHMARKS=OFF  -DSIMDJSON_ENABLE_THREADS=OFF -DSIMDJSON_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=OFF ..  &&
+          cmake -DCMAKE_BUILD_TYPE=Debug -DSIMDJSON2_GOOGLE_BENCHMARKS=OFF  -DSIMDJSON2_ENABLE_THREADS=OFF -DSIMDJSON2_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=OFF ..  &&
           cmake --build .   &&
           ctest --output-on-failure -LE explicitonly -j   &&
           cd .. &&
           mkdir build &&
           cd build &&
-          cmake  -DSIMDJSON_DEVELOPER_MODE=ON -DSIMDJSON_GOOGLE_BENCHMARKS=ON -DSIMDJSON_ENABLE_THREADS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH=destination ..  &&
+          cmake  -DSIMDJSON2_DEVELOPER_MODE=ON -DSIMDJSON2_GOOGLE_BENCHMARKS=ON -DSIMDJSON2_ENABLE_THREADS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH=destination ..  &&
           cmake --build .   &&
           ctest --output-on-failure -LE explicitonly -j   &&
           make install  &&
-          echo -e '#include <simdjson.h>\nint main(int argc,char**argv) {simdjson::dom::parser parser;simdjson::dom::element tweets = parser.load(argv[1]); }' > tmp.cpp && c++ -Idestination/include -Ldestination/lib -std=c++17 -Wl,-rpath,destination/lib -o linkandrun tmp.cpp -lsimdjson && ./linkandrun jsonexamples/twitter.json &&
+          echo -e '#include <simdjson2.h>\nint main(int argc,char**argv) {simdjson2::dom::parser parser;simdjson2::dom::element tweets = parser.load(argv[1]); }' > tmp.cpp && c++ -Idestination/include -Ldestination/lib -std=c++17 -Wl,-rpath,destination/lib -o linkandrun tmp.cpp -lsimdjson2 && ./linkandrun jsonexamples/twitter.json &&
           mkdir testfindpackage &&
           cd testfindpackage &&
-          echo -e 'cmake_minimum_required(VERSION 3.1)\nproject(simdjsontester)\nset(CMAKE_CXX_STANDARD 17)\nfind_package(simdjson REQUIRED)'> CMakeLists.txt && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX:PATH=../destination .. &&  cmake --build .
+          echo -e 'cmake_minimum_required(VERSION 3.1)\nproject(simdjson2tester)\nset(CMAKE_CXX_STANDARD 17)\nfind_package(simdjson2 REQUIRED)'> CMakeLists.txt && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX:PATH=../destination .. &&  cmake --build .

@@ -1,12 +1,12 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace ordering_tests {
   using namespace std;
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   auto json = "{\"coordinates\":[{\"x\":1.1,\"y\":2.2,\"z\":3.3}]}"_padded;
 
@@ -121,7 +121,7 @@ namespace ordering_tests {
     TEST_START();
     ondemand::parser parser{};
     auto doc = parser.iterate(json);
-    simdjson_result<ondemand::value> x{}, y{}, z{};
+    simdjson2_result<ondemand::value> x{}, y{}, z{};
     for (auto point_object : doc["coordinates"]) {
       x = point_object["x"];
       y = point_object["y"];
@@ -141,11 +141,11 @@ namespace ordering_tests {
     return (double(x) == 1.1) && (double(z) == 3.3) && (double(y) == 2.2);
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool run() {
     return
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            in_order_object_index() &&
            in_order_object_find_field_unordered() &&
            in_order_object_find_field() &&
@@ -155,7 +155,7 @@ namespace ordering_tests {
            foreach_object_field_lookup() &&
            use_values_out_of_order_after_array() &&
            use_object_multiple_times_out_of_order() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            true;
   }
 

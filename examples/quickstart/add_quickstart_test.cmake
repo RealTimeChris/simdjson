@@ -38,13 +38,13 @@ function(add_quickstart_test TEST_NAME SOURCE_FILE)
 
   add_test(
     NAME ${TEST_NAME}
-    COMMAND ${CMAKE_CXX_COMPILER} ${QUICKSTART_FLAGS} -I${PROJECT_SOURCE_DIR}/include -I${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/simdjson.cpp ${SOURCE_FILE}
+    COMMAND ${CMAKE_CXX_COMPILER} ${QUICKSTART_FLAGS} -I${PROJECT_SOURCE_DIR}/include -I${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/simdjson2.cpp ${SOURCE_FILE}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/quickstart
   )
   list(APPEND ARGS_LABELS quickstart compile no_mingw)
   set_property(TEST ${TEST_NAME} APPEND PROPERTY LABELS ${ARGS_LABELS})
   set_property(
     TEST ${TEST_NAME}
-    APPEND PROPERTY DEPENDS simdjson-source ${PROJECT_SOURCE_DIR}/examples/quickstart/${SOURCE_FILE}
+    APPEND PROPERTY DEPENDS simdjson2-source ${PROJECT_SOURCE_DIR}/examples/quickstart/${SOURCE_FILE}
   )
 endfunction(add_quickstart_test)

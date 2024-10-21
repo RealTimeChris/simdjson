@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 /**
  * Does the file filename ends with the given extension.
  */
@@ -60,28 +60,28 @@ bool validate_minefield(const char *dirname) {
       char *fullpath = static_cast<char *>(malloc(fullpathlen));
       snprintf(fullpath, fullpathlen, "%s%s%s", dirname, needsep ? "/" : "", name);
 
-      simdjson::padded_string p;
-      auto error = simdjson::padded_string::load(fullpath).get(p);
+      simdjson2::padded_string p;
+      auto error = simdjson2::padded_string::load(fullpath).get(p);
       if (error) {
         std::cerr << "Could not load the file " << fullpath << std::endl;
         free(fullpath);
         delete[] is_file_as_expected;
         return EXIT_FAILURE;
       }
-      simdjson::dom::parser parser;
+      simdjson2::dom::parser parser;
       auto errorcode = parser.parse(p).error();
       ++how_many;
-      printf("%s\n", errorcode == simdjson::error_code::SUCCESS ? "ok" : "invalid");
+      printf("%s\n", errorcode == simdjson2::error_code::SUCCESS ? "ok" : "invalid");
       if (starts_with("i_", name) ) {
         // skipping
         how_many--;
-      } else if (starts_with("y_", name) && errorcode != simdjson::error_code::SUCCESS) {
+      } else if (starts_with("y_", name) && errorcode != simdjson2::error_code::SUCCESS) {
         is_file_as_expected[i] = false;
         printf("warning: file %s should pass but it fails. Error is: %s\n",
-               name, simdjson::error_message(errorcode));
+               name, simdjson2::error_message(errorcode));
         printf("size of file in bytes: %zu \n", p.size());
         everything_fine = false;
-      } else if (starts_with("n_", name) && errorcode == simdjson::error_code::SUCCESS) {
+      } else if (starts_with("n_", name) && errorcode == simdjson2::error_code::SUCCESS) {
         is_file_as_expected[i] = false;
         printf("warning: file %s should fail but it passes.\n", name);
         printf("size of file in bytes: %zu \n", p.size());
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
   while ((c = getopt(argc, argv, "a:")) != -1) {
     switch (c) {
     case 'a': {
-      const simdjson::implementation *impl = simdjson::get_available_implementations()[optarg];
+      const simdjson2::implementation *impl = simdjson2::get_available_implementations()[optarg];
       if (!impl) {
         fprintf(stderr, "Unsupported architecture value -a %s\n", optarg);
         return EXIT_FAILURE;
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "The selected implementation does not match your current CPU: -a %s\n", optarg);
         return EXIT_FAILURE;
       }
-      simdjson::get_active_implementation() = impl;
+      simdjson2::get_active_implementation() = impl;
       break;
     }
     default:
@@ -135,15 +135,15 @@ int main(int argc, char *argv[]) {
   if ((argc - optind) != 1) {
     std::cerr << "Usage: " << argv[0] << " <directorywithjsonfiles>"
               << std::endl;
-#ifndef SIMDJSON_MINEFIELD_TEST_DATA_DIR
+#ifndef SIMDJSON2_MINEFIELD_TEST_DATA_DIR
     std::cout
         << "We are going to assume you mean to use the 'jsonchecker/minefield' directory."
         << std::endl;
     return validate_minefield("jsonchecker/minefield") ? EXIT_SUCCESS : EXIT_FAILURE;
 #else
     std::cout << "We are going to assume you mean to use the '"
-              << SIMDJSON_MINEFIELD_TEST_DATA_DIR << "' directory." << std::endl;
-    return validate_minefield(SIMDJSON_MINEFIELD_TEST_DATA_DIR) ? EXIT_SUCCESS : EXIT_FAILURE;
+              << SIMDJSON2_MINEFIELD_TEST_DATA_DIR << "' directory." << std::endl;
+    return validate_minefield(SIMDJSON2_MINEFIELD_TEST_DATA_DIR) ? EXIT_SUCCESS : EXIT_FAILURE;
 #endif
   }
   return validate_minefield(argv[optind]) ? EXIT_SUCCESS : EXIT_FAILURE;

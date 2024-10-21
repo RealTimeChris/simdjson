@@ -1,5 +1,5 @@
 #pragma once
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "json2msgpack.h"
 
@@ -8,7 +8,7 @@ namespace json2msgpack {
 using namespace nlohmann;
 
 struct nlohmann_json2msgpack {
-  inline std::string_view to_msgpack(const simdjson::padded_string &json,
+  inline std::string_view to_msgpack(const simdjson2::padded_string &json,
                                      uint8_t *buf);
 
 private:
@@ -21,7 +21,7 @@ private:
   uint8_t *buff{};
 };
 
-std::string_view nlohmann_json2msgpack::to_msgpack(const simdjson::padded_string &json,
+std::string_view nlohmann_json2msgpack::to_msgpack(const simdjson2::padded_string &json,
                              uint8_t *buf) {
   buff = buf;
   auto val = nlohmann::json::parse(json.data(), json.data() + json.size());
@@ -100,7 +100,7 @@ struct nlohmann_json {
 
   nlohmann_json2msgpack parser{};
 
-  bool run(simdjson::padded_string &json, char *buffer,
+  bool run(simdjson2::padded_string &json, char *buffer,
            std::string_view &result) {
     result = parser.to_msgpack(json, reinterpret_cast<uint8_t *>(buffer));
     return true;
@@ -111,7 +111,7 @@ BENCHMARK_TEMPLATE(json2msgpack, nlohmann_json)->UseManualTime();
 
 } // namespace json2msgpack
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 
 

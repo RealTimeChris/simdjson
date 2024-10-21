@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-DATADIR="$1/_deps/simdjson-data"
+DATADIR="$1/_deps/simdjson2-data"
 
 for i in $DATADIR/jsonchecker/adversarial/issue150/*.json ; do
   echo $i;

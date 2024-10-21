@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 #include <cstdlib>
 #include <iostream>
@@ -6,12 +6,12 @@
 #include <list>
 #include <optional>
 
-using namespace simdjson;
+using namespace simdjson2;
 
-#if !SIMDJSON_SUPPORTS_DESERIALIZATION
+#if !SIMDJSON2_SUPPORTS_DESERIALIZATION
 
 int main(void) {
-  printf("This test is only relevant when SIMDJSON_SUPPORTS_DESERIALIZATION is true (C++20)\n");
+  printf("This test is only relevant when SIMDJSON2_SUPPORTS_DESERIALIZATION is true (C++20)\n");
   return EXIT_SUCCESS;
 }
 #else
@@ -40,10 +40,10 @@ std::ostream &operator<<(std::ostream &os, const Car &c) {
 
 
 
-namespace simdjson {
-// This tag_invoke MUST be inside simdjson namespace
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, Car& car) {
+namespace simdjson2 {
+// This tag_invoke MUST be inside simdjson2 namespace
+template <typename simdjson2_value>
+auto tag_invoke(deserialize_tag, simdjson2_value &val, Car& car) {
   ondemand::object obj;
   auto error = val.get_object().get(obj);
   if (error) {
@@ -62,12 +62,12 @@ auto tag_invoke(deserialize_tag, simdjson_value &val, Car& car) {
            car.tire_pressure))) {
     return error;
   }
-  return simdjson::SUCCESS;
+  return simdjson2::SUCCESS;
 }
 
 // suppose we want to filter out all Toyotas
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, std::list<Car>& car) {
+template <typename simdjson2_value>
+auto tag_invoke(deserialize_tag, simdjson2_value &val, std::list<Car>& car) {
   ondemand::array arr;
   auto error = val.get_array().get(arr);
   if (error) {
@@ -82,9 +82,9 @@ auto tag_invoke(deserialize_tag, simdjson_value &val, std::list<Car>& car) {
       car.push_back(c);
     }
   }
-  return simdjson::SUCCESS;
+  return simdjson2::SUCCESS;
 }
-} // namespace simdjson
+} // namespace simdjson2
 
 
 int main_should_compile(void) {
@@ -100,7 +100,7 @@ int main_should_compile(void) {
   ondemand::document doc;
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
   for (auto val : doc) {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     Car c(val); // an exception may be thrown
 #else
     Car c;
@@ -129,7 +129,7 @@ bool car_deserialize() {
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
   std::vector<Car> cars;
   for (auto val : doc) {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     Car c(val); // an exception may be thrown
 #else
     Car c;
@@ -164,8 +164,8 @@ bool vector_car_deserialize() {
   ondemand::parser parser;
   ondemand::document doc;
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
-#if SIMDJSON_EXCEPTIONS
-#if SIMDJSON_REGULAR_VISUAL_STUDIO
+#if SIMDJSON2_EXCEPTIONS
+#if SIMDJSON2_REGULAR_VISUAL_STUDIO
   std::vector<Car> cars = doc.get<std::vector<Car>>();  // an exception may be thrown
 #else
   std::vector<Car> cars(doc); // an exception may be thrown
@@ -201,8 +201,8 @@ bool list_car_deserialize() {
   ondemand::parser parser;
   ondemand::document doc;
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
-#if SIMDJSON_EXCEPTIONS
-#if SIMDJSON_REGULAR_VISUAL_STUDIO
+#if SIMDJSON2_EXCEPTIONS
+#if SIMDJSON2_REGULAR_VISUAL_STUDIO
   std::list<Car> cars = doc.get<std::list<Car>>();  // an exception may be thrown
 #else
   std::list<Car> cars(doc); // an exception may be thrown
@@ -246,7 +246,7 @@ bool car_doc_deserialize() {
   ondemand::parser parser;
   ondemand::document doc;
   [[maybe_unused]] auto doc_error = parser.iterate(json).get(doc);
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   Car c(doc);   // an exception may be thrown
 #else
   Car c;
@@ -276,7 +276,7 @@ bool car_stream_deserialize() {
   [[maybe_unused]] auto error = parser.iterate_many(json).get(stream);
   std::vector<Car> cars;
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   for(auto doc : stream) {
     cars.push_back((Car)doc); // an exception may be thrown
   }
@@ -304,10 +304,10 @@ bool car_unique_ptr_deserialize() {
   TEST_START();
   auto const json = R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] })"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc;
   [[maybe_unused]] auto error = parser.iterate(json).get(doc);
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   std::unique_ptr<Car> c(doc);
 #else
   std::unique_ptr<Car> c;
@@ -332,4 +332,4 @@ bool run() { return list_car_deserialize()
 int main(int argc, char *argv[]) {
   return test_main(argc, argv, car_error_tests::run);
 }
-#endif // SIMDJSON_SUPPORTS_DESERIALIZATION
+#endif // SIMDJSON2_SUPPORTS_DESERIALIZATION

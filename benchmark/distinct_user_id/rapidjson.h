@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "distinct_user_id.h"
 
@@ -40,20 +40,20 @@ struct rapidjson_base {
 };
 
 struct rapidjson : rapidjson_base {
-  bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
     return rapidjson_base::run(doc.Parse<kParseValidateEncodingFlag>(json.data()), result);
   }
 };
 BENCHMARK_TEMPLATE(distinct_user_id, rapidjson)->UseManualTime();
 
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 struct rapidjson_insitu : rapidjson_base {
-  bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
     return rapidjson_base::run(doc.ParseInsitu<kParseValidateEncodingFlag|kParseInsituFlag>(json.data()), result);
   }
 };
 BENCHMARK_TEMPLATE(distinct_user_id, rapidjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace partial_tweets
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

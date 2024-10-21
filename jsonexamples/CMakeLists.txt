@@ -1,4 +1,4 @@
-# The bulk of our data files is found in https://github.com/simdjson/simdjson-data
+# The bulk of our data files is found in https://github.com/simdjson2/simdjson2-data
 set(EXAMPLE_JSON ${CMAKE_CURRENT_BINARY_DIR}/twitter.json PARENT_SCOPE)
 set(EXAMPLE_NDJSON ${CMAKE_CURRENT_BINARY_DIR}/amazon_cellphones.ndjson PARENT_SCOPE)
 

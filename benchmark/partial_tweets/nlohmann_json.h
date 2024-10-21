@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "partial_tweets.h"
 
@@ -9,12 +9,12 @@ namespace partial_tweets {
 struct nlohmann_json {
   using StringType=std::string;
 
-  simdjson_inline uint64_t nullable_int(nlohmann::json value) {
+  simdjson2_inline uint64_t nullable_int(nlohmann::json value) {
     if (value.is_null()) { return 0; }
     return value;
   }
 
-  bool run(simdjson::padded_string &json, std::vector<tweet<std::string>> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<tweet<std::string>> &result) {
     auto root = nlohmann::json::parse(json.data(), json.data() + json.size());
     for (auto tweet : root["statuses"]) {
       auto user = tweet["user"];
@@ -37,4 +37,4 @@ BENCHMARK_TEMPLATE(partial_tweets, nlohmann_json)->UseManualTime();
 
 } // namespace partial_tweets
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

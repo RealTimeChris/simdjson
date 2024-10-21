@@ -1,13 +1,13 @@
 The Basics
 ==========
 
-An overview of what you need to know to use simdjson, with examples.
+An overview of what you need to know to use simdjson2, with examples.
 
 - [The Basics](#the-basics)
   - [Requirements](#requirements)
-  - [Including simdjson](#including-simdjson)
-  - [Using simdjson with package managers](#using-simdjson-with-package-managers)
-  - [Using simdjson as a CMake dependency](#using-simdjson-as-a-cmake-dependency)
+  - [Including simdjson2](#including-simdjson2)
+  - [Using simdjson2 with package managers](#using-simdjson2-with-package-managers)
+  - [Using simdjson2 as a CMake dependency](#using-simdjson2-as-a-cmake-dependency)
   - [Versions](#versions)
   - [The basics: loading and parsing JSON documents](#the-basics-loading-and-parsing-json-documents)
   - [Documents are iterators](#documents-are-iterators)
@@ -17,7 +17,7 @@ An overview of what you need to know to use simdjson, with examples.
   - [Using the parsed JSON](#using-the-parsed-json)
     - [Using the parsed JSON: additional examples](#using-the-parsed-json-additional-examples)
   - [Adding support for custom types](#adding-support-for-custom-types)
-    - [1. Specialize `simdjson::ondemand::value::get` to get custom types (pre-C++20)](#1-specialize-simdjsonondemandvalueget-to-get-custom-types-pre-c20)
+    - [1. Specialize `simdjson2::ondemand::value::get` to get custom types (pre-C++20)](#1-specialize-simdjson2ondemandvalueget-to-get-custom-types-pre-c20)
     - [2. Use `tag_invoke` for custom types (C++20)](#2-use-tag_invoke-for-custom-types-c20)
   - [Minifying JSON strings without parsing](#minifying-json-strings-without-parsing)
   - [UTF-8 validation (alone)](#utf-8-validation-alone)
@@ -55,68 +55,68 @@ Support for AVX-512 require a processor with AVX512-VBMI2 support (Ice Lake or b
 
 We test the library on a big-endian system (IBM s390x with Linux).
 
-Including simdjson
+Including simdjson2
 ------------------
 
-To include simdjson, copy [simdjson.h](/singleheader/simdjson.h) and [simdjson.cpp](/singleheader/simdjson.cpp)
+To include simdjson2, copy [simdjson2.h](/singleheader/simdjson2.h) and [simdjson2.cpp](/singleheader/simdjson2.cpp)
 into your project. Then include it in your project with:
 
 ```c++
-#include "simdjson.h"
-using namespace simdjson; // optional
+#include "simdjson2.h"
+using namespace simdjson2; // optional
 ```
 
 Under most systems, you can compile with:
 
 ```
-c++ myproject.cpp simdjson.cpp
+c++ myproject.cpp simdjson2.cpp
 ```
 
 Note:
-- We recommend that you use simdjson by copying the single-header `simdjson.h` file along with the source file `simdjson.cpp` directly in your project, as they are part of [every release](https://github.com/simdjson/simdjson/releases) as assets. In this manner, you only have to compile `simdjson.cpp` as any other source file: it works well in every development environment. However, you may also use simdjson as a git submodule ([example](https://github.com/simdjson/cmakedemo)), using FetchContent ([example](https://github.com/simdjson/cmake_demo_single_file)), with ExternalProject_Add ([example](https://github.com/simdjson/cmakedemo_externalproject)) or with CPM ([example](https://github.com/cpm-cmake/CPM.cmake/tree/master/examples/simdjson)).
-- Users on macOS and other platforms where default compilers do not provide C++11 compliant by default should request it with the appropriate flag (e.g., `c++ -std=c++11 myproject.cpp simdjson.cpp`).
+- We recommend that you use simdjson2 by copying the single-header `simdjson2.h` file along with the source file `simdjson2.cpp` directly in your project, as they are part of [every release](https://github.com/simdjson2/simdjson2/releases) as assets. In this manner, you only have to compile `simdjson2.cpp` as any other source file: it works well in every development environment. However, you may also use simdjson2 as a git submodule ([example](https://github.com/simdjson2/cmakedemo)), using FetchContent ([example](https://github.com/simdjson2/cmake_demo_single_file)), with ExternalProject_Add ([example](https://github.com/simdjson2/cmakedemo_externalproject)) or with CPM ([example](https://github.com/cpm-cmake/CPM.cmake/tree/master/examples/simdjson2)).
+- Users on macOS and other platforms where default compilers do not provide C++11 compliant by default should request it with the appropriate flag (e.g., `c++ -std=c++11 myproject.cpp simdjson2.cpp`).
 - The library relies on [runtime CPU detection](implementation-selection.md): avoid specifying an architecture at compile time (e.g., `-march-native`) if you want your binaries to run everywhere.
 
-Using simdjson with package managers
+Using simdjson2 with package managers
 ------------------
 
-You can install the simdjson library on your system or in your project using multiple package managers such as MSYS2, the conan package manager, vcpkg, brew, the apt package manager (debian-based Linux systems), the FreeBSD package manager (FreeBSD), and so on. E.g., [we provide an complete example with vcpkg](https://github.com/simdjson/simdjson-vcpkg) that works under Windows. [Visit our wiki for more details](https://github.com/simdjson/simdjson/wiki/Installing-simdjson-with-a-package-manager).
+You can install the simdjson2 library on your system or in your project using multiple package managers such as MSYS2, the conan package manager, vcpkg, brew, the apt package manager (debian-based Linux systems), the FreeBSD package manager (FreeBSD), and so on. E.g., [we provide an complete example with vcpkg](https://github.com/simdjson2/simdjson2-vcpkg) that works under Windows. [Visit our wiki for more details](https://github.com/simdjson2/simdjson2/wiki/Installing-simdjson2-with-a-package-manager).
 
 
 
-The following Linux distributions provide simdjson packages: Alpine, RedHat, Rocky Linux, Debian, Fedora, and Ubuntu.
+The following Linux distributions provide simdjson2 packages: Alpine, RedHat, Rocky Linux, Debian, Fedora, and Ubuntu.
 
-Using simdjson as a CMake dependency
+Using simdjson2 as a CMake dependency
 ------------------
 
-You can include the simdjson library as a CMake dependency by including the following lines in your `CMakeLists.txt`:
+You can include the simdjson2 library as a CMake dependency by including the following lines in your `CMakeLists.txt`:
 
 ```cmake
 include(FetchContent)
 
 FetchContent_Declare(
-  simdjson
-  GIT_REPOSITORY https://github.com/simdjson/simdjson.git
+  simdjson2
+  GIT_REPOSITORY https://github.com/simdjson2/simdjson2.git
   GIT_TAG  tags/v3.6.0
   GIT_SHALLOW TRUE)
 
-FetchContent_MakeAvailable(simdjson)
+FetchContent_MakeAvailable(simdjson2)
 ```
 
-You should provide `GIT_TAG` with the release you need. If you omit `GIT_TAG  ...`, you will work from the main branch of simdjson: we recommend that if you are working on production code, you always work from a release.
+You should provide `GIT_TAG` with the release you need. If you omit `GIT_TAG  ...`, you will work from the main branch of simdjson2: we recommend that if you are working on production code, you always work from a release.
 
-Elsewhere in your project, you can declare dependencies on simdjson with lines such as these:
+Elsewhere in your project, you can declare dependencies on simdjson2 with lines such as these:
 
 ```cmake
 add_executable(myprogram myprogram.cpp)
-target_link_libraries(myprogram simdjson)
+target_link_libraries(myprogram simdjson2)
 ```
 
 We recommend CMake version 3.15 or better.
 
-See [our CMake demonstration](https://github.com/simdjson/cmake_demo_single_file). It works under Linux, FreeBSD, macOS and Windows (including Visual Studio).
+See [our CMake demonstration](https://github.com/simdjson2/cmake_demo_single_file). It works under Linux, FreeBSD, macOS and Windows (including Visual Studio).
 
-The CMake build in simdjson can be tailored with a few variables. You can see the available variables and their default values by entering the `cmake -LA` command.
+The CMake build in simdjson2 can be tailored with a few variables. You can see the available variables and their default values by entering the `cmake -LA` command.
 
 
 Versions
@@ -135,7 +135,7 @@ are made of three numbers prefixed by the letter `v` and separated by periods.
 
 You can always find the latest release at the following hyperlink:
 
-https://github.com/simdjson/simdjson/releases/latest/
+https://github.com/simdjson2/simdjson2/releases/latest/
 
 The archive you download at this location contains its own corresponding
 documentation.
@@ -144,7 +144,7 @@ You can also choose to browse a specific version
 of the documentation and the code using GitHub,
 by appending the version number to the hyperlink, like so:
 
-https://github.com/simdjson/simdjson/blob/vx.y.z/doc/basics.md
+https://github.com/simdjson2/simdjson2/blob/vx.y.z/doc/basics.md
 
 where `x.y.z` should correspond to the version number you have
 chosen.
@@ -152,19 +152,19 @@ chosen.
 The basics: loading and parsing JSON documents
 ----------------------------------------------
 
-The simdjson library allows you to navigate and validate JSON documents ([RFC 8259](https://www.tbray.org/ongoing/When/201x/2017/12/14/rfc8259.html)).
+The simdjson2 library allows you to navigate and validate JSON documents ([RFC 8259](https://www.tbray.org/ongoing/When/201x/2017/12/14/rfc8259.html)).
 As required by the standard, your JSON document should be in a Unicode (UTF-8) string. The whole
 string, from the beginning to the end, needs to be valid: we do not attempt to tolerate bad
 inputs before or after a document.
 
-For efficiency reasons, simdjson requires a string with a few bytes (`simdjson::SIMDJSON_PADDING`)
+For efficiency reasons, simdjson2 requires a string with a few bytes (`simdjson2::SIMDJSON2_PADDING`)
 at the end, these bytes may be read but their content does not affect the parsing. In practice,
-it means that the JSON inputs should be stored in a memory region with `simdjson::SIMDJSON_PADDING`
+it means that the JSON inputs should be stored in a memory region with `simdjson2::SIMDJSON2_PADDING`
 extra bytes at the end. You do not have to set these bytes to specific values though you may
 want to if you want to avoid runtime warnings with some sanitizers. Advanced users may want to
 read the section Free Padding in [our performance notes](performance.md).
 
-The simdjson library offers a tree-like [API](https://en.wikipedia.org/wiki/API), which you can
+The simdjson2 library offers a tree-like [API](https://en.wikipedia.org/wiki/API), which you can
 access by creating a `ondemand::parser` and calling the `iterate()` method. The iterate method
 quickly indexes the input string and may detect some errors. The following example illustrates
 how to get started with an input JSON file (`"twitter.json"`):
@@ -179,47 +179,47 @@ You can also create a padded string---and call `iterate()`:
 
 ```c++
 ondemand::parser parser;
-auto json = "[1,2,3]"_padded; // The _padded suffix creates a simdjson::padded_string instance
+auto json = "[1,2,3]"_padded; // The _padded suffix creates a simdjson2::padded_string instance
 ondemand::document doc = parser.iterate(json); // parse a string
 ```
 
-If you have a buffer of your own with enough padding already (SIMDJSON_PADDING extra bytes allocated), you can use `padded_string_view` to pass it in:
+If you have a buffer of your own with enough padding already (SIMDJSON2_PADDING extra bytes allocated), you can use `padded_string_view` to pass it in:
 
 ```c++
 ondemand::parser parser;
-char json[3+SIMDJSON_PADDING];
+char json[3+SIMDJSON2_PADDING];
 strcpy(json, "[1]");
 ondemand::document doc = parser.iterate(json, strlen(json), sizeof(json));
 ```
 
-The simdjson library will also accept `std::string` instances. If the provided
+The simdjson2 library will also accept `std::string` instances. If the provided
 reference is non-const, it will allocate padding as needed.
 
-You can copy your data directly on a `simdjson::padded_string` as follows:
+You can copy your data directly on a `simdjson2::padded_string` as follows:
 
 ```c++
 const char * data = "my data"; // 7 bytes
-simdjson::padded_string my_padded_data(data, 7); // copies to a padded buffer
+simdjson2::padded_string my_padded_data(data, 7); // copies to a padded buffer
 ```
 
 Or as follows...
 
 ```c++
 std::string data = "my data";
-simdjson::padded_string my_padded_data(data); // copies to a padded buffer
+simdjson2::padded_string my_padded_data(data); // copies to a padded buffer
 ```
 
 
 We recommend against creating many `std::string` or many `std::padding_string` instances in your application to store your JSON data.
 Consider reusing the same buffers and limiting memory allocations.
 
-By default, the simdjson library throws exceptions (`simdjson_error`) on errors. We omit `try`-`catch` clauses from our illustrating examples: if you omit `try`-`catch` in your code, an uncaught exception will halt your program. It is also possible to use simdjson without generating exceptions, and you may even build the library without exception support at all. See [Error handling](#error-handling) for details.
+By default, the simdjson2 library throws exceptions (`simdjson2_error`) on errors. We omit `try`-`catch` clauses from our illustrating examples: if you omit `try`-`catch` in your code, an uncaught exception will halt your program. It is also possible to use simdjson2 without generating exceptions, and you may even build the library without exception support at all. See [Error handling](#error-handling) for details.
 
 
 Some users may want to browse code along with the compiled assembly. You want to check out the following lists of examples:
 
-* [simdjson examples with errors handled through exceptions](https://godbolt.org/z/98Kx9Kqjn)
-* [simdjson examples with errors without exceptions](https://godbolt.org/z/PKG7GdbPo)
+* [simdjson2 examples with errors handled through exceptions](https://godbolt.org/z/98Kx9Kqjn)
+* [simdjson2 examples with errors without exceptions](https://godbolt.org/z/PKG7GdbPo)
 
 *Windows-specific*:  Windows users who need to read files with
 non-ANSI characters in the name should set their code page to
@@ -231,7 +231,7 @@ codepage, and they may call SetFileApisToOEM accordingly.
 Documents are iterators
 -----------------------
 
-The simdjson library relies on an approach to parsing JSON that we call "On-Demand".
+The simdjson2 library relies on an approach to parsing JSON that we call "On-Demand".
 A `document` is *not* a fully-parsed JSON value; rather, it is an **iterator** over the JSON text.
 This means that while you iterate an array, or search for a field in an object, it is actually
 walking through the original JSON text, merrily reading commas and colons and brackets to make sure
@@ -256,23 +256,23 @@ with the document, the source (whether file or string) can be safely discarded.
 
 For best performance, a `parser` instance should be reused over several files: otherwise you will
 needlessly reallocate memory, an expensive process. It is also possible to avoid entirely memory
-allocations during parsing when using simdjson. [See our performance notes for details](performance.md).
+allocations during parsing when using simdjson2. [See our performance notes for details](performance.md).
 
 If you need to have several documents active at once, you should have several parser instances.
 
 string_view
 -------------
 
-The simdjson library builds on compilers supporting the [C++11 standard](https://en.wikipedia.org/wiki/C%2B%2B11).
+The simdjson2 library builds on compilers supporting the [C++11 standard](https://en.wikipedia.org/wiki/C%2B%2B11).
 It is also a strict requirement: we have no plan to support older C++ compilers.
 
-We represent parsed Unicode (UTF-8) strings in simdjson using the `std::string_view` class. It avoids
+We represent parsed Unicode (UTF-8) strings in simdjson2 using the `std::string_view` class. It avoids
 the need to copy the data, as would be necessary with the `std::string` class. It also
 avoids the pitfalls of null-terminated C strings. It makes it easier for our users to
 copy the data into their own favorite class instances (e.g., alternatives to `std::string`).
 
 A `std::string_view` instance is effectively just a pointer to a region in memory representing
-a string. In simdjson, we return `std::string_view` instances that either point within the
+a string. In simdjson2, we return `std::string_view` instances that either point within the
 input string you parsed (see [General direct access to the raw JSON string](#general-direct-access-to-the-raw-json-string)), or to a temporary string buffer inside
 our parser class instances that is valid until the parser object is destroyed or you use it to parse another document.
 When using `std::string_view` instances, it is your responsibility to ensure that
@@ -286,16 +286,16 @@ For convenience, we also allow [storing an escaped string directly into an exist
 
 The `std::string_view` class has become standard as part of C++17 but it is not always available
 on compilers which only supports C++11. When we detect that `string_view` is natively
-available, we define the macro `SIMDJSON_HAS_STRING_VIEW`.
+available, we define the macro `SIMDJSON2_HAS_STRING_VIEW`.
 
 When we detect that it is unavailable,
 we use [string-view-lite](https://github.com/martinmoene/string-view-lite) as a
 substitute. In such cases, we use the type alias `using string_view = nonstd::string_view;` to
 offer the same API, irrespective of the compiler and standard library. The macro
-`SIMDJSON_HAS_STRING_VIEW` will be *undefined* to indicate that we emulate `string_view`.
+`SIMDJSON2_HAS_STRING_VIEW` will be *undefined* to indicate that we emulate `string_view`.
 
 Some users prefer to use non-JSON native encoding formats such as UTF-16 or UTF-32. Users may
-transcode the UTF-8 strings produced by the simdjson library to other formats. See the
+transcode the UTF-8 strings produced by the simdjson2 library to other formats. See the
 [simdutf library](https://github.com/simdutf/simdutf), for example.
 
 Avoiding pitfalls: enable development checks
@@ -306,34 +306,34 @@ We recommend that you first compile and run your code in Debug mode:
 - under Visual Studio, it means having the `_DEBUG` macro defined,
 -  for other compilers, it means leaving the `__OPTIMIZE__` macro undefined.
 
-The simdjson code will set `SIMDJSON_DEVELOPMENT_CHECKS=1` in debug mode.
-Alternatively, you can set the macro `SIMDJSON_DEVELOPMENT_CHECKS` to 1 prior to including
-the `simdjson.h` header to enable these additional checks: just make sure you remove the
-definition once your code has been tested. When `SIMDJSON_DEVELOPMENT_CHECKS` is set to 1, the
-simdjson library runs additional (expensive) tests on your code to help ensure that you are
+The simdjson2 code will set `SIMDJSON2_DEVELOPMENT_CHECKS=1` in debug mode.
+Alternatively, you can set the macro `SIMDJSON2_DEVELOPMENT_CHECKS` to 1 prior to including
+the `simdjson2.h` header to enable these additional checks: just make sure you remove the
+definition once your code has been tested. When `SIMDJSON2_DEVELOPMENT_CHECKS` is set to 1, the
+simdjson2 library runs additional (expensive) tests on your code to help ensure that you are
 using the library in a safe manner.
 
 Once your code has been tested, you can then run it in
 Release mode: under Visual Studio, it means having the `_DEBUG` macro undefined, and, for other
 compilers, it means setting `__OPTIMIZE__` to a positive integer. You can also forcefully
-disable these checks by setting `SIMDJSON_DEVELOPMENT_CHECKS` to 0. Once your code is tested, we
+disable these checks by setting `SIMDJSON2_DEVELOPMENT_CHECKS` to 0. Once your code is tested, we
 further encourage you to define `NDEBUG` in your Release builds to disable additional runtime
 testing and get the best performance.
 
 Using the parsed JSON
 ---------------------
 
-Once you have a document (`simdjson::ondemand::document`), you can navigate it with
+Once you have a document (`simdjson2::ondemand::document`), you can navigate it with
 idiomatic C++ iterators, operators and casts. Besides the document instances and
 native types (`double`, `uint64_t`, `int64_t`, `bool`), we also access
-Unicode (UTF-8) strings (`std::string_view`), objects (`simdjson::ondemand::object`)
-and arrays (`simdjson::ondemand::array`).
-We also have a generic ephemeral type (`simdjson::ondemand::value`) which represents a potential
+Unicode (UTF-8) strings (`std::string_view`), objects (`simdjson2::ondemand::object`)
+and arrays (`simdjson2::ondemand::array`).
+We also have a generic ephemeral type (`simdjson2::ondemand::value`) which represents a potential
 array or object, or scalar type (`double`, `uint64_t`, `int64_t`, `bool`, `null`, string) inside
-an array or an object. Both generic types (`simdjson::ondemand::document` and
-`simdjson::ondemand::value`) have a `type()` method returning a `json_type` value describing the
+an array or an object. Both generic types (`simdjson2::ondemand::document` and
+`simdjson2::ondemand::value`) have a `type()` method returning a `json_type` value describing the
 value (`json_type::array`, `json_type::object`, `json_type::number`, `json_type::string`,
-`json_type::boolean`, `json_type::null`). A generic value (`simdjson::ondemand::value`)
+`json_type::boolean`, `json_type::null`). A generic value (`simdjson2::ondemand::value`)
 is only valid temporarily, as soon as you access other values, other keys in objects, etc.
 it becomes invalid: you should therefore consume the value immediately by converting it to a
 scalar type, an array or an object.
@@ -349,13 +349,13 @@ We invite you to keep the following rules in mind:
 2. Because On-Demand is really just an iterator, you must fully consume the current object or array before accessing a sibling object or array.
 3. Values can only be consumed once, you should get the values and store them if you plan to need them multiple times. You are expected to access the keys of an object just once. You are expected to go through the values of an array just once.
 
-The simdjson library makes generous use of `std::string_view` instances. If you are unfamiliar
+The simdjson2 library makes generous use of `std::string_view` instances. If you are unfamiliar
 with `std::string_view` in C++, make sure to [read the section on std::string_view](#string_view).
 They behave much like an immutable `std::string` but they require no memory allocation. You can
 create a `std::string` instance from a `std::string_view` when you need it.
 
-The following specific instructions indicate how to use the JSON when exceptions are enabled, but simdjson has full, idiomatic
-support for users who avoid exceptions. See [the simdjson error handling documentation](basics.md#error-handling) for more.
+The following specific instructions indicate how to use the JSON when exceptions are enabled, but simdjson2 has full, idiomatic
+support for users who avoid exceptions. See [the simdjson2 error handling documentation](basics.md#error-handling) for more.
 
 * **Validate What You Use:** When calling `iterate`, the document is quickly indexed. If it is
   not a valid Unicode (UTF-8) string or if there is an unclosed string, an error may be reported right away.
@@ -366,7 +366,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   ondemand::object and ondemand::array. We also have explicit methods such as `get_string()`, `get_double()`,
   `get_uint64()`, `get_int64()`, `get_bool()`, `get_object()` and `get_array()`. After a cast or an explicit method,
   the number, string or boolean will be parsed, or the initial `{` or `[` will be verified for `ondemand::object` and `ondemand::array`. An exception may be thrown if
-  the cast is not possible: there error code is `simdjson::INCORRECT_TYPE` (see [Error handling](#error-handling)). Importantly, when getting an ondemand::object or ondemand::array instance, its content is
+  the cast is not possible: there error code is `simdjson2::INCORRECT_TYPE` (see [Error handling](#error-handling)). Importantly, when getting an ondemand::object or ondemand::array instance, its content is
   not validated: you are only guaranteed that the corresponding initial character (`{` or `[`) is present. Thus,
   for example, you could have an ondemand::object instance pointing at the invalid JSON `{ "this is not a valid object" }`: the validation occurs as you access the content.
   The `get_string()` returns a valid UTF-8 string, after
@@ -408,7 +408,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   out of the array, you may use an array access (e.g., `array[1]`).
 * **Field Access:** To get the value of the "foo" field in an object, use `object["foo"]`. This will
   scan through the object looking for the field with the matching string, doing a character-by-character
-  comparison. It may generate the error `simdjson::NO_SUCH_FIELD` if there is no such key in the object, it may throw an exception (see [Error handling](#error-handling)). For efficiency reason, you should avoid looking up the same field repeatedly: e.g., do
+  comparison. It may generate the error `simdjson2::NO_SUCH_FIELD` if there is no such key in the object, it may throw an exception (see [Error handling](#error-handling)). For efficiency reason, you should avoid looking up the same field repeatedly: e.g., do
   not do `object["foo"]` followed by `object["foo"]` with the same `object` instance. For best performance, you should try to query the keys in the same order they appear in the document. If you need several keys and you cannot predict the order they will appear in, it is recommended to iterate through all keys `for(auto field : object) {...}`. Generally, you should not mix and match iterating through an object (`for(auto field : object) {...}`) and key accesses (`object["foo"]`): if you need to iterate through an object after a key access, you need to call `reset()` on the object. Whenever you call `reset()`, you need to keep in mind that though you can iterate over the array repeatedly, values should be consumedonly once (e.g., repeatedly calling `unescaped_key()` on the same  key is forbidden). Keep in mind that On-Demand does not buffer or save the result of the parsing: if you repeatedly access `object["foo"]`, then it must repeatedly seek the key and parse the content. The library does not provide a distinct function to check if a key is present, instead we recommend you attempt to access the key: e.g., by doing `ondemand::value val{}; if (!object["foo"].get(val)) {...}`, you have that `val` contains the requested value inside the if clause.  It is your responsibility as a user to temporarily keep a reference to the value (`auto v = object["foo"]`), or to consume the content and store it in your own data structures. If you consume an
   object twice: `std::string_view(object["foo"]` followed by `std::string_view(object["foo"]` then your code
   is in error. Furthermore, you can only consume one field at a time, on the same object. The
@@ -418,7 +418,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   unsafe to do so. You can detect such mistakes by first compiling and running the code [with development checks](#avoiding-pitfalls-enable-development-checks): an OUT_OF_ORDER_ITERATION error is generated.
 
   > NOTE: JSON allows you to escape characters in keys. E.g., the key `"date"` may be written as
-  > `"\u0064\u0061\u0074\u0065"`. By default, simdjson does *not* unescape keys when matching.
+  > `"\u0064\u0061\u0074\u0065"`. By default, simdjson2 does *not* unescape keys when matching.
   > Thus if you search for the key `"date"` and the JSON document uses `"\u0064\u0061\u0074\u0065"`
   > as a key, it will not be recognized. This is not generally a problem.  Nevertheless, if you do need
   > to support escaped keys, the method `unescaped_key()` provides the desired unescaped keys by
@@ -472,12 +472,12 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   > double y = doc["y"]; // The cursor is now after the 2 (at })
   > double x = doc["x"]; // Success: [] loops back around to find "x"
   > ```
-* **Output to strings:** Given a document, a value, an array or an object in a JSON document, you can output a JSON string version suitable to be parsed again as JSON content: `simdjson::to_json_string(element)`. A call to `to_json_string` consumes fully the element: if you apply it on a document, the JSON pointer is advanced to the end of the document. The `simdjson::to_json_string` does not allocate memory. The `to_json_string` function should not be confused with retrieving the value of a string instance which are escaped and represented using a lightweight `std::string_view` instance pointing at an internal string buffer inside the parser instance. To illustrate, the first of the following two code segments will print the unescaped string `"test"` complete with the quote whereas the second one will print the escaped content of the string (without the quotes).
+* **Output to strings:** Given a document, a value, an array or an object in a JSON document, you can output a JSON string version suitable to be parsed again as JSON content: `simdjson2::to_json_string(element)`. A call to `to_json_string` consumes fully the element: if you apply it on a document, the JSON pointer is advanced to the end of the document. The `simdjson2::to_json_string` does not allocate memory. The `to_json_string` function should not be confused with retrieving the value of a string instance which are escaped and represented using a lightweight `std::string_view` instance pointing at an internal string buffer inside the parser instance. To illustrate, the first of the following two code segments will print the unescaped string `"test"` complete with the quote whereas the second one will print the escaped content of the string (without the quotes).
   > ```C++
   > // serialize a JSON to an escaped std::string instance so that it can be parsed again as JSON
   > auto silly_json = R"( { "test": "result"  }  )"_padded;
   > ondemand::document doc = parser.iterate(silly_json);
-  > std::cout << simdjson::to_json_string(doc["test"]) << std::endl; // Requires simdjson 1.0 or better
+  > std::cout << simdjson2::to_json_string(doc["test"]) << std::endl; // Requires simdjson2 1.0 or better
   >````
   > ```C++
   > // retrieves an unescaped string value as a string_view instance
@@ -499,7 +499,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   >   ondemand::parser parser;
   >   for (ondemand::object car : parser.iterate(cars_json)) {
   >     if (uint64_t(car["year"]) > 2000) {
-  >       arrays.push_back(simdjson::to_json_string(car["tire_pressure"]));
+  >       arrays.push_back(simdjson2::to_json_string(car["tire_pressure"]));
   >     }
   >   }
   > }
@@ -528,7 +528,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   double value;
   auto doc = parser.iterate(abstract_json);
   auto error = doc["str"]["123"]["abc"].get(value);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
   cout << value << endl; // Prints 3.14
   ```
   This examples also show how we can string several operations and only check for the error once, a strategy we call  *error chaining*.
@@ -543,7 +543,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   ```C++
   auto cars_json = R"( [ 40.1, 39.9, 37.7, 40.4 ] )"_padded;
   auto doc = parser.iterate(cars_json);
-  size_t count = doc.count_elements(); // requires simdjson 1.0 or better
+  size_t count = doc.count_elements(); // requires simdjson2 1.0 or better
   std::vector<double> values(count);
   size_t index = 0;
   for(double x : doc) { values[index++] = x; }
@@ -555,10 +555,10 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   auto cars_json = R"( { "test":[ { "val1":1, "val2":2 }, { "val1":1, "val2":2 } ] }   )"_padded;
   auto doc = parser.iterate(cars_json);
   auto test_array = doc.find_field("test").get_array();
-  size_t count = test_array.count_elements(); // requires simdjson 1.0 or better
+  size_t count = test_array.count_elements(); // requires simdjson2 1.0 or better
   std::cout << "Number of elements: " <<  count << std::endl;
   for(ondemand::object elem: test_array) {
-     std::cout << simdjson::to_json_string(elem);
+     std::cout << simdjson2::to_json_string(elem);
   }
   ```
 * **Counting fields in objects:** Other times, it is useful to scan an object to determine the number of fields prior to
@@ -572,7 +572,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   ondemand::parser parser;
   auto json = R"( { "test":{ "val1":1, "val2":2 } }   )"_padded;
   auto doc = parser.iterate(json);
-  size_t count = doc.count_fields(); // requires simdjson 1.0 or better
+  size_t count = doc.count_fields(); // requires simdjson2 1.0 or better
   std::cout << "Number of fields: " <<  count << std::endl; // Prints "Number of fields: 1"
   ```
   Similarly to `count_elements`, you should not let an object instance go out of scope before consuming it after calling
@@ -582,7 +582,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
   auto json = R"( { "test":{ "val1":1, "val2":2 } }   )"_padded;
   auto doc = parser.iterate(json);
   auto test_object = doc.find_field("test").get_object();
-  size_t count = test_object.count_fields(); // requires simdjson 1.0 or better
+  size_t count = test_object.count_fields(); // requires simdjson2 1.0 or better
   std::cout << "Number of fields: " <<  count << std::endl; // Prints "Number of fields: 2"
   ```
 * **Tree Walking and JSON Element Types:** Sometimes you don't necessarily have a document
@@ -674,7 +674,7 @@ support for users who avoid exceptions. See [the simdjson error handling documen
 ### Using the parsed JSON: additional examples
 
 
-Let us review these concepts with some additional examples. For simplicity, we omit the include clauses (`#include "simdjson.h"`) as well as namespace-using clauses (`using namespace simdjson;`).
+Let us review these concepts with some additional examples. For simplicity, we omit the include clauses (`#include "simdjson2.h"`) as well as namespace-using clauses (`using namespace simdjson2;`).
 
 The first example illustrates how we can chain operations. In this instance, we repeatedly select keys using the bracket operator (`doc["str"]`) and then finally request a number (using `get_double()`). It is safe to write code in this manner: if any step causes an error, the error status propagates and an exception is thrown at the end. You do not need to constantly check for errors.
 
@@ -759,9 +759,9 @@ The following example illustrates how you may also iterate through object values
 
 ```C++
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 using namespace std;
-using namespace simdjson;
+using namespace simdjson2;
 
 // ...
 
@@ -790,17 +790,17 @@ for (ondemand::object points : parser.iterate(points_json)) {
 Adding support for custom types
 ----------------------
 
-There are 2 main ways provided by simdjson to deserialize a value into a custom type:
+There are 2 main ways provided by simdjson2 to deserialize a value into a custom type:
 
 1. Provide a [**template specialization** for member functions](https://en.cppreference.com/w/cpp/language/template_specialization#Members_of_specializations)
-   1. Specialize `simdjson::ondemand::document::get` for the whole document
-   2. Specialize `simdjson::ondemand::value::get` for each value
+   1. Specialize `simdjson2::ondemand::document::get` for the whole document
+   2. Specialize `simdjson2::ondemand::value::get` for each value
 2. Using `tag_invoke` *(the recommended way if your system supports C++20 or better)*
 
 We describe both of them in the following sections. Most users who have systems compatible with
 C++20 or better should skip ahead to [using `tag_invoke` for custom types (C++20)](#2-use-tag_invoke-for-custom-types-c20) as it is more powerful and simpler.
 
-### 1. Specialize `simdjson::ondemand::value::get` to get custom types (pre-C++20)
+### 1. Specialize `simdjson2::ondemand::value::get` to get custom types (pre-C++20)
 
 Suppose you have your own types, such as a `Car` struct:
 
@@ -836,17 +836,17 @@ type:
 
 We may do so by providing additional template definitions to the `ondemand::value` type.
 We may start by providing a definition for `std::vector<double>` as follows. Observe
-how we guard the code with `#if !SIMDJSON_SUPPORTS_DESERIALIZATION`: that is because the necessary code
-is automatically provided by simdjson if C++20 (and concepts) are available.
+how we guard the code with `#if !SIMDJSON2_SUPPORTS_DESERIALIZATION`: that is because the necessary code
+is automatically provided by simdjson2 if C++20 (and concepts) are available.
 See [Use `tag_invoke` for custom types](#2-use-tag_invoke-for-custom-types-c20) if you have
 C++20 support.
 
 ```c++
-#if !SIMDJSON_SUPPORTS_DESERIALIZATION
+#if !SIMDJSON2_SUPPORTS_DESERIALIZATION
 // The code is unnecessary with C++20:
 template <>
-simdjson_inline simdjson_result<std::vector<double>>
-simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<std::vector<double>>
+simdjson2::ondemand::value::get() noexcept {
   ondemand::array array;
   auto error = get_array().get(array);
   if (error) { return error; }
@@ -866,7 +866,7 @@ We may then provide support for our `Car` struct:
 
 ```C++
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::value::get() noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) { return error; }
@@ -882,11 +882,11 @@ simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
 And that is all that is needed! The following code is a complete example:
 
 ```c++
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <iostream>
 #include <vector>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 /**
  * A custom type that we want to parse.
@@ -898,11 +898,11 @@ struct Car {
   std::vector<double> tire_pressure;
 };
 
-#if !SIMDJSON_SUPPORTS_DESERIALIZATION
+#if !SIMDJSON2_SUPPORTS_DESERIALIZATION
 // This code is not necessary if you have a C++20 compliant system:
 template <>
-simdjson_inline simdjson_result<std::vector<double>>
-simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<std::vector<double>>
+simdjson2::ondemand::value::get() noexcept {
   ondemand::array array;
   auto error = get_array().get(array);
   if (error) { return error; }
@@ -918,7 +918,7 @@ simdjson::ondemand::value::get() noexcept {
 #endif
 
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::value::get() noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) { return error; }
@@ -964,11 +964,11 @@ int main(void) {
   ondemand::parser parser;
   ondemand::document doc;
   auto error = parser.iterate(json).get(doc);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
   for (auto val : doc) {
     Car c;
     error = val.get<Car>().get(c);
-    if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
+    if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
     std::cout << c.make << std::endl;
   }
   return EXIT_SUCCESS;
@@ -978,16 +978,16 @@ int main(void) {
 Our example is limited to `ondemand::value` instances. If you wish to also be able to map
 directly the document instance itself to a custom type, you need to provide the definitions to
 the `ondemand::document` type. In this instance, we must replace the function with signature
-`simdjson_result<Car> simdjson::ondemand::value::get()` with a function having signature
-`simdjson_result<Car> simdjson::ondemand::document::get() &`. The following is a complete
+`simdjson2_result<Car> simdjson2::ondemand::value::get()` with a function having signature
+`simdjson2_result<Car> simdjson2::ondemand::document::get() &`. The following is a complete
 example:
 
 ```C++
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <iostream>
 #include <vector>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 /**
  * A custom type that we want to parse.
@@ -999,11 +999,11 @@ struct Car {
   std::vector<double> tire_pressure;
 };
 
-#if !SIMDJSON_SUPPORTS_DESERIALIZATION
+#if !SIMDJSON2_SUPPORTS_DESERIALIZATION
 // This code is not necessary if you have a C++20 compliant system:
 template <>
-simdjson_inline simdjson_result<std::vector<double>>
-simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<std::vector<double>>
+simdjson2::ondemand::value::get() noexcept {
   ondemand::array array;
   auto error = get_array().get(array);
   if (error) { return error; }
@@ -1019,7 +1019,7 @@ simdjson::ondemand::value::get() noexcept {
 #endif
 
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() & noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::document::get() & noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) { return error; }
@@ -1033,7 +1033,7 @@ simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() & noexc
 
 
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::document::get() noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) { return error; }
@@ -1063,12 +1063,12 @@ A customization point is a function or function object that can be customized fo
 
 A tag_invoke function serves as a mechanism for customization points. It is not directly part of the C++ standard library but is often used in libraries that implement customization points.
 The tag_invoke function is typically a generic function that takes a tag type and additional arguments.
-The first argument is usually a tag type (often an empty struct) that uniquely identifies the customization point (e.g., deserialization of custom types in simdjson). Users or library providers can specialize tag_invoke for their types by defining it in the appropriate namespace, often inline namespace.
+The first argument is usually a tag type (often an empty struct) that uniquely identifies the customization point (e.g., deserialization of custom types in simdjson2). Users or library providers can specialize tag_invoke for their types by defining it in the appropriate namespace, often inline namespace.
 
 
 If your system supports C++20, we recommend that you adopt the `tag_invoke` approach
 instead to deserialize custom types. It may prove to be considerably simpler. When
-simdjson detects the necessary support, it sets the `SIMDJSON_SUPPORTS_DESERIALIZATION` macro
+simdjson2 detects the necessary support, it sets the `SIMDJSON2_SUPPORTS_DESERIALIZATION` macro
 to 1, otherwise it is set to 0.
 
 Consider a custom class `Car`:
@@ -1082,7 +1082,7 @@ struct Car {
 };
 ```
 
-Observe how we defined the class to use types that simdjson does not directly support (`float`, `int`).
+Observe how we defined the class to use types that simdjson2 does not directly support (`float`, `int`).
 With C++20 support, the library grabs from the JSON the generic type (`double`, `int`) and then it
 casts it automatically.
 
@@ -1091,10 +1091,10 @@ by defining a single `tag_invoke` function:
 
 
 ```C++
-namespace simdjson {
-// This tag_invoke MUST be inside simdjson namespace
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, Car& car) {
+namespace simdjson2 {
+// This tag_invoke MUST be inside simdjson2 namespace
+template <typename simdjson2_value>
+auto tag_invoke(deserialize_tag, simdjson2_value &val, Car& car) {
   ondemand::object obj;
   auto error = val.get_object().get(obj);
   if (error) {
@@ -1113,29 +1113,29 @@ auto tag_invoke(deserialize_tag, simdjson_value &val, Car& car) {
            car.tire_pressure))) {
     return error;
   }
-  return simdjson::SUCCESS;
+  return simdjson2::SUCCESS;
 }
-} // namespace simdjson
+} // namespace simdjson2
 ```
 
 Observe how we call `get<std::vector<float>>()` even though we never defined support
-for `std::vector<float>` in the simdjson library: it is all automated thanks to C++20 concepts.
+for `std::vector<float>` in the simdjson2 library: it is all automated thanks to C++20 concepts.
 
-Importantly, the `tag_invoke` function must be inside the `simdjson` namespace.
+Importantly, the `tag_invoke` function must be inside the `simdjson2` namespace.
 Let us explain each argument of `tag_invoke` function.
 
-- `simdjson::deserialize_tag`: it is the tag for Customization Point Object (CPO). You may often ignore this parameter. It is used to indicate that you mean to provide a deserialization function for simdjson.
-- `var`: It receives automatically a `simdjson` value type (document, value, document_reference).
+- `simdjson2::deserialize_tag`: it is the tag for Customization Point Object (CPO). You may often ignore this parameter. It is used to indicate that you mean to provide a deserialization function for simdjson2.
+- `var`: It receives automatically a `simdjson2` value type (document, value, document_reference).
 - The third parameter is an instance of the type that you want to support.
 
 You can use it like so:
 
 ```cpp
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] })"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   Car c(doc);
   std::cout << c.make << std::endl;
 ```
@@ -1147,13 +1147,13 @@ You can also handle errors explicitly:
 ```cpp
   Car c;
   auto error = doc.get(c);
-  if(error) { std::cerr << simdjson::error_message(error); return false; }
+  if(error) { std::cerr << simdjson2::error_message(error); return false; }
   std::cout << c.make << std::endl;
 ```
 
 You can also read instances of `Car` from an array or an object:
 ```cpp
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] },
   { "make": "Kia",    "model": "Soul",   "year": 2012,
@@ -1162,8 +1162,8 @@ You can also read instances of `Car` from an array or an object:
        "tire_pressure": [ 29.8, 30.0 ] }
 ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   for (auto val : doc) {
     Car c(val); // an exception may be thrown
     std::cout << c.year << std::endl;
@@ -1179,15 +1179,15 @@ Once more, you can handle errors explicitly:
   for (auto val : doc) {
     Car c;
     auto error = val.get(c);
-    if(error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if(error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
   }
 ```
 
 You can also use the custom `Car` type as part of a template such as `std::vector`:
 
 ```cpp
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   std::vector<Car> cars(doc);
   // visual studio users need an explicit call:
   //   std::vector<Car> cars = doc.get<std::vector<Car>>();
@@ -1209,8 +1209,8 @@ E.g., you can recover an `std::unique_ptr<Car>` like so:
 int main() {
   auto const json = R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] })"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   std::unique_ptr<Car> c(doc);
   std::cout << c->make << std::endl;
   return EXIT_SUCCESS;
@@ -1229,24 +1229,24 @@ You may also conditionally fill in `std::optional` values.
   ondemand::document doc = parser.iterate(json);
   std::optional<Car> car;
   error = doc["key not found"].get<std::optional<Car>>().get(car);
-  // car has no value, error != simdjson::SUCCESS
+  // car has no value, error != simdjson2::SUCCESS
   error = doc["car1"].get<std::optional<Car>>().get(car);
   // car has value Car{"Toyota", "Camry", 2018, {40.1f, 39.9f}}
-  // error is simdjson::SUCCESS
+  // error is simdjson2::SUCCESS
 ```
 
 And so forth.
 
-Advanced users may want to overwrite the defaults provided by the simdjson library.
+Advanced users may want to overwrite the defaults provided by the simdjson2 library.
 Suppose for example that you want to construct an instance of `std::list<Car>`, but
 you also want to filter out any car made by Toyota. You may provide your own
 `tag_invoke` function:
 
 ```c++
-namespace simdjson {
+namespace simdjson2 {
 // suppose we want to filter out all Toyotas
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, std::list<Car>& car) {
+template <typename simdjson2_value>
+auto tag_invoke(deserialize_tag, simdjson2_value &val, std::list<Car>& car) {
   ondemand::array arr;
   auto error = val.get_array().get(arr);
   if (error) {
@@ -1261,7 +1261,7 @@ auto tag_invoke(deserialize_tag, simdjson_value &val, std::list<Car>& car) {
       car.push_back(c);
     }
   }
-  return simdjson::SUCCESS;
+  return simdjson2::SUCCESS;
 }
 }
 ```
@@ -1273,7 +1273,7 @@ that are not made by Toyota.
 Minifying JSON strings without parsing
 ----------------------
 
-In some cases, you may have valid JSON strings that you do not wish to parse but that you wish to minify. That is, you wish to remove all unnecessary spaces. We have a fast function for this purpose (`simdjson::minify(const char * input, size_t length, const char * output, size_t& new_length)`). This function does not validate your content, and it does not parse it.  It is much faster than parsing the string and re-serializing it in minified form (`simdjson::minify(parser.parse())`). Usage is relatively simple. You must pass an input pointer with a length parameter, as well as an output pointer and an output length parameter (by reference). The output length parameter is not read, but written to. The output pointer should point to a valid memory region that is as large as the original string length. The input pointer and input length are read, but not written to.
+In some cases, you may have valid JSON strings that you do not wish to parse but that you wish to minify. That is, you wish to remove all unnecessary spaces. We have a fast function for this purpose (`simdjson2::minify(const char * input, size_t length, const char * output, size_t& new_length)`). This function does not validate your content, and it does not parse it.  It is much faster than parsing the string and re-serializing it in minified form (`simdjson2::minify(parser.parse())`). Usage is relatively simple. You must pass an input pointer with a length parameter, as well as an output pointer and an output length parameter (by reference). The output length parameter is not read, but written to. The output pointer should point to a valid memory region that is as large as the original string length. The input pointer and input length are read, but not written to.
 
 ```C++
   // Starts with a valid JSON document as a string.
@@ -1283,8 +1283,8 @@ In some cases, you may have valid JSON strings that you do not wish to parse but
   // Create a buffer to receive the minified string. Make sure that there is enough room (length bytes).
   std::unique_ptr<char[]> buffer{new char[length]};
   size_t new_length{}; // It will receive the minified length.
-  auto error = simdjson::minify(some_string, length, buffer.get(), new_length);
-  if(error) { std::cerr << simdjson::error_message(error); }
+  auto error = simdjson2::minify(some_string, length, buffer.get(), new_length);
+  if(error) { std::cerr << simdjson2::error_message(error); }
   // The buffer variable now has "[1,2,3,4]" and new_length has value 9.
 ```
 
@@ -1294,12 +1294,12 @@ Though it does not validate the JSON input, it will detect when the document end
 UTF-8 validation (alone)
 ----------------------
 
-The simdjson library has fast functions to validate UTF-8 strings. They are many times faster than most functions commonly found in libraries. You can use our fast functions, even if you do not care about JSON.
+The simdjson2 library has fast functions to validate UTF-8 strings. They are many times faster than most functions commonly found in libraries. You can use our fast functions, even if you do not care about JSON.
 
 ```C++
   const char * some_string = "[ 1, 2, 3, 4] ";
   size_t length = std::strlen(some_string);
-  bool is_ok = simdjson::validate_utf8(some_string, length);
+  bool is_ok = simdjson2::validate_utf8(some_string, length);
 ```
 
 The UTF-8 validation function merely checks that the input is valid UTF-8: it works with strings in general, not just JSON strings.
@@ -1311,7 +1311,7 @@ If you find yourself needing only fast Unicode functions, consider using the sim
 JSON Pointer
 ------------
 
-The simdjson library also supports [JSON pointer](https://tools.ietf.org/html/rfc6901) through the `at_pointer()` method, letting you reach further down into the document in a single call. JSON pointer is supported by both the [DOM approach](https://github.com/simdjson/simdjson/blob/master/doc/dom.md#json-pointer) as well as the On-Demand approach.
+The simdjson2 library also supports [JSON pointer](https://tools.ietf.org/html/rfc6901) through the `at_pointer()` method, letting you reach further down into the document in a single call. JSON pointer is supported by both the [DOM approach](https://github.com/simdjson2/simdjson2/blob/master/doc/dom.md#json-pointer) as well as the On-Demand approach.
 
 **Note:** The On-Demand implementation of JSON pointer relies on `find_field` which implies that it does not unescape keys when matching.
 
@@ -1428,7 +1428,7 @@ be represented as `value` instances. You can check that a document is a scalar w
 JSONPath
 ------------
 
-The simdjson library supports a subset of [JSONPath](https://datatracker.ietf.org/doc/html/draft-normington-jsonpath-00) through the `at_path()` method, allowing you to reach further into the document in a single call. The subset of JSONPath that is implemented is the subset that is trivially convertible into the JSON Pointer format, using `.` to access a field and `[]` to access a specific index.
+The simdjson2 library supports a subset of [JSONPath](https://datatracker.ietf.org/doc/html/draft-normington-jsonpath-00) through the `at_path()` method, allowing you to reach further into the document in a single call. The subset of JSONPath that is implemented is the subset that is trivially convertible into the JSON Pointer format, using `.` to access a field and `[]` to access a specific index.
 
 This implementation relies on `at_path()` converting its argument to JSON Pointer and then calling `at_pointer`, which makes use of
 [`rewind`](#rewind) to reset the parser at the beginning of the document. Hence, it invalidates all previously parsed values, objects
@@ -1447,7 +1447,7 @@ auto cars = parser.iterate(cars_json);
 cout << cars.at_path("[0].tire_pressure[1]") << endl; // Prints 39.9
 ```
 
-A call to `at_path(json_path)` can result in any of the errors that are returned by the `at_pointer` method and if the conversion of `json_path` to JSON Pointer fails, it will lead to an `simdjson::INVALID_JSON_POINTER`error.
+A call to `at_path(json_path)` can result in any of the errors that are returned by the `at_pointer` method and if the conversion of `json_path` to JSON Pointer fails, it will lead to an `simdjson2::INVALID_JSON_POINTER`error.
 
 ```c++
 auto cars_json = R"( [
@@ -1490,25 +1490,25 @@ Error handling
 
 Error handing with exception and a single try/catch clause makes the code simple, but it gives you little control over errors. For easier debugging or more robust error handling, you may want to consider our exception-free approach.
 
-The entire simdjson API is usable with and without exceptions. All simdjson APIs that can fail return `simdjson_result<T>`, which is a &lt;value, error_code&gt;
+The entire simdjson2 API is usable with and without exceptions. All simdjson2 APIs that can fail return `simdjson2_result<T>`, which is a &lt;value, error_code&gt;
 pair. You can retrieve the value with .get() without generating an exception, like so:
 
 ```c++
 ondemand::document doc;
 auto error = parser.iterate(json).get(doc);
-if(error) { std::cerr << simdjson::error_message(error); exit(1); }
+if(error) { std::cerr << simdjson2::error_message(error); exit(1); }
 ```
 
-When there is no error, the error code `simdjson::SUCCESS`is returned: it evaluates as false as a Boolean.
+When there is no error, the error code `simdjson2::SUCCESS`is returned: it evaluates as false as a Boolean.
 We have several error codes to indicate errors, they all evaluate to true as a Boolean: your software should not generally not depend on exact
 error codes. We may change the error codes in future releases and the exact error codes could vary depending on your system.
 
 Some errors are recoverable:
 
-* You may get the error `simdjson::INCORRECT_TYPE` after trying to convert a value to an incorrect type: e.g., you expected a number and try to convert the value to a number, but it is an array.
-* You may query a key from an object, but the key is missing in which case you get the error `simdjson::NO_SUCH_FIELD`: e.g., you call `obj["myname"]` and the object does not have a key `"myname"`.
+* You may get the error `simdjson2::INCORRECT_TYPE` after trying to convert a value to an incorrect type: e.g., you expected a number and try to convert the value to a number, but it is an array.
+* You may query a key from an object, but the key is missing in which case you get the error `simdjson2::NO_SUCH_FIELD`: e.g., you call `obj["myname"]` and the object does not have a key `"myname"`.
 
-Other errors (e.g., `simdjson::INCOMPLETE_ARRAY_OR_OBJECT`) may indicate a fatal error and often follow from the fact that the document is not valid JSON. In which case, it is no longer possible to continue accessing the document: calling the method `is_alive()` on the document instance returns false. All following accesses will keep returning the same fatal error (e.g., `simdjson::INCOMPLETE_ARRAY_OR_OBJECT`).
+Other errors (e.g., `simdjson2::INCOMPLETE_ARRAY_OR_OBJECT`) may indicate a fatal error and often follow from the fact that the document is not valid JSON. In which case, it is no longer possible to continue accessing the document: calling the method `is_alive()` on the document instance returns false. All following accesses will keep returning the same fatal error (e.g., `simdjson2::INCOMPLETE_ARRAY_OR_OBJECT`).
 
 When you use the code without exceptions, it is your responsibility to check for error before using the
 result: if there is an error, the result value will not be valid and using it will caused undefined behavior. Most compilers should be able to help you if you activate the right
@@ -1525,9 +1525,9 @@ bool simple_error_example() {
     if (parser.iterate(json).get(doc) != SUCCESS) { return false; }
     double x;
     auto error = doc["bad number"].get_double().get(x);
-    // returns "simdjson::NUMBER_ERROR"
+    // returns "simdjson2::NUMBER_ERROR"
     if (error != SUCCESS) {
-      std::cerr << simdjson::error_message(error) << std::endl;
+      std::cerr << simdjson2::error_message(error) << std::endl;
       return false;
     }
     std::cout << "Got " << x << std::endl;
@@ -1549,7 +1549,7 @@ The equivalent with exception handling might look as follows.
       double x = doc["bad number"].get_double();
       std::cout << "Got " << x << std::endl;
       return true;
-    } catch(simdjson_error& e) {
+    } catch(simdjson2_error& e) {
       // e.error() == NUMBER_ERROR
       std::cout << e.error() << std::endl;
       return false;
@@ -1557,7 +1557,7 @@ The equivalent with exception handling might look as follows.
   }
 ```
 
-Notice how we can retrieve the exact error condition (in this instance `simdjson::NUMBER_ERROR`)
+Notice how we can retrieve the exact error condition (in this instance `simdjson2::NUMBER_ERROR`)
 from the exception.
 
 We can write a "quick start" example where we attempt to parse the following JSON file and access some data, without triggering exceptions:
@@ -1582,16 +1582,16 @@ it selects the key `"count"` within that object.
 
 ```C++
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 int main(void) {
-  simdjson::ondemand::parser parser;
+  simdjson2::ondemand::parser parser;
   auto error = padded_string::load("twitter.json").get(json);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
-  simdjson::ondemand::document tweets;
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
+  simdjson2::ondemand::document tweets;
   error = parser.iterate(json).get(tweets);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
-  simdjson::ondemand::value res;
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
+  simdjson2::ondemand::value res;
   error = tweets["search_metadata"]["count"].get(res);
   if (error != SUCCESS) {
     std::cerr << "could not access keys : " << error << std::endl;
@@ -1614,19 +1614,19 @@ Observe how we use the `at` method when querying an index into an array, and not
 
 ```C++
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 int main(void) {
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document tweets;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document tweets;
   padded_string json;
   auto error = padded_string::load("twitter.json").get(json);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
   error = parser.iterate(json).get(tweets);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
   uint64_t identifier;
   error = tweets["statuses"].at(0)["id"].get(identifier);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return EXIT_FAILURE; }
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return EXIT_FAILURE; }
   std::cout << identifier << std::endl;
 }
 ```
@@ -1650,40 +1650,40 @@ bool parse() {
 
   // Iterating through an array of objects
   auto error = parser.iterate(cars_json).get(doc);
-  if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+  if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
   ondemand::array cars; // invalid until the get() succeeds
   error = doc.get_array().get(cars);
 
   for (auto car_value : cars) {
     ondemand::object car; // invalid until the get() succeeds
     error = car_value.get_object().get(car);
-    if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
 
     // Accessing a field by name
     std::string_view make;
     std::string_view model;
     error = car["make"].get(make);
-    if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
     error = car["model"].get(model);
-    if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
 
     cout << "Make/Model: " << make << "/" << model << endl;
 
     // Casting a JSON element to an integer
     uint64_t year{};
     error = car["year"].get(year);
-    if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
     cout << "- This car is " << 2020 - year << " years old." << endl;
 
     // Iterating through an array of floats
     double total_tire_pressure = 0;
     ondemand::array pressures;
     error = car["tire_pressure"].get_array().get(pressures);
-    if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
     for (auto tire_pressure_value : pressures) {
       double tire_pressure;
       error = tire_pressure_value.get_double().get(tire_pressure);
-      if (error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+      if (error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
       total_tire_pressure += tire_pressure;
     }
     cout << "- Average tire pressure: " << (total_tire_pressure / 4) << endl;
@@ -1734,21 +1734,21 @@ having to handle exceptions.
 
 ### Disabling exceptions
 
-The simdjson can be build with exceptions entirely disabled. It checks the `__cpp_exceptions` macro at compile time. Even if exceptions are enabled in your compiler, you may still disable exceptions specifically for simdjson, by setting `SIMDJSON_EXCEPTIONS` to `0` (false) at compile-time when building the simdjson library. If you are building with CMake,  to ensure you don't write any code that uses exceptions, you compile with `SIMDJSON_EXCEPTIONS=OFF`. For example, if including the project via cmake:
+The simdjson2 can be build with exceptions entirely disabled. It checks the `__cpp_exceptions` macro at compile time. Even if exceptions are enabled in your compiler, you may still disable exceptions specifically for simdjson2, by setting `SIMDJSON2_EXCEPTIONS` to `0` (false) at compile-time when building the simdjson2 library. If you are building with CMake,  to ensure you don't write any code that uses exceptions, you compile with `SIMDJSON2_EXCEPTIONS=OFF`. For example, if including the project via cmake:
 
 ```cmake
-target_compile_definitions(simdjson PUBLIC SIMDJSON_EXCEPTIONS=OFF)
+target_compile_definitions(simdjson2 PUBLIC SIMDJSON2_EXCEPTIONS=OFF)
 ```
 
 ### Exceptions
 
-Users more comfortable with an exception flow may choose to directly cast the `simdjson_result<T>` to the desired type:
+Users more comfortable with an exception flow may choose to directly cast the `simdjson2_result<T>` to the desired type:
 
 ```c++
-simdjson::ondemand::document doc = parser.iterate(json); // Throws an exception if there was an error!
+simdjson2::ondemand::document doc = parser.iterate(json); // Throws an exception if there was an error!
 ```
 
-When used this way, a `simdjson_error` exception will be thrown if an error occurs, preventing the
+When used this way, a `simdjson2_error` exception will be thrown if an error occurs, preventing the
 program from continuing if there was an error.
 
 
@@ -1756,12 +1756,12 @@ If one is willing to trigger exceptions, it is possible to write simpler code:
 
 ```C++
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 int main(void) {
-  simdjson::ondemand::parser parser;
+  simdjson2::ondemand::parser parser;
   padded_string json = padded_string::load("twitter.json");
-  simdjson::ondemand::document tweets = parser.iterate(json);
+  simdjson2::ondemand::document tweets = parser.iterate(json);
   uint64_t identifier = tweets["statuses"].at(0)["id"];
   std::cout << identifier << std::endl;
   return EXIT_SUCCESS;
@@ -1773,17 +1773,17 @@ You can do handle errors gracefully as well...
 
 ```C++
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 int main(void) {
-  simdjson::ondemand::parser parser;
-  simdjson::padded_string json_string;
-  simdjson::ondemand::document doc;
+  simdjson2::ondemand::parser parser;
+  simdjson2::padded_string json_string;
+  simdjson2::ondemand::document doc;
   try {
     json_string = padded_string::load("twitter.json");
     doc = parser.iterate(json_string);
     uint64_t identifier = doc["statuses"].at(0)["id"];
     std::cout << identifier << std::endl;
-  } catch (simdjson::simdjson_error &error) {
+  } catch (simdjson2::simdjson2_error &error) {
     std::cerr << "JSON error: " << error.what() << " near "
               << doc.current_location() << " in " << json_string << std::endl;
   }
@@ -1796,7 +1796,7 @@ Sometimes, it might be helpful to know the current location in the document duri
 `document` instances makes it easy to identify common JSON errors. Users can call the `current_location()` method on a valid document instance to retrieve a `const char *` pointer to the current location in the document. This method also works even after an error has invalidated the document and the parser (e.g. `TAPE_ERROR`, `INCOMPLETE_ARRAY_OR_OBJECT`).
 When the input was a `padding_string` or another null-terminated source, then you may
 use the `const char *` pointer as a C string. As an example, consider the following
-example where we used the exception-free simdjson interface:
+example where we used the exception-free simdjson2 interface:
 
 ```c++
 auto broken_json = R"( {"double": 13.06, false, "integer": -343} )"_padded;    // Missing key
@@ -1805,13 +1805,13 @@ auto doc = parser.iterate(broken_json);
 int64_t i;
 auto error = doc["integer"].get_int64().get(i);    // Expect to get integer from "integer" key, but get TAPE_ERROR
 if (error) {
-  std::cerr << simdjson::error_message(error) << std::endl;    // Prints TAPE_ERROR error message
+  std::cerr << simdjson2::error_message(error) << std::endl;    // Prints TAPE_ERROR error message
   // Recover a pointer to the location of the first error:
   const char * ptr;
   doc.current_location().get(ptr);
   // ptr points at 'false, "integer": -343} " which is the location of the error
   //
-  // Because we pad simdjson::padded_string instances with null characters, you may also do the following:
+  // Because we pad simdjson2::padded_string instances with null characters, you may also do the following:
   std::cout<< doc.current_location() << std::endl;  // Prints "false, "integer": -343} " (location of TAPE_ERROR)
 }
 ```
@@ -1824,7 +1824,7 @@ ondemand::parser parser;
 ondemand::document doc = parser.iterate(broken_json);
 try {
   return int64_t(doc["integer"]);
-} catch(simdjson_error& err) {
+} catch(simdjson2_error& err) {
   std::cerr << doc.current_location() << std::endl;
   return -1;
 }
@@ -1842,7 +1842,7 @@ auto doc = parser.iterate(json);
 int64_t i;
 auto error = doc["integer"].get_int64().get(i);    // Incorrect call on array, INCORRECT_TYPE error
 if (error) {
-  std::cerr << simdjson::error_message(error) << std::endl;     // Prints INCORRECT_TYPE error message
+  std::cerr << simdjson2::error_message(error) << std::endl;     // Prints INCORRECT_TYPE error message
   std::cout<< doc.current_location() << std::endl;  // Prints "[1,2,3] " (location of INCORRECT_TYPE error)
 }
 ```
@@ -1860,7 +1860,7 @@ for (auto val : doc) {
 std::cout << doc.current_location() << std::endl;   // Throws OUT_OF_BOUNDS
 ```
 
-Conversely, if `doc.current_location().error() == simdjson::SUCCESS`,
+Conversely, if `doc.current_location().error() == simdjson2::SUCCESS`,
 then the document has more content.
 
 Finally, the `current_location()` method may also be used even when no exceptions/errors
@@ -1911,7 +1911,7 @@ content.
   }
 ```
 
-The `at_end()` method is equivalent to `doc.current_location().error() == simdjson::SUCCESS` but
+The `at_end()` method is equivalent to `doc.current_location().error() == simdjson2::SUCCESS` but
 more convenient.
 
 Rewinding
@@ -1934,11 +1934,11 @@ before printout the data.
   ] )"_padded;
 
   auto doc = parser.iterate(cars_json);
-  for (simdjson_unused ondemand::object car : doc) {
+  for (simdjson2_unused ondemand::object car : doc) {
     if (car["make"] == "Toyota") { count++; }
   }
   std::cout << "We have " << count << " Toyota cars.\n";
-  doc.rewind(); // requires simdjson 1.0 or better
+  doc.rewind(); // requires simdjson2 1.0 or better
   for (ondemand::object car : doc) {
     cout << "Make/Model: " << std::string_view(car["make"]) << "/" << std::string_view(car["model"]) << endl;
   }
@@ -1961,7 +1961,7 @@ serialize data into streams of multiple JSON documents. That is, instead of one 
 (e.g., 2 GB) JSON document containing multiple records, it is often preferable to
 write out multiple records as independent JSON documents, to be read one-by-one.
 
-The simdjson library also supports multithreaded JSON streaming through a large file
+The simdjson2 library also supports multithreaded JSON streaming through a large file
 containing many smaller JSON documents in either [ndjson](http://ndjson.org)
 or [JSON lines](http://jsonlines.org) format. If your JSON documents all contain arrays
 or objects, we even support direct file concatenation without whitespace. However, if there
@@ -1989,7 +1989,7 @@ Unlike `parser.iterate`, `parser.iterate_many` may parse "On-Demand" (lazily). T
 As with `parser.iterate`, when calling  `parser.iterate_many(string)`, no copy is made of the provided string input. The provided memory buffer may be accessed each time a JSON document is parsed.  Calling `parser.iterate_many(string)` on a  temporary string buffer (e.g., `docs = parser.parse_many("[1,2,3]"_padded)`) is unsafe (and will not compile) because the  `document_stream` instance needs access to the buffer to return the JSON documents.
 
 
-The `iterate_many` function can also take an optional parameter `size_t batch_size` which defines the window processing size. It is set by default to a large value (`1000000` corresponding to 1 MB). None of your JSON documents should exceed this window size, or else you will get  the error `simdjson::CAPACITY`. You cannot set this window size larger than 4 GB: you will get  the error `simdjson::CAPACITY`. The smaller the window size is, the less memory the function will use. Setting the window size too small (e.g., less than 100 kB) may also impact performance negatively. Leaving it to 1 MB is expected to be a good choice, unless you have some larger documents.
+The `iterate_many` function can also take an optional parameter `size_t batch_size` which defines the window processing size. It is set by default to a large value (`1000000` corresponding to 1 MB). None of your JSON documents should exceed this window size, or else you will get  the error `simdjson2::CAPACITY`. You cannot set this window size larger than 4 GB: you will get  the error `simdjson2::CAPACITY`. The smaller the window size is, the less memory the function will use. Setting the window size too small (e.g., less than 100 kB) may also impact performance negatively. Leaving it to 1 MB is expected to be a good choice, unless you have some larger documents.
 
 
 The following toy examples illustrates how to get capacity errors. It is an artificial example since you should never use a `batch_size` of 50 bytes (it is far too small).
@@ -2013,9 +2013,9 @@ for (auto doc: stream) {
   } else {
     ondemand::value val;
     error = doc.at_pointer("/4").get(val);
-    // error == simdjson::CAPACITY
+    // error == simdjson2::CAPACITY
     if (error) {
-      std::cerr << simdjson::error_message(error) << std::endl;
+      std::cerr << simdjson2::error_message(error) << std::endl;
       // We left 293 bytes unprocessed at the tail end of the input.
       std::cout << " unprocessed bytes at the end: " << stream.truncated_bytes() << std::endl;
       break;
@@ -2047,7 +2047,7 @@ Parsing numbers inside strings
 ------------------------------
 
 Though the JSON specification allows for numbers and string values, many engineers choose to integrate the numbers inside strings, e.g., they prefer `{"a":"1.9"}` to`{"a":1.9}`.
-The simdjson library supports parsing valid numbers inside strings which makes it more convenient for people working with those types of documents. This feature is supported through
+The simdjson2 library supports parsing valid numbers inside strings which makes it more convenient for people working with those types of documents. This feature is supported through
 three methods: `get_double_in_string`, `get_int64_in_string` and  `get_uint64_in_string`. However, it is important to note that these methods are not substitute to the regular
 `get_double`, `get_int64` and `get_uint64`. The usage of the `get_*_in_string` methods is solely to parse valid JSON numbers inside strings, and so we expect users to call these
 methods appropriately. In particular, a valid JSON number has no leading and no trailing whitespaces, and the strings `"nan"`, `"1e"` and `"infinity"` will not be accepted as valid
@@ -2136,7 +2136,7 @@ if (error) {
   else { /* Handle wrong value */ }
 }
 ```
-It is also important to note that when dealing an invalid number inside a string, simdjson will report a `NUMBER_ERROR` error if the string begins with a number whereas simdjson
+It is also important to note that when dealing an invalid number inside a string, simdjson2 will report a `NUMBER_ERROR` error if the string begins with a number whereas simdjson2
 will report an `INCORRECT_TYPE` error otherwise.
 
 The `*_in_string` methods can also be called on a single document instance:
@@ -2288,13 +2288,13 @@ unescape  the `raw_json_string` on your own string buffer: `parser.unescape(myst
 advances the provided pointer `ptr` and returns a string_view instance on the newly serialized
 string upon success, otherwise it returns an error. When unescaping to your own string buffer,
 you should ensure that you have sufficient memory space: the total size of the strings plus
-`simdjson::SIMDJSON_PADDING` bytes. The following example illustrates how we can unescape
+`simdjson2::SIMDJSON2_PADDING` bytes. The following example illustrates how we can unescape
 JSON string to a user-provided buffer:
 
 ```C++
     auto json = R"( {"name": "Jack The Ripper \u0033"} )"_padded;
     // We create a buffer large enough to store all strings we need:
-    std::unique_ptr<uint8_t[]> buffer(new uint8_t[json.size() + simdjson::SIMDJSON_PADDING]);
+    std::unique_ptr<uint8_t[]> buffer(new uint8_t[json.size() + simdjson2::SIMDJSON2_PADDING]);
     uint8_t * ptr = buffer.get();
     ondemand::parser parser;
     ondemand::document doc = parser.iterate(json);
@@ -2328,10 +2328,10 @@ begins with `"name"` and may containing trailing white-space characters.
 General direct access to the raw JSON string
 --------------------------------
 If your value is a string, the `raw_json_string` you get with `get_raw_json_string()` gives you direct access to the unprocessed
-string. But the simdjson library allows you to have access to the raw underlying JSON
+string. But the simdjson2 library allows you to have access to the raw underlying JSON
 more generally, not just for strings.
 
-The simdjson library makes explicit assumptions about types. For examples, numbers
+The simdjson2 library makes explicit assumptions about types. For examples, numbers
 must be integers (up to 64-bit integers) or binary64 floating-point numbers. Some users
 have different needs. For example, some users might want to support big integers.
 The library makes this possible by providing a `raw_json_token` method which returns
@@ -2339,10 +2339,10 @@ a `std::string_view` instance containing the value as a string which you may the
 parse as you see fit.
 
 ```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::object obj = doc.get_object();
+simdjson2::ondemand::parser parser;
+simdjson2::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
+simdjson2::ondemand::document doc = parser.iterate(docdata);
+simdjson2::ondemand::object obj = doc.get_object();
 std::string_view token = obj["value"].raw_json_token();
 // token has value 12321323213213213213213213213211223, it points inside the input string
 ```
@@ -2352,10 +2352,10 @@ will return the complete string with the quotes and with eventual escaped sequen
 source document.
 
 ```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::object obj = doc.get_object();
+simdjson2::ondemand::parser parser;
+simdjson2::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
+simdjson2::ondemand::document doc = parser.iterate(docdata);
+simdjson2::ondemand::object obj = doc.get_object();
 string_view token = obj["value"].raw_json_token();
 // token has value "12321323213213213213213213213211223", it points inside the input string
 ```
@@ -2374,19 +2374,19 @@ character (`[`) or (`}`) which is not very useful. For arrays and objects, we ha
 method called `raw_json()` which consumes (traverses) the array or the object.
 
 ```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"({"value":123})"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::object obj = doc.get_object();
+simdjson2::ondemand::parser parser;
+simdjson2::padded_string docdata =  R"({"value":123})"_padded;
+simdjson2::ondemand::document doc = parser.iterate(docdata);
+simdjson2::ondemand::object obj = doc.get_object();
 string_view token = obj.raw_json(); // gives you `{"value":123}`
 ```
 
 
 ```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"([1,2,3])"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::array arr = doc.get_array();
+simdjson2::ondemand::parser parser;
+simdjson2::padded_string docdata =  R"([1,2,3])"_padded;
+simdjson2::ondemand::document doc = parser.iterate(docdata);
+simdjson2::ondemand::array arr = doc.get_array();
 string_view token = arr.raw_json(); // gives you `[1,2,3]`
 ```
 
@@ -2394,10 +2394,10 @@ Because `raw_json()` consumes to object or the array, if you want to both have
 access to the raw string, and also use the array or object, you should call `reset()`.
 
 ```C++
-simdjson::ondemand::parser parser;
-simdjson::padded_string docdata =  R"({"value":123})"_padded;
-simdjson::ondemand::document doc = parser.iterate(docdata);
-simdjson::ondemand::object obj = doc.get_object();
+simdjson2::ondemand::parser parser;
+simdjson2::padded_string docdata =  R"({"value":123})"_padded;
+simdjson2::ondemand::document doc = parser.iterate(docdata);
+simdjson2::ondemand::object obj = doc.get_object();
 string_view token = obj.raw_json(); // gives you `{"value":123}`
 obj.reset(); // revise the object
 uint64_t x = obj["value"]; // gives me 123
@@ -2434,7 +2434,7 @@ string representation.
 
 You can use `raw_json()` to capture the content of some JSON values as `std::string_view`
 instances which can be safely used later. The `std::string_view` instances point inside
-the original document and do not depend in any way on simdjson. In the following example,
+the original document and do not depend in any way on simdjson2. In the following example,
 we store the `std::string_view` instances inside a `std::vector<std::string_view>` instance
 and print the out after the parsing is concluded:
 
@@ -2462,7 +2462,7 @@ and print the out after the parsing is concluded:
 Storing directly into an existing string instance
 -----------------------------------------------------
 
-The simdjson library favours  the use of `std::string_view` instances because
+The simdjson2 library favours  the use of `std::string_view` instances because
 it tends to lead to better performance due to causing fewer memory allocations.
 However, they are cases where you need to store a string result in a `std::string`
 instance. You can do so with a templated version of the `to_string()` method which takes as
@@ -2509,9 +2509,9 @@ You should be mindful of the trade-off: allocating multiple
 Thread safety
 -------------
 
-We built simdjson with thread safety in mind.
+We built simdjson2 with thread safety in mind.
 
-The simdjson library is single-threaded except for [`iterate_many`](iterate_many.md) and [`parse_many`](parse_many.md) which may use secondary threads under their control when the library is compiled with thread support.
+The simdjson2 library is single-threaded except for [`iterate_many`](iterate_many.md) and [`parse_many`](parse_many.md) which may use secondary threads under their control when the library is compiled with thread support.
 
 
 We recommend using one `parser` object per thread. When using the On-Demand front-end (our default), you should access the `document` instances in a single-threaded manner since it
@@ -2524,32 +2524,32 @@ main thread and may be discarded at the end of the main thread. If you have mult
 and some threads use the library while the main thread is cleaning up ressources, you may encounter
 issues. If you expect such problems, you may consider using [std::quick_exit](https://en.cppreference.com/w/cpp/utility/program/quick_exit).
 
-In a threaded environment, stack space is often limited. Running code like simdjson in debug mode may require hundreds of kilobytes of stack memory. Thus stack overflows are a possibility. We recommend you turn on optimization when working in an environment where stack space is limited. If you must run your code in debug mode, we recommend you configure your system to have more stack space. We discourage you from running production code based on a debug build.
+In a threaded environment, stack space is often limited. Running code like simdjson2 in debug mode may require hundreds of kilobytes of stack memory. Thus stack overflows are a possibility. We recommend you turn on optimization when working in an environment where stack space is limited. If you must run your code in debug mode, we recommend you configure your system to have more stack space. We discourage you from running production code based on a debug build.
 
 
 Standard compliance
 --------------------
 
-The simdjson library is fully compliant with  the [RFC 8259](https://www.tbray.org/ongoing/When/201x/2017/12/14/rfc8259.html) JSON specification.
+The simdjson2 library is fully compliant with  the [RFC 8259](https://www.tbray.org/ongoing/When/201x/2017/12/14/rfc8259.html) JSON specification.
 
 - The only insignificant whitespace characters allowed are the space, the horizontal tab, the line feed and the carriage return. In particular, a JSON document may not contain an unescaped null character.
 - A single string or a single number is considered to be a valid JSON document.
 - We fully validate the numbers according to the JSON specification. For example,  the string `01` is not valid JSON document since the specification states that *leading zeros are not allowed*.
 - The specification allows implementations to set limits on the range and precision of numbers accepted.  We support 64-bit floating-point numbers as well as integer values.
   - We parse integers and floating-point numbers as separate types which allows us to support all signed (two's complement) 64-bit integers, like a Java `long` or a C/C++ `long long` and all 64-bit unsigned integers. When we cannot represent exactly an integer as a signed or unsigned 64-bit value, we reject the JSON document.
-  - We support the full range of 64-bit floating-point numbers (binary64). The values range from `std::numeric_limits<double>::lowest()`  to `std::numeric_limits<double>::max()`, so from -1.7976e308 all the way to 1.7975e308. Extreme values (less or equal to -1e308, greater or equal to 1e308) are rejected: we refuse to parse the input document. Numbers are parsed with a perfect accuracy (ULP 0): the nearest floating-point value is chosen, rounding to even when needed. If you serialized your floating-point numbers with 17 significant digits in a standard compliant manner, the simdjson library is guaranteed to recover the same numbers, exactly.
-- The specification states that JSON text exchanged between systems that are not part of a closed ecosystem MUST be encoded using UTF-8. The simdjson library does full UTF-8 validation as part of the parsing. The specification states that implementations MUST NOT add a byte order mark: the simdjson library rejects documents starting with a  byte order mark.
-- The simdjson library validates string content for unescaped characters. Unescaped line breaks and tabs in strings are not allowed.
-- The simdjson library accepts objects with repeated keys: all of the name/value pairs, including duplicates, are reported. We do not enforce key uniqueness.
-- The specification states that an implementation may set limits on the size of texts that it accepts. The simdjson library limits single JSON documents to 4 GiB. It will refuse to parse a JSON document larger than 4294967295 bytes. (This limitation does not apply to streams of JSON documents, only to single JSON documents.)
-- The specification states that an implementation may set limits on the maximum depth of nesting. By default, the simdjson will refuse to parse documents with a depth exceeding 1024.
+  - We support the full range of 64-bit floating-point numbers (binary64). The values range from `std::numeric_limits<double>::lowest()`  to `std::numeric_limits<double>::max()`, so from -1.7976e308 all the way to 1.7975e308. Extreme values (less or equal to -1e308, greater or equal to 1e308) are rejected: we refuse to parse the input document. Numbers are parsed with a perfect accuracy (ULP 0): the nearest floating-point value is chosen, rounding to even when needed. If you serialized your floating-point numbers with 17 significant digits in a standard compliant manner, the simdjson2 library is guaranteed to recover the same numbers, exactly.
+- The specification states that JSON text exchanged between systems that are not part of a closed ecosystem MUST be encoded using UTF-8. The simdjson2 library does full UTF-8 validation as part of the parsing. The specification states that implementations MUST NOT add a byte order mark: the simdjson2 library rejects documents starting with a  byte order mark.
+- The simdjson2 library validates string content for unescaped characters. Unescaped line breaks and tabs in strings are not allowed.
+- The simdjson2 library accepts objects with repeated keys: all of the name/value pairs, including duplicates, are reported. We do not enforce key uniqueness.
+- The specification states that an implementation may set limits on the size of texts that it accepts. The simdjson2 library limits single JSON documents to 4 GiB. It will refuse to parse a JSON document larger than 4294967295 bytes. (This limitation does not apply to streams of JSON documents, only to single JSON documents.)
+- The specification states that an implementation may set limits on the maximum depth of nesting. By default, the simdjson2 will refuse to parse documents with a depth exceeding 1024.
 
 
 Backwards compatibility
 -----------------------
 
-The only header file supported by simdjson is `simdjson.h`. Older versions of simdjson published a
-number of other include files such as `document.h` or `ParsedJson.h` alongside `simdjson.h`; these headers
+The only header file supported by simdjson2 is `simdjson2.h`. Older versions of simdjson2 published a
+number of other include files such as `document.h` or `ParsedJson.h` alongside `simdjson2.h`; these headers
 may be moved or removed in future versions.
 
 Examples
@@ -2820,11 +2820,11 @@ bool example() {
 
 ```C++
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <iostream>
 
 // prints the content of the array as hexadecimal 64-bit integers
-void f(simdjson::ondemand::array v) {
+void f(simdjson2::ondemand::array v) {
   for(uint64_t val : v) {
     std::cout << "0x" << std::hex << val << std::endl;
   }
@@ -2832,9 +2832,9 @@ void f(simdjson::ondemand::array v) {
 
 
 int main(void) {
-  simdjson::padded_string json = R"( [ 897314173811950000, 3122321 ])"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::padded_string json = R"( [ 897314173811950000, 3122321 ])"_padded;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   f(doc.get_array());
   return EXIT_SUCCESS;
 }
@@ -2869,11 +2869,11 @@ Performance tips
 
 
 - Read [our performance notes](performance.md) for advanced topics.
-- To better understand the operation of your On-Demand parser, and whether it is performing as well as you think it should be, there is a  logger feature built in to simdjson! To use it, define the pre-processor directive `SIMDJSON_VERBOSE_LOGGING` prior to including the `simdjson.h` header, which enables logging in simdjson. Run your code. It may generate a lot of logging output; adding printouts from your application that show each section may be helpful. The log's output will show step-by-step information on state, buffer pointer position, depth, and key retrieval status. Importantly, unless `SIMDJSON_VERBOSE_LOGGING` is defined, logging is entirely disabled and thus carries no overhead.
+- To better understand the operation of your On-Demand parser, and whether it is performing as well as you think it should be, there is a  logger feature built in to simdjson2! To use it, define the pre-processor directive `SIMDJSON2_VERBOSE_LOGGING` prior to including the `simdjson2.h` header, which enables logging in simdjson2. Run your code. It may generate a lot of logging output; adding printouts from your application that show each section may be helpful. The log's output will show step-by-step information on state, buffer pointer position, depth, and key retrieval status. Importantly, unless `SIMDJSON2_VERBOSE_LOGGING` is defined, logging is entirely disabled and thus carries no overhead.
 - The On-Demand front-end works best when doing a single pass over the input: avoid calling `count_elements`, `rewind`, `reset` and similar methods.
 - If you are familiar with assembly language, you may use the online tool godbolt to explore the compiled code. The following example may work: [https://godbolt.org/z/xE4GWs573](https://godbolt.org/z/xE4GWs573).
 - Given a field `field` in an object, calling `field.key()` is often faster than `field.unescaped_key()` so if you do not need an unescaped `std::string_view` instance, prefer `field.key()`. Similarly, we expect `field.escaped_key()` to be faster than `field.unescaped_key()` even though both return a `std::string_view` instance.
-- For release builds, we recommend setting `NDEBUG` pre-processor directive when compiling the `simdjson` library. Importantly, using the optimization flags `-O2` or `-O3` under GCC and LLVM clang does not set the `NDEBUG` directive, you must set it manually (e.g., `-DNDEBUG`).
+- For release builds, we recommend setting `NDEBUG` pre-processor directive when compiling the `simdjson2` library. Importantly, using the optimization flags `-O2` or `-O3` under GCC and LLVM clang does not set the `NDEBUG` directive, you must set it manually (e.g., `-DNDEBUG`).
 - For long streams of JSON documents, consider [`iterate_many`](iterate_many.md) and [`parse_many`](parse_many.md) for better performance.
 - Never seek to access a field twice (e.g., o["data"] and later again o["data"]). Instead capture once an ondemand::value and reuse it.
 - If you must access several different keys in an object, it might be preferable to iterate through all the fields in the object instead, and branch on the field keys.
@@ -2885,7 +2885,7 @@ Performance tips
   ```
   We expect that it is more efficient to access the `"data"` key once:
   ```C++
-	simdjson::ondemand::object data = o["data"];
+	simdjson2::ondemand::object data = o["data"];
 	std::string_view model = data["model"];
 	std::string_view year = data["year"];
 	std::string_view rating = data["rating"];

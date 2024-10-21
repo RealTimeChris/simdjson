@@ -2,7 +2,7 @@ iterate_many
 ==========
 
 When serializing large databases, it is often better to write out many independent JSON
-documents, instead of one large monolithic document containing many records. The simdjson
+documents, instead of one large monolithic document containing many records. The simdjson2
 library provides high-speed access to files or streams containing multiple small JSON documents separated by ASCII white-space characters. Given an input such as
 ```JSON
 {"text":"a"}
@@ -48,9 +48,9 @@ How it works
 
 ### Context
 
-Before parsing anything, simdjson first preprocesses the JSON text by identifying all structural indexes
+Before parsing anything, simdjson2 first preprocesses the JSON text by identifying all structural indexes
 (i.e. the starting position of any JSON value, as well as any important operators like `,`, `:`, `]` or
-`}`) and validating UTF8. This stage is referred to stage 1. However, during this process, simdjson has
+`}`) and validating UTF8. This stage is referred to stage 1. However, during this process, simdjson2 has
 no knowledge of whether parsed a valid document, multiple documents, or even if the document is complete.
 Then, to iterate through the JSON text during parsing, we use what we call a JSON iterator that will navigate
 through the text using these structural indexes. This JSON iterator is not visible though, but it is the
@@ -60,7 +60,7 @@ Prior to iterate_many, most people who had to parse a multiline JSON file would 
 file line by line, using a utility function like `std::getline` or equivalent, and would then use
 the `parse` on each of those lines.  From a performance point of view, this process is highly
 inefficient,  in that it requires a lot of unnecessary memory allocation and makes use of the
-`getline` function, which is fundamentally slow, slower than the act of parsing with simdjson
+`getline` function, which is fundamentally slow, slower than the act of parsing with simdjson2
 [(more on this here)](https://lemire.me/blog/2019/06/18/how-fast-is-getline-in-c/).
 
 Unlike the popular parser RapidJson, our DOM does not require the buffer once the parsing job is
@@ -103,12 +103,12 @@ remove almost entirely its cost and replaces it by the overhead of a thread, whi
 cheaper. Ain't that awesome!
 
 Thread support is only active if thread supported is detected in which case the macro
-SIMDJSON_THREADS_ENABLED is set.  You can also manually pass `SIMDJSON_THREADS_ENABLED=1` flag
+SIMDJSON2_THREADS_ENABLED is set.  You can also manually pass `SIMDJSON2_THREADS_ENABLED=1` flag
 to the library. Otherwise the library runs in single-thread mode.
 
-You should be consistent. If you link against the simdjson library built for multithreading
-(i.e., with `SIMDJSON_THREADS_ENABLED`), then you should build your application with multithreading
-system (setting `SIMDJSON_THREADS_ENABLED=1` and linking against a thread library).
+You should be consistent. If you link against the simdjson2 library built for multithreading
+(i.e., with `SIMDJSON2_THREADS_ENABLED`), then you should build your application with multithreading
+system (setting `SIMDJSON2_THREADS_ENABLED=1` and linking against a thread library).
 
 A `document_stream` instance uses at most two threads: there is a main thread and a worker thread.
 
@@ -199,8 +199,8 @@ Let us illustrate the idea with code:
 
 ```C++
     auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} [1,2,3]  )"_padded;
-    simdjson::ondemand::parser parser;
-    simdjson::ondemand::document_stream stream;
+    simdjson2::ondemand::parser parser;
+    simdjson2::ondemand::document_stream stream;
     auto error = parser.iterate_many(json).get(stream);
     if (error) { /* do something */ }
     auto i = stream.begin();
@@ -233,15 +233,15 @@ got full document at 29
 Incomplete streams
 -----------
 
-Some users may need to work with truncated streams. The simdjson may truncate documents at the very end of the stream that cannot possibly be valid JSON (e.g., they contain unclosed strings, unmatched brackets, unmatched braces). After iterating through the stream, you may query the `truncated_bytes()` method which tells you how many bytes were truncated. If the stream is made of full (whole) documents, then you should expect `truncated_bytes()` to return zero.
+Some users may need to work with truncated streams. The simdjson2 may truncate documents at the very end of the stream that cannot possibly be valid JSON (e.g., they contain unclosed strings, unmatched brackets, unmatched braces). After iterating through the stream, you may query the `truncated_bytes()` method which tells you how many bytes were truncated. If the stream is made of full (whole) documents, then you should expect `truncated_bytes()` to return zero.
 
 
 Consider the following example where a truncated document (`{"key":"intentionally unclosed string  `) containing 39 bytes has been left within the stream. In such cases, the first two whole documents are parsed and returned, and the `truncated_bytes()` method returns 39.
 
 ```C++
     auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} {"key":"intentionally unclosed string  )"_padded;
-    simdjson::ondemand::parser parser;
-    simdjson::ondemand::document_stream stream;
+    simdjson2::ondemand::parser parser;
+    simdjson2::ondemand::document_stream stream;
     auto error = parser.iterate_many(json,json.size()).get(stream);
     if (error) { std::cerr << error << std::endl; return; }
     for(auto i = stream.begin(); i != stream.end(); ++i) {
@@ -304,13 +304,13 @@ A customization point is a function or function object that can be customized fo
 
 A tag_invoke function serves as a mechanism for customization points. It is not directly part of the C++ standard library but is often used in libraries that implement customization points.
 The tag_invoke function is typically a generic function that takes a tag type and additional arguments.
-The first argument is usually a tag type (often an empty struct) that uniquely identifies the customization point (e.g., deserialization of custom types in simdjson). Users or library providers can specialize tag_invoke for their types by defining it in the appropriate namespace, often inline namespace.
+The first argument is usually a tag type (often an empty struct) that uniquely identifies the customization point (e.g., deserialization of custom types in simdjson2). Users or library providers can specialize tag_invoke for their types by defining it in the appropriate namespace, often inline namespace.
 
 
 
 You can deserialize you own data structures conveniently if your system supports C++20.
-When it is the case, the macro `SIMDJSON_SUPPORTS_DESERIALIZATION` will be set to 1 by
-the simdjson library.
+When it is the case, the macro `SIMDJSON2_SUPPORTS_DESERIALIZATION` will be set to 1 by
+the simdjson2 library.
 
 Consider a custom class `Car`:
 
@@ -329,10 +329,10 @@ by defining a single `tag_invoke` function:
 
 
 ```C++
-namespace simdjson {
-// This tag_invoke MUST be inside simdjson namespace
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, Car& car) {
+namespace simdjson2 {
+// This tag_invoke MUST be inside simdjson2 namespace
+template <typename simdjson2_value>
+auto tag_invoke(deserialize_tag, simdjson2_value &val, Car& car) {
   ondemand::object obj;
   auto error = val.get_object().get(obj);
   if (error) {
@@ -351,16 +351,16 @@ auto tag_invoke(deserialize_tag, simdjson_value &val, Car& car) {
            car.tire_pressure))) {
     return error;
   }
-  return simdjson::SUCCESS;
+  return simdjson2::SUCCESS;
 }
-} // namespace simdjson
+} // namespace simdjson2
 ```
 
-Importantly, the `tag_invoke` function must be inside the `simdjson` namespace.
+Importantly, the `tag_invoke` function must be inside the `simdjson2` namespace.
 Let us explain each argument of `tag_invoke` function.
 
-- `simdjson::deserialize_tag`: it is the tag for Customization Point Object (CPO). You may often ignore this parameter. It is used to indicate that you mean to provide a deserialization function for simdjson.
-- `var`: It receives automatically a `simdjson` value type (document, value, document_reference).
+- `simdjson2::deserialize_tag`: it is the tag for Customization Point Object (CPO). You may often ignore this parameter. It is used to indicate that you mean to provide a deserialization function for simdjson2.
+- `var`: It receives automatically a `simdjson2` value type (document, value, document_reference).
 - The third parameter is an instance of the type that you want to support.
 
 Please see our main documentation (`basics.md`) under
@@ -396,7 +396,7 @@ Otherwise you may use this longer version for explicit handling of errors:
   for(auto doc : stream) {
     Car c;
     if ((error = doc.get<Car>().get(c))) {
-      std::cerr << simdjson::error_message(error); << std::endl;
+      std::cerr << simdjson2::error_message(error); << std::endl;
       return EXIT_FAILURE;
     }
     cars.push_back(c);

@@ -6,7 +6,7 @@ task:
 
   env:
     ASSUME_ALWAYS_YES: YES
-    simdjson_DEPENDENCY_CACHE_DIR: $HOME/.dep_cache
+    simdjson2_DEPENDENCY_CACHE_DIR: $HOME/.dep_cache
   dep_cache:
     folder: $HOME/.dep_cache
     reupload_on_changes: false
@@ -19,7 +19,7 @@ task:
   build_script:
     - mkdir build
     - cd build
-    - cmake -DSIMDJSON_BASH=OFF  -DSIMDJSON_GIT=OFF ..
+    - cmake -DSIMDJSON2_BASH=OFF  -DSIMDJSON2_GIT=OFF ..
     - make
   test_script:
     - cd build

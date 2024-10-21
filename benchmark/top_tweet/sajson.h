@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_SAJSON
+#ifdef SIMDJSON2_COMPETITION_SAJSON
 
 #include "top_tweet.h"
 
@@ -13,7 +13,7 @@ struct sajson {
   size_t *ast_buffer{nullptr};
   ~sajson() { free(ast_buffer); }
 
-  bool run(simdjson::padded_string &json, int32_t max_retweet_count, top_tweet_result<StringType> &result) {
+  bool run(simdjson2::padded_string &json, int32_t max_retweet_count, top_tweet_result<StringType> &result) {
     if (!ast_buffer) {
       ast_buffer_size = json.size();
       ast_buffer = (size_t *)std::malloc(ast_buffer_size * sizeof(size_t));
@@ -60,4 +60,4 @@ BENCHMARK_TEMPLATE(top_tweet, sajson)->UseManualTime();
 
 } // namespace top_tweet
 
-#endif // SIMDJSON_COMPETITION_SAJSON
+#endif // SIMDJSON2_COMPETITION_SAJSON

@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_YYJSON
+#ifdef SIMDJSON2_COMPETITION_YYJSON
 
 #include "large_random.h"
 
@@ -9,7 +9,7 @@ namespace large_random {
 struct yyjson_base {
   static constexpr diff_flags DiffFlags = diff_flags::NONE;
 
-  simdjson_inline double get_double(yyjson_val *obj, std::string_view key) {
+  simdjson2_inline double get_double(yyjson_val *obj, std::string_view key) {
     yyjson_val *val = yyjson_obj_getn(obj, key.data(), key.length());
     if (!val) { throw "missing point field!"; }
     if (yyjson_get_type(val) != YYJSON_TYPE_NUM) { throw "Number is not a type!"; }
@@ -22,9 +22,9 @@ struct yyjson_base {
       case YYJSON_SUBTYPE_REAL:
         return yyjson_get_real(val);
       default:
-        SIMDJSON_UNREACHABLE();
+        SIMDJSON2_UNREACHABLE();
     }
-    SIMDJSON_UNREACHABLE();
+    SIMDJSON2_UNREACHABLE();
     return 0.0; // unreachable
   }
 
@@ -46,19 +46,19 @@ struct yyjson_base {
 };
 
 struct yyjson : yyjson_base {
-  bool run(simdjson::padded_string &json, std::vector<point> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<point> &result) {
     return yyjson_base::run(yyjson_read(json.data(), json.size(), 0), result);
   }
 };
 BENCHMARK_TEMPLATE(large_random, yyjson)->UseManualTime();
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 struct yyjson_insitu : yyjson_base {
-  bool run(simdjson::padded_string &json, std::vector<point> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<point> &result) {
     return yyjson_base::run(yyjson_read_opts(json.data(), json.size(), YYJSON_READ_INSITU, 0, 0), result);
   }
 };
 BENCHMARK_TEMPLATE(large_random, yyjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace large_random
 
-#endif // SIMDJSON_COMPETITION_YYJSON
+#endif // SIMDJSON2_COMPETITION_YYJSON

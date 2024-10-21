@@ -1,14 +1,14 @@
-#ifndef SIMDJSON_SRC_ARM64_CPP
-#define SIMDJSON_SRC_ARM64_CPP
+#ifndef SIMDJSON2_SRC_ARM64_CPP
+#define SIMDJSON2_SRC_ARM64_CPP
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
 #include <base.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-#include <simdjson/arm64.h>
-#include <simdjson/arm64/implementation.h>
+#include <simdjson2/arm64.h>
+#include <simdjson2/arm64/implementation.h>
 
-#include <simdjson/arm64/begin.h>
+#include <simdjson2/arm64/begin.h>
 #include <generic/amalgamated.h>
 #include <generic/stage1/amalgamated.h>
 #include <generic/stage2/amalgamated.h>
@@ -16,10 +16,10 @@
 //
 // Stage 1
 //
-namespace simdjson {
+namespace simdjson2 {
 namespace arm64 {
 
-simdjson_warn_unused error_code implementation::create_dom_parser_implementation(
+simdjson2_warn_unused error_code implementation::create_dom_parser_implementation(
   size_t capacity,
   size_t max_depth,
   std::unique_ptr<internal::dom_parser_implementation>& dst
@@ -37,7 +37,7 @@ namespace {
 
 using namespace simd;
 
-simdjson_inline json_character_block json_character_block::classify(const simd::simd8x64<uint8_t>& in) {
+simdjson2_inline json_character_block json_character_block::classify(const simd::simd8x64<uint8_t>& in) {
   // Functional programming causes trouble with Visual Studio.
   // Keeping this version in comments since it is much nicer:
   // auto v = in.map<uint8_t>([&](simd8<uint8_t> chunk) {
@@ -91,12 +91,12 @@ simdjson_inline json_character_block json_character_block::classify(const simd::
   return { whitespace, op };
 }
 
-simdjson_inline bool is_ascii(const simd8x64<uint8_t>& input) {
+simdjson2_inline bool is_ascii(const simd8x64<uint8_t>& input) {
     simd8<uint8_t> bits = input.reduce_or();
     return bits.max_val() < 0x80u;
 }
 
-simdjson_unused simdjson_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
+simdjson2_unused simdjson2_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
     simd8<bool> is_second_byte = prev1 >= uint8_t(0xc0u);
     simd8<bool> is_third_byte  = prev2 >= uint8_t(0xe0u);
     simd8<bool> is_fourth_byte = prev3 >= uint8_t(0xf0u);
@@ -108,7 +108,7 @@ simdjson_unused simdjson_inline simd8<bool> must_be_continuation(const simd8<uin
     return is_second_byte ^ is_third_byte ^ is_fourth_byte;
 }
 
-simdjson_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
+simdjson2_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
     simd8<uint8_t> is_third_byte  = prev2.saturating_sub(0xe0u-0x80); // Only 111_____ will be >= 0x80
     simd8<uint8_t> is_fourth_byte = prev3.saturating_sub(0xf0u-0x80); // Only 1111____ will be >= 0x80
     return is_third_byte | is_fourth_byte;
@@ -116,7 +116,7 @@ simdjson_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> pre
 
 } // unnamed namespace
 } // namespace arm64
-} // namespace simdjson
+} // namespace simdjson2
 
 //
 // Stage 2
@@ -125,48 +125,48 @@ simdjson_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> pre
 //
 // Implementation-specific overrides
 //
-namespace simdjson {
+namespace simdjson2 {
 namespace arm64 {
 
-simdjson_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
+simdjson2_warn_unused error_code implementation::minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept {
   return arm64::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
   return arm64::stage1::json_structural_indexer::index<256>(buf, len, *this, streaming);
 }
 
-simdjson_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
+simdjson2_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {
   return arm64::stage1::generic_validate_utf8(buf,len);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage2(dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage2(dom::document &_doc) noexcept {
   return stage2::tape_builder::parse_document<false>(*this, _doc);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::stage2_next(dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::stage2_next(dom::document &_doc) noexcept {
   return stage2::tape_builder::parse_document<true>(*this, _doc);
 }
 
-simdjson_warn_unused uint8_t *dom_parser_implementation::parse_string(const uint8_t *src, uint8_t *dst, bool allow_replacement) const noexcept {
+simdjson2_warn_unused uint8_t *dom_parser_implementation::parse_string(const uint8_t *src, uint8_t *dst, bool allow_replacement) const noexcept {
   return arm64::stringparsing::parse_string(src, dst, allow_replacement);
 }
 
-simdjson_warn_unused uint8_t *dom_parser_implementation::parse_wobbly_string(const uint8_t *src, uint8_t *dst) const noexcept {
+simdjson2_warn_unused uint8_t *dom_parser_implementation::parse_wobbly_string(const uint8_t *src, uint8_t *dst) const noexcept {
   return arm64::stringparsing::parse_wobbly_string(src, dst);
 }
 
-simdjson_warn_unused error_code dom_parser_implementation::parse(const uint8_t *_buf, size_t _len, dom::document &_doc) noexcept {
+simdjson2_warn_unused error_code dom_parser_implementation::parse(const uint8_t *_buf, size_t _len, dom::document &_doc) noexcept {
   auto error = stage1(_buf, _len, stage1_mode::regular);
   if (error) { return error; }
   return stage2(_doc);
 }
 
 } // namespace arm64
-} // namespace simdjson
+} // namespace simdjson2
 
-#include <simdjson/arm64/end.h>
+#include <simdjson2/arm64/end.h>
 
-#endif // SIMDJSON_SRC_ARM64_CPP
+#endif // SIMDJSON2_SRC_ARM64_CPP

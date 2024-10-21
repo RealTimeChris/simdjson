@@ -1,16 +1,16 @@
 #include <benchmark/benchmark.h>
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <sstream>
 
-using namespace simdjson;
+using namespace simdjson2;
 using namespace benchmark;
 using namespace std;
 
 const padded_string EMPTY_ARRAY("[]", 2);
 
-static const char *TWITTER_JSON = SIMDJSON_BENCHMARK_DATA_DIR "twitter.json";
-static const char *NUMBERS_JSON = SIMDJSON_BENCHMARK_DATA_DIR "numbers.json";
+static const char *TWITTER_JSON = SIMDJSON2_BENCHMARK_DATA_DIR "twitter.json";
+static const char *NUMBERS_JSON = SIMDJSON2_BENCHMARK_DATA_DIR "numbers.json";
 
 static void recover_one_string(State& state) {
   dom::parser parser;
@@ -27,7 +27,7 @@ static void recover_one_string(State& state) {
     cerr << "could not parse string" << error << endl;
     return;
   }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
       std::string_view v;
       error = doc.get(v);
       if (error) {
@@ -59,17 +59,17 @@ static void serialize_twitter(State& state) {
     return;
   }
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
-    std::string serial = simdjson::minify(doc);
+  for (simdjson2_unused auto _ : state) {
+    std::string serial = simdjson2::minify(doc);
     bytes += serial.size();
     benchmark::DoNotOptimize(serial);
   }
   // we validate the result
   {
-    auto serial = simdjson::minify(doc);
+    auto serial = simdjson2::minify(doc);
     dom::element doc2; // we parse the minified output
     if ((error = parser.parse(serial).get(doc2))) { throw std::runtime_error("serialization error"); }
-    auto serial2 = simdjson::minify(doc2); // we minify a second time
+    auto serial2 = simdjson2::minify(doc2); // we minify a second time
     if(serial != serial2) { throw std::runtime_error("serialization mismatch"); }
   }
   // Gigabyte: https://en.wikipedia.org/wiki/Gigabyte
@@ -92,14 +92,14 @@ static void serialize_big_string_to_string(State& state) {
   }
   content.push_back('\"');
   dom::element doc;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   if ((error = parser.parse(content.data(), content.size()).get(doc))) {
     cerr << "could not parse big string" << error << endl;
     return;
   }
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
-    auto serial = simdjson::to_string(doc);
+  for (simdjson2_unused auto _ : state) {
+    auto serial = simdjson2::to_string(doc);
     bytes += serial.size();
     benchmark::DoNotOptimize(serial);
   }
@@ -133,17 +133,17 @@ static void serialize_twitter_to_string(State& state) {
     return;
   }
   size_t bytes = 0;
-  for (simdjson_unused auto _ : state) {
-    auto serial = simdjson::to_string(doc);
+  for (simdjson2_unused auto _ : state) {
+    auto serial = simdjson2::to_string(doc);
     bytes += serial.size();
     benchmark::DoNotOptimize(serial);
   }
   // we validate the result
   {
-    auto serial = simdjson::to_string(doc);
+    auto serial = simdjson2::to_string(doc);
     dom::element doc2; // we parse the stringify output
     if ((error = parser.parse(serial).get(doc2))) { throw std::runtime_error("serialization error"); }
-    auto serial2 = simdjson::to_string(doc2); // we stringify again
+    auto serial2 = simdjson2::to_string(doc2); // we stringify again
     if(serial != serial2) { throw std::runtime_error("serialization mismatch"); }
   }
   // Gigabyte: https://en.wikipedia.org/wiki/Gigabyte
@@ -175,8 +175,8 @@ static void serialize_twitter_string_builder(State& state) {
     return;
   }
   size_t bytes = 0;
-  simdjson::internal::string_builder<> sb;// not part of our public API, for internal use
-  for (simdjson_unused auto _ : state) {
+  simdjson2::internal::string_builder<> sb;// not part of our public API, for internal use
+  for (simdjson2_unused auto _ : state) {
     sb.clear();
     sb.append(doc);
     std::string_view serial = sb.str();
@@ -198,12 +198,12 @@ static void numbers_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   if ((error = parser.load(NUMBERS_JSON).get(arr))) {
     cerr << "could not read " << NUMBERS_JSON << " as an array: " << error << endl;
     return;
   }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     for (auto e : arr) {
       double x;
@@ -220,12 +220,12 @@ static void numbers_size_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   if ((error = parser.load(NUMBERS_JSON).get(arr))) {
     cerr << "could not read " << NUMBERS_JSON << " as an array: " << error << endl;
     return;
   }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     container.resize(arr.size());
     size_t pos = 0;
@@ -246,12 +246,12 @@ static void numbers_type_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   if ((error = parser.load(NUMBERS_JSON).get(arr))) {
     cerr << "could not read " << NUMBERS_JSON << " as an array" << endl;
     return;
   }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     for (auto e : arr) {
       dom::element_type actual_type = e.type();
@@ -272,12 +272,12 @@ static void numbers_type_size_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   if ((error = parser.load(NUMBERS_JSON).get(arr))) {
     cerr << "could not read " << NUMBERS_JSON << " as an array: " << error << endl;
     return;
   }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     container.resize(arr.size());
     size_t pos = 0;
@@ -301,8 +301,8 @@ static void numbers_load_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr;
-  simdjson::error_code error;
-  for (simdjson_unused auto _ : state) {
+  simdjson2::error_code error;
+  for (simdjson2_unused auto _ : state) {
     // this may hit the disk, but probably just once
     if ((error = parser.load(NUMBERS_JSON).get(arr))) {
       cerr << "could not read " << NUMBERS_JSON << " as an array: " << error << endl;
@@ -324,8 +324,8 @@ static void numbers_load_size_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr;
-  simdjson::error_code error;
-  for (simdjson_unused auto _ : state) {
+  simdjson2::error_code error;
+  for (simdjson2_unused auto _ : state) {
     // this may hit the disk, but probably just once
     if ((error = parser.load(NUMBERS_JSON).get(arr))) {
       cerr << "could not read " << NUMBERS_JSON << " as an array" << endl;
@@ -347,14 +347,14 @@ static void numbers_load_size_scan(State& state) {
 BENCHMARK(numbers_load_size_scan);
 
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 
 static void numbers_exceptions_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr = parser.load(NUMBERS_JSON);
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     for (double x : arr) {
       container.push_back(x);
@@ -369,7 +369,7 @@ static void numbers_exceptions_size_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr = parser.load(NUMBERS_JSON);
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     container.resize(arr.size());
     size_t pos = 0;
@@ -389,7 +389,7 @@ static void numbers_type_exceptions_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr = parser.load(NUMBERS_JSON);
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     for (auto e : arr) {
       dom::element_type actual_type = e.type();
@@ -408,7 +408,7 @@ static void numbers_type_exceptions_size_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::array arr = parser.load(NUMBERS_JSON);
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     std::vector<double> container;
     container.resize(arr.size());
     size_t pos = 0;
@@ -429,7 +429,7 @@ BENCHMARK(numbers_type_exceptions_size_scan);
 static void numbers_exceptions_load_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     // this may hit the disk, but probably just once
     dom::array arr = parser.load(NUMBERS_JSON);
     std::vector<double> container;
@@ -445,7 +445,7 @@ BENCHMARK(numbers_exceptions_load_scan);
 static void numbers_exceptions_load_size_scan(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     // this may hit the disk, but probably just once
     dom::array arr = parser.load(NUMBERS_JSON);
     std::vector<double> container;
@@ -466,7 +466,7 @@ static void twitter_count(State& state) {
   // Prints the number of results in twitter.json
   dom::parser parser;
   dom::element doc = parser.load(TWITTER_JSON);
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     uint64_t result_count = doc["search_metadata"]["count"];
     if (result_count != 100) { return; }
   }
@@ -477,7 +477,7 @@ static void twitter_default_profile(State& state) {
   // Count unique users with a default profile.
   dom::parser parser;
   dom::element doc = parser.load(TWITTER_JSON);
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     set<string_view> default_users;
     for (dom::object tweet : doc["statuses"]) {
       dom::object user = tweet["user"];
@@ -494,8 +494,8 @@ static void twitter_image_sizes(State& state) {
   // Count unique image sizes
   dom::parser parser;
   dom::element doc = parser.load(TWITTER_JSON);
-  simdjson::error_code error;
-  for (simdjson_unused auto _ : state) {
+  simdjson2::error_code error;
+  for (simdjson2_unused auto _ : state) {
     set<tuple<uint64_t, uint64_t>> image_sizes;
     for (dom::object tweet : doc["statuses"]) {
       dom::array media;
@@ -512,15 +512,15 @@ static void twitter_image_sizes(State& state) {
 }
 BENCHMARK(twitter_image_sizes);
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
 static void error_code_twitter_count(State& state) noexcept {
   // Prints the number of results in twitter.json
   dom::parser parser;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   dom::element doc;
   if ((error = parser.load(TWITTER_JSON).get(doc))) { return; }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     uint64_t value;
     if ((error = doc["search_metadata"]["count"].get(value))) { return; }
     if (value != 100) { return; }
@@ -531,10 +531,10 @@ BENCHMARK(error_code_twitter_count);
 static void error_code_twitter_default_profile(State& state) noexcept {
   // Count unique users with a default profile.
   dom::parser parser;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   dom::element doc;
   if ((error = parser.load(TWITTER_JSON).get(doc))) { std::cerr << error << std::endl; return; }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     set<string_view> default_users;
 
     dom::array tweets;
@@ -559,10 +559,10 @@ BENCHMARK(error_code_twitter_default_profile);
 static void error_code_twitter_image_sizes(State& state) noexcept {
   // Count unique image sizes
   dom::parser parser;
-  simdjson::error_code error;
+  simdjson2::error_code error;
   dom::element doc;
   if ((error = parser.load(TWITTER_JSON).get(doc))) { std::cerr << error << std::endl; return; }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     set<tuple<uint64_t, uint64_t>> image_sizes;
     dom::array statuses;
     if ((error = doc["statuses"].get(statuses))) { return; }
@@ -600,7 +600,7 @@ static void parse_surrogate_pairs(State& state) {
     cout << error << endl;
     return;
   }
-  for (simdjson_unused auto _ : state) {
+  for (simdjson2_unused auto _ : state) {
     dom::element doc;
     if ((error = parser.parse(docdata).get(doc))) {
       cerr << "could not parse string" << error << endl;

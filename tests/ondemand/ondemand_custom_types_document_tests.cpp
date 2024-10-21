@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
 #include <string>
@@ -6,23 +6,23 @@
 
 
 namespace doc_custom_types_tests {
-#if SIMDJSON_EXCEPTIONS && defined(__cpp_concepts)
+#if SIMDJSON2_EXCEPTIONS && defined(__cpp_concepts)
 struct Car {
   std::string make{};
   std::string model{};
   int64_t year{};
   std::vector<double> tire_pressure{};
 
-  friend error_code tag_invoke(simdjson::deserialize_tag,
+  friend error_code tag_invoke(simdjson2::deserialize_tag,
                                          auto &val, Car& car) {
-    simdjson::ondemand::object obj;
+    simdjson2::ondemand::object obj;
     if (auto const error = val.get_object().get(obj)) {
       return error;
     }
     // Instead of repeatedly obj["something"], we iterate through the object
     // which we expect to be faster.
     for (auto field : obj) {
-      simdjson::ondemand::raw_json_string key;
+      simdjson2::ondemand::raw_json_string key;
       if (auto const error = field.key().get(key)) {
         return error;
       }
@@ -49,10 +49,10 @@ struct Car {
   }
 };
 
-static_assert(simdjson::custom_deserializable<std::unique_ptr<Car>, simdjson::ondemand::value>, "It should be invocable");
-static_assert(simdjson::custom_deserializable<std::unique_ptr<Car>, simdjson::ondemand::document>, "Tag_invoke should work with document as well.");
-static_assert(simdjson::custom_deserializable<std::vector<Car>, simdjson::ondemand::value>, "It should be invocable");
-static_assert(simdjson::custom_deserializable<std::vector<Car>, simdjson::ondemand::document>, "Tag_invoke should work with document as well.");
+static_assert(simdjson2::custom_deserializable<std::unique_ptr<Car>, simdjson2::ondemand::value>, "It should be invocable");
+static_assert(simdjson2::custom_deserializable<std::unique_ptr<Car>, simdjson2::ondemand::document>, "Tag_invoke should work with document as well.");
+static_assert(simdjson2::custom_deserializable<std::vector<Car>, simdjson2::ondemand::value>, "It should be invocable");
+static_assert(simdjson2::custom_deserializable<std::vector<Car>, simdjson2::ondemand::document>, "Tag_invoke should work with document as well.");
 
 bool custom_test() {
   TEST_START();
@@ -63,8 +63,8 @@ bool custom_test() {
       "tire_pressure": [ 40.1, 39.9 ]
  } )"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
 
   // creating car directly from "doc":
   const std::unique_ptr<Car> car(doc);
@@ -87,8 +87,8 @@ bool readme_test() {
   TEST_START();
   auto const json = R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] })"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   std::unique_ptr<Car> c(doc);
   std::cout << c->make << std::endl;
   TEST_SUCCEED();
@@ -97,11 +97,11 @@ bool readme_test() {
 
 bool simple_document_test() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] })"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   Car c(doc);
   std::cout << c.make << std::endl;
   ASSERT_EQUAL(c.make, "Toyota");
@@ -110,7 +110,7 @@ bool simple_document_test() {
 
 bool custom_test_crazier() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] },
   { "make": "Kia",    "model": "Soul",   "year": 2012,
@@ -119,9 +119,9 @@ bool custom_test_crazier() {
        "tire_pressure": [ 29.8, 30.0 ] }
 ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
-#if SIMDJSON_REGULAR_VISUAL_STUDIO
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
+#if SIMDJSON2_REGULAR_VISUAL_STUDIO
   std::vector<Car> cars = doc.get<std::vector<Car>>();
 #else
   std::vector<Car> cars(doc);
@@ -146,28 +146,28 @@ bool custom_test_crazier() {
 
 bool simple_document_test_no_except() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] })"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   Car c;
   auto error = doc.get(c);
-  if(error) { std::cerr << simdjson::error_message(error); return false; }
+  if(error) { std::cerr << simdjson2::error_message(error); return false; }
   std::cout << c.make << std::endl;
   ASSERT_EQUAL(c.make, "Toyota");
   TEST_SUCCEED();
 }
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 bool run() {
   return
-#if SIMDJSON_EXCEPTIONS && defined(__cpp_concepts)
+#if SIMDJSON2_EXCEPTIONS && defined(__cpp_concepts)
       readme_test() &&
       custom_test() &&
       simple_document_test() &&
       simple_document_test_no_except() &&
       custom_test_crazier() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
       true;
 }
 

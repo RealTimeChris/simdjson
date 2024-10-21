@@ -9,9 +9,9 @@ assignees: ''
 
 Before submitting an issue, please ensure that you have read the documentation:
 
-* Basics is an overview of how to use simdjson and its APIs: https://github.com/simdjson/simdjson/blob/master/doc/basics.md
-* Performance shows some more advanced scenarios and how to tune for them: https://github.com/simdjson/simdjson/blob/master/doc/performance.md
-* Contributing: https://github.com/simdjson/simdjson/blob/master/CONTRIBUTING.md
+* Basics is an overview of how to use simdjson2 and its APIs: https://github.com/simdjson2/simdjson2/blob/master/doc/basics.md
+* Performance shows some more advanced scenarios and how to tune for them: https://github.com/simdjson2/simdjson2/blob/master/doc/performance.md
+* Contributing: https://github.com/simdjson2/simdjson2/blob/master/CONTRIBUTING.md
 * We follow the [JSON specification as described by RFC 8259](https://www.rfc-editor.org/rfc/rfc8259.txt) (T. Bray, 2017). If you wish to support features that are not part of RFC 8259, then you should not refer to your issue as a bug.
 
 
@@ -26,7 +26,7 @@ An unexpected poor software performance can be accepted as a bug (a 'performance
 
 We accept the identification of an issue by a sanitizer or some checker tool (e.g., valgrind) as a bug, but you must first ensure that it is not a false positive.
 
-We recommend that you run your tests using different optimization levels. In particular, we recommend your run tests with the simdjson library and you code compiled in debug mode. The simdjson then sets the SIMDJSON_DEVELOPMENT_CHECKS macro to 1, and this triggers additional checks on your code and on the internals of the library. If possible, we recommend that you run tests with sanitizers (e.g., see [No more leaks with sanitize flags in gcc and clang](https://lemire.me/blog/2016/04/20/no-more-leaks-with-sanitize-flags-in-gcc-and-clang/)).  You can compile the library with sanitizers for debugging purposes (e.g., set SIMDJSON_SANITIZE to ON using CMake), but you should also turn on sanitizers on your own code. You may also use tools like valgrind or the commercial equivalent.
+We recommend that you run your tests using different optimization levels. In particular, we recommend your run tests with the simdjson2 library and you code compiled in debug mode. The simdjson2 then sets the SIMDJSON2_DEVELOPMENT_CHECKS macro to 1, and this triggers additional checks on your code and on the internals of the library. If possible, we recommend that you run tests with sanitizers (e.g., see [No more leaks with sanitize flags in gcc and clang](https://lemire.me/blog/2016/04/20/no-more-leaks-with-sanitize-flags-in-gcc-and-clang/)).  You can compile the library with sanitizers for debugging purposes (e.g., set SIMDJSON2_SANITIZE to ON using CMake), but you should also turn on sanitizers on your own code. You may also use tools like valgrind or the commercial equivalent.
 
 Before reporting a bug, please ensure that you have read our documentation.
 
@@ -35,11 +35,11 @@ Steps to reproduce the behaviour: provide a code sample if possible. Please prov
 
 If we cannot reproduce the issue, then we cannot address it. Note that a stack trace from your own program is not enough. A sample of your source code is insufficient: please provide a complete test for us to reproduce the issue. Please reduce the issue: use as small and as simple an example of the bug as possible.
 
-It should be possible to trigger the bug by using solely simdjson with our default build setup. If you can only observe the bug within some specific context, with some other software, please reduce the issue first.
+It should be possible to trigger the bug by using solely simdjson2 with our default build setup. If you can only observe the bug within some specific context, with some other software, please reduce the issue first.
 
 **simjson release**
 
-Unless you plan to contribute to simdjson, you should only work from releases. Please be mindful that our main branch may have additional features, bugs and documentation items.
+Unless you plan to contribute to simdjson2, you should only work from releases. Please be mindful that our main branch may have additional features, bugs and documentation items.
 
 It is fine to report bugs against our main branch, but if that is what you are doing, please be explicit.
 
@@ -52,11 +52,11 @@ It is fine to report bugs against our main branch, but if that is what you are d
 We support up-to-date 64-bit ARM and x64 FreeBSD, macOS, Windows and Linux systems. Please ensure that your configuration is supported before labelling the issue as a bug.
 
 * We do not support unreleased or experimental compilers. If you encounter an issue with a
-pre-release version of a compiler, do not report it as a bug to simdjson. However, we always
+pre-release version of a compiler, do not report it as a bug to simdjson2. However, we always
 invite contributions either in the form an analysis or of a code contribution.
 
 **Indicate whether you are willing or able to provide a bug fix as a pull request**
 
-If you plan to contribute to simdjson, please read our guide:
-* CONTRIBUTING guide: https://github.com/simdjson/simdjson/blob/master/CONTRIBUTING.md and our
-* HACKING guide: https://github.com/simdjson/simdjson/blob/master/HACKING.md
+If you plan to contribute to simdjson2, please read our guide:
+* CONTRIBUTING guide: https://github.com/simdjson2/simdjson2/blob/master/CONTRIBUTING.md and our
+* HACKING guide: https://github.com/simdjson2/simdjson2/blob/master/HACKING.md

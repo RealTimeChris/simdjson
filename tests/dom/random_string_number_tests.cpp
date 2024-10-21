@@ -9,19 +9,19 @@
 #include <climits>
 #include <unistd.h>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 
 /**
  * Some systems have bad floating-point parsing. We want to exclude them.
  */
-#if defined(SIMDJSON_REGULAR_VISUAL_STUDIO) || defined (__linux__) || defined (__APPLE__) || defined(__FreeBSD__)
+#if defined(SIMDJSON2_REGULAR_VISUAL_STUDIO) || defined (__linux__) || defined (__APPLE__) || defined(__FreeBSD__)
 // Ok. So under Visual Studio, linux, apple and freebsd systems, we have a good chance of having a decent
 // enough strtod. It is not certain, but it is maybe a good enough heuristics. We exclude systems like msys2
 // or cygwin.
 //
 // Finally, we want to exclude legacy 32-bit systems.
-#if SIMDJSON_IS_32BITS
+#if SIMDJSON2_IS_32BITS
 // we omit 32-bit tests
 #else
 // So we only run some of the floating-point tests under 64-bit linux, apple, regular visual studio, freebsd.
@@ -138,7 +138,7 @@ bool check_float(double result, const char *buf) {
  */
 bool tester(int seed, size_t volume) {
   std::vector<char> buffer(1024); // large buffer (can't overflow)
-  simdjson::dom::parser parser;
+  simdjson2::dom::parser parser;
   RandomEngine rand(seed);
   double result{};
   for (size_t i = 0; i < volume; i++) {
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
   while ((c = getopt(argc, argv, "a:m:h")) != -1) {
     switch (c) {
     case 'a': {
-      const simdjson::implementation *impl = simdjson::get_available_implementations()[optarg];
+      const simdjson2::implementation *impl = simdjson2::get_available_implementations()[optarg];
       if (!impl) {
         fprintf(stderr, "Unsupported architecture value -a %s\n", optarg);
         return EXIT_FAILURE;
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "The selected implementation does not match your current CPU: -a %s\n", optarg);
         return EXIT_FAILURE;
       }
-      simdjson::get_active_implementation() = impl;
+      simdjson2::get_active_implementation() = impl;
       break;
     }
     case 'h': {

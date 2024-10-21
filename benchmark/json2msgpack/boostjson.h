@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_BOOSTJSON
+#ifdef SIMDJSON2_COMPETITION_BOOSTJSON
 
 #include "json2msgpack.h"
 
@@ -90,7 +90,7 @@ struct boostjson {
 
   boostjson2msgpack parser{};
 
-  bool run(simdjson::padded_string &json, char *buffer, std::string_view &result) {
+  bool run(simdjson2::padded_string &json, char *buffer, std::string_view &result) {
     auto root = boost::json::parse(json);
     result = parser.to_msgpack(root, reinterpret_cast<uint8_t *>(buffer));
     return true;
@@ -101,4 +101,4 @@ BENCHMARK_TEMPLATE(json2msgpack, boostjson)->UseManualTime();
 
 } // namespace json2msgpack
 
-#endif // SIMDJSON_COMPETITION_BOOSTJSON
+#endif // SIMDJSON2_COMPETITION_BOOSTJSON

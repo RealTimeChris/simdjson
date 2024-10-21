@@ -1,7 +1,7 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace error_tests {
   using namespace std;
@@ -23,12 +23,12 @@ namespace error_tests {
 })"_padded;
     ondemand::document document;
     auto error = parser.iterate(json_string).get(document);
-    if(error != simdjson::SUCCESS) {
+    if(error != simdjson2::SUCCESS) {
       return false;
     }
     ondemand::object obj;
     error =  document.get_object().get(obj);
-    if(error != simdjson::SUCCESS) {
+    if(error != simdjson2::SUCCESS) {
       return false;
     }
     std::string_view name_value{};
@@ -50,18 +50,18 @@ namespace error_tests {
 })"_padded;
     ondemand::document document;
     auto error = parser.iterate(json_string).get(document);
-    if(error != simdjson::SUCCESS) {
+    if(error != simdjson2::SUCCESS) {
       return false;
     }
     ondemand::object obj;
     error =  document.get_object().get(obj);
-    if(error != simdjson::SUCCESS) {
+    if(error != simdjson2::SUCCESS) {
       return false;
     }
 
     std::string_view main_value{};
     error = obj["main"].get_string().get(main_value);
-    ASSERT_ERROR(error, simdjson::SUCCESS);
+    ASSERT_ERROR(error, simdjson2::SUCCESS);
     std::string_view name_value{};
     error = obj["name"].get_string().get(name_value);
     ASSERT_ERROR(error,TAPE_ERROR);
@@ -76,7 +76,7 @@ namespace error_tests {
     auto doc = parser.iterate(json);
     size_t cnt{};
     auto error = doc.count_elements().get(cnt);
-    return error != simdjson::SUCCESS;
+    return error != simdjson2::SUCCESS;
   }
   bool issue1834_2() {
     TEST_START();
@@ -86,7 +86,7 @@ namespace error_tests {
     auto doc = parser.iterate(json);
     size_t cnt{};
     auto error = doc.count_fields().get(cnt);
-    return error != simdjson::SUCCESS;
+    return error != simdjson2::SUCCESS;
   }
   bool empty_document_error() {
     TEST_START();
@@ -105,7 +105,7 @@ namespace error_tests {
     ASSERT_ERROR( doc.get_raw_json_string().get(rawjson), INCORRECT_TYPE );
     TEST_SUCCEED();
   }
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   // This is a compile-only test
   struct Class {
       Class(std::string text)
@@ -113,8 +113,8 @@ namespace error_tests {
           , doc(parser.iterate(text))
       {
       }
-      simdjson::ondemand::parser parser;
-      simdjson::ondemand::document doc;
+      simdjson2::ondemand::parser parser;
+      simdjson2::ondemand::document doc;
   };
   bool document_in_class() {
     TEST_START();
@@ -125,8 +125,8 @@ namespace error_tests {
   bool direct_document() {
     TEST_START();
     std::string text = "{}";
-    simdjson::ondemand::parser parser;
-    simdjson::ondemand::document doc(parser.iterate(text));
+    simdjson2::ondemand::parser parser;
+    simdjson2::ondemand::document doc(parser.iterate(text));
     TEST_SUCCEED();
   }
   bool raw_json_string_except() {
@@ -139,7 +139,7 @@ namespace error_tests {
       ondemand::raw_json_string rawjson = doc.get_raw_json_string();
       (void)rawjson;
       TEST_FAIL("Should have thrown an exception!")
-    } catch(simdjson_error& e) {
+    } catch(simdjson2_error& e) {
       ASSERT_ERROR(e.error(), INCORRECT_TYPE);
       TEST_SUCCEED();
     }
@@ -154,7 +154,7 @@ namespace error_tests {
       auto rawjson = doc.get_raw_json_string();
       std::cout << rawjson;
       TEST_FAIL("Should have thrown an exception!")
-    } catch(simdjson_error& e) {
+    } catch(simdjson2_error& e) {
       ASSERT_ERROR(e.error(), INCORRECT_TYPE);
       TEST_SUCCEED();
     }
@@ -182,7 +182,7 @@ namespace error_tests {
     TEST_SUCCEED();
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   bool simple_error_example_except() {
     TEST_START();
     ondemand::parser parser;
@@ -191,7 +191,7 @@ namespace error_tests {
       ondemand::document doc = parser.iterate(json);
       double x = doc["bad number"].get_double();
       TEST_FAIL("should throw got: "+std::to_string(x))
-    } catch(simdjson_error& e) {
+    } catch(simdjson2_error& e) {
       ASSERT_ERROR(e.error(), NUMBER_ERROR);
     }
     TEST_SUCCEED();
@@ -201,8 +201,8 @@ namespace error_tests {
   bool get_fail_then_succeed_bool() {
     TEST_START();
     auto json = R"({ "val" : true })"_padded;
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc) {
-      simdjson_result<ondemand::value> val = doc["val"];
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc) {
+      simdjson2_result<ondemand::value> val = doc["val"];
       // Get everything that can fail in both forward and backwards order
       bool is_null_value;
       ASSERT_SUCCESS( val.is_null().get(is_null_value) );
@@ -247,7 +247,7 @@ namespace error_tests {
       TEST_SUCCEED();
     }));
     json = R"(true)"_padded;
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](simdjson_result<ondemand::document> val) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](simdjson2_result<ondemand::document> val) {
       // Get everything that can fail in both forward and backwards order
       bool is_null_value;
       ASSERT_SUCCESS( val.is_null().get(is_null_value) );
@@ -297,8 +297,8 @@ namespace error_tests {
   bool get_fail_then_succeed_null() {
     TEST_START();
     auto json = R"({ "val" : null })"_padded;
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc) {
-      simdjson_result<ondemand::value> val = doc["val"];
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc) {
+      simdjson2_result<ondemand::value> val = doc["val"];
       // Get everything that can fail in both forward and backwards order
       ASSERT_ERROR( val.get_bool(), INCORRECT_TYPE );
       ASSERT_ERROR( val.get_array(), INCORRECT_TYPE );
@@ -342,7 +342,7 @@ namespace error_tests {
       TEST_SUCCEED();
     }));
     json = R"(null)"_padded;
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](simdjson_result<ondemand::document> val) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](simdjson2_result<ondemand::document> val) {
       // Get everything that can fail in both forward and backwards order
       ASSERT_ERROR( val.get_bool(), INCORRECT_TYPE );
       ASSERT_ERROR( val.get_array(), INCORRECT_TYPE );
@@ -403,7 +403,7 @@ namespace error_tests {
            badbadjson2() &&
            issue1834() &&
            issue1834_2() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            document_in_class() &&
            direct_document() &&
            raw_json_string_except() &&
@@ -416,7 +416,7 @@ namespace error_tests {
            get_fail_then_succeed_null() &&
            invalid_type() &&
            simple_error_example() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            simple_error_example_except() &&
 #endif
            true;

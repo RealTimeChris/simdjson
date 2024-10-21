@@ -1,9 +1,9 @@
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 using namespace std;
-using namespace simdjson;
-using error_code=simdjson::error_code;
+using namespace simdjson2;
+using error_code=simdjson2::error_code;
 
 void basics_1() {
   const char *filename = "x.txt";
@@ -54,8 +54,8 @@ void basics_dom_1() {
 
 void parse_many_truncated() {
     auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} {"key":"intentionally unclosed string  )"_padded;
-    simdjson::dom::parser parser;
-    simdjson::dom::document_stream stream;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::document_stream stream;
     auto error = parser.parse_many(json,json.size()).get(stream);
     if(error) { std::cerr << error << std::endl; return; }
     for(auto doc : stream) {
@@ -75,7 +75,7 @@ void basics_dom_2() {
   cout << cars.at_pointer("/0/tire_pressure/1") << endl; // Prints 39.9
   for (dom::element car_element : cars) {
     dom::object car;
-    simdjson::error_code error;
+    simdjson2::error_code error;
     if ((error = car_element.get(car))) { std::cerr << error << std::endl; return; }
     double x = car.at_pointer("/tire_pressure/1");
     cout << x << endl; // Prints 39.9, 31 and 30
@@ -223,7 +223,7 @@ namespace treewalk_1 {
   }
 }
 
-#ifdef SIMDJSON_CPLUSPLUS17
+#ifdef SIMDJSON2_CPLUSPLUS17
 void basics_cpp17_1() {
   padded_string json = R"(  { "foo": 1, "bar": 2 }  )"_padded;
   dom::parser parser;
@@ -267,9 +267,9 @@ void basics_ndjson_parse_many() {
   }
 }
 void implementation_selection_1() {
-  cout << "simdjson v" << SIMDJSON_VERSION << endl;
-  cout << "Detected the best implementation for your machine: " << simdjson::get_active_implementation()->name();
-  cout << "(" << simdjson::get_active_implementation()->description() << ")" << endl;
+  cout << "simdjson2 v" << SIMDJSON2_VERSION << endl;
+  cout << "Detected the best implementation for your machine: " << simdjson2::get_active_implementation()->name();
+  cout << "(" << simdjson2::get_active_implementation()->description() << ")" << endl;
 }
 
 void unescaped_key() {
@@ -292,32 +292,32 @@ void unescaped_key() {
 }
 
 void implementation_selection_2() {
-  for (auto implementation : simdjson::get_available_implementations()) {
+  for (auto implementation : simdjson2::get_available_implementations()) {
     cout << implementation->name() << ": " << implementation->description() << endl;
   }
 }
 
 void implementation_selection_2_safe() {
-  for (auto implementation : simdjson::get_available_implementations()) {
+  for (auto implementation : simdjson2::get_available_implementations()) {
     if(implementation->supported_by_runtime_system()) {
       cout << implementation->name() << ": " << implementation->description() << endl;
     }
   }
 }
 void implementation_selection_3() {
-  cout << simdjson::get_available_implementations()["fallback"]->description() << endl;
+  cout << simdjson2::get_available_implementations()["fallback"]->description() << endl;
 }
 
 void implementation_selection_safe() {
-  auto my_implementation = simdjson::get_available_implementations()["haswell"];
+  auto my_implementation = simdjson2::get_available_implementations()["haswell"];
   if(! my_implementation) { exit(1); }
   if(! my_implementation->supported_by_runtime_system()) { exit(1); }
-  simdjson::get_active_implementation() = my_implementation;
+  simdjson2::get_active_implementation() = my_implementation;
 }
 
 void implementation_selection_4() {
   // Use the fallback implementation, even though my machine is fast enough for anything
-  simdjson::get_active_implementation() = simdjson::get_available_implementations()["fallback"];
+  simdjson2::get_active_implementation() = simdjson2::get_available_implementations()["fallback"];
 }
 
 void ondemand_performance_1() {
@@ -357,8 +357,8 @@ void performance_1() {
   cout << doc2 << endl;
 }
 
-#ifdef SIMDJSON_CPLUSPLUS17
-SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
+#ifdef SIMDJSON2_CPLUSPLUS17
+SIMDJSON2_PUSH_DISABLE_ALL_WARNINGS
 // The web_request part of this is aspirational, so we compile as much as we can here
 void performance_2() {
   dom::parser parser(1000*1000); // Never grow past documents > 1MB
@@ -387,7 +387,7 @@ void performance_3() {
     // ...
   }
 }
-SIMDJSON_POP_DISABLE_WARNINGS
+SIMDJSON2_POP_DISABLE_WARNINGS
 #endif
 
 void minify() {
@@ -395,8 +395,8 @@ void minify() {
   size_t length = std::strlen(some_string);
   std::unique_ptr<char[]> buffer{new char[length]};
   size_t new_length{};
-  auto error = simdjson::minify(some_string, length, buffer.get(), new_length);
-  if(error != simdjson::SUCCESS) {
+  auto error = simdjson2::minify(some_string, length, buffer.get(), new_length);
+  if(error != simdjson2::SUCCESS) {
     std::cerr << "error " << error << std::endl;
     abort();
   } else {
@@ -418,7 +418,7 @@ void minify() {
 bool is_correct() {
   const char * some_string = "[ 1, 2, 3, 4] ";
   size_t length = std::strlen(some_string);
-  bool is_ok = simdjson::validate_utf8(some_string, length);
+  bool is_ok = simdjson2::validate_utf8(some_string, length);
   return is_ok;
 }
 
@@ -426,21 +426,21 @@ bool is_correct_string_view() {
   const char * some_string = "[ 1, 2, 3, 4] ";
   size_t length = std::strlen(some_string);
   std::string_view v(some_string, length);
-  bool is_ok = simdjson::validate_utf8(v);
+  bool is_ok = simdjson2::validate_utf8(v);
   return is_ok;
 }
 
 bool is_correct_string() {
   const std::string some_string = "[ 1, 2, 3, 4] ";
-  bool is_ok = simdjson::validate_utf8(some_string);
+  bool is_ok = simdjson2::validate_utf8(some_string);
   return is_ok;
 }
 
 void parse_documentation() {
   const char *json      = R"({"key":"value"})";
   const size_t json_len = std::strlen(json);
-  simdjson::dom::parser parser;
-  simdjson::dom::element element = parser.parse(json, json_len);
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element element = parser.parse(json, json_len);
   // Next line is to avoid unused warning.
   (void)element;
 }
@@ -449,14 +449,14 @@ void parse_documentation() {
 void parse_documentation_lowlevel() {
   // Such low-level code is not generally recommended. Please
   // see parse_documentation() instead.
-  // Motivation: https://github.com/simdjson/simdjson/issues/1175
+  // Motivation: https://github.com/simdjson2/simdjson2/issues/1175
   const char *json      = R"({"key":"value"})";
   const size_t json_len = std::strlen(json);
-  std::unique_ptr<char[]> padded_json_copy{new char[json_len + SIMDJSON_PADDING]};
+  std::unique_ptr<char[]> padded_json_copy{new char[json_len + SIMDJSON2_PADDING]};
   std::memcpy(padded_json_copy.get(), json, json_len);
-  std::memset(padded_json_copy.get() + json_len, '\0', SIMDJSON_PADDING);
-  simdjson::dom::parser parser;
-  simdjson::dom::element element = parser.parse(padded_json_copy.get(), json_len, false);
+  std::memset(padded_json_copy.get() + json_len, '\0', SIMDJSON2_PADDING);
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element element = parser.parse(padded_json_copy.get(), json_len, false);
   // Next line is to avoid unused warning.
   (void)element;
 }

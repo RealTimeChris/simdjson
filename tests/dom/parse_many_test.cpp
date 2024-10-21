@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
 /**
  * Does the file filename end with the given extension.
@@ -95,12 +95,12 @@ bool validate(const char *dirname) {
             snprintf(fullpath, fullpathlen, "%s%s%s", dirname, needsep ? "/" : "", name);
 
             /* The actual test*/
-            simdjson::padded_string json;
-            auto error = simdjson::padded_string::load(fullpath).get(json);
+            simdjson2::padded_string json;
+            auto error = simdjson2::padded_string::load(fullpath).get(json);
             if (!error) {
-                simdjson::dom::parser parser;
+                simdjson2::dom::parser parser;
                 ++how_many;
-                simdjson::dom::document_stream docs;
+                simdjson2::dom::document_stream docs;
                 error = parser.parse_many(json).get(docs);
                 for (auto doc : docs) {
                   error = doc.error();
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
   while ((c = getopt(argc, argv, "a:")) != -1) {
     switch (c) {
     case 'a': {
-      const simdjson::implementation *impl = simdjson::get_available_implementations()[optarg];
+      const simdjson2::implementation *impl = simdjson2::get_available_implementations()[optarg];
       if (!impl) {
         fprintf(stderr, "Unsupported architecture value -a %s\n", optarg);
         return EXIT_FAILURE;
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "The selected implementation does not match your current CPU: -a %s\n", optarg);
         return EXIT_FAILURE;
       }
-      simdjson::get_active_implementation() = impl;
+      simdjson2::get_active_implementation() = impl;
       break;
     }
     default:
@@ -178,25 +178,25 @@ int main(int argc, char *argv[]) {
 
   // this is put here deliberately to check that the documentation is correct (README),
   // should this fail to compile, you should update the documentation:
-  if (simdjson::get_active_implementation()->name() == "unsupported") {
+  if (simdjson2::get_active_implementation()->name() == "unsupported") {
     printf("unsupported CPU\n");
   }
   // We want to know what we are testing.
-  std::cout << "Running tests against this implementation: " << simdjson::get_active_implementation()->name();
-  std::cout << " (" << simdjson::get_active_implementation()->description() << ")" << std::endl;
+  std::cout << "Running tests against this implementation: " << simdjson2::get_active_implementation()->name();
+  std::cout << " (" << simdjson2::get_active_implementation()->description() << ")" << std::endl;
   std::cout << "------------------------------------------------------------" << std::endl;
   if(optind >= argc) {
         std::cerr << "Usage: " << argv[0] << " <directorywithjsonfiles>"
                   << std::endl;
-#ifndef SIMDJSON_TEST_DATA_DIR
+#ifndef SIMDJSON2_TEST_DATA_DIR
         std::cout
         << "We are going to assume you mean to use the 'jsonchecker' directory."
         << std::endl;
     return validate("jsonchecker/") ? EXIT_SUCCESS : EXIT_FAILURE;
 #else
         std::cout << "We are going to assume you mean to use the '"
-                  << SIMDJSON_TEST_DATA_DIR << "' directory." << std::endl;
-        return validate(SIMDJSON_TEST_DATA_DIR) ? EXIT_SUCCESS : EXIT_FAILURE;
+                  << SIMDJSON2_TEST_DATA_DIR << "' directory." << std::endl;
+        return validate(SIMDJSON2_TEST_DATA_DIR) ? EXIT_SUCCESS : EXIT_FAILURE;
 #endif
   }
   return validate(argv[optind]) ? EXIT_SUCCESS : EXIT_FAILURE;

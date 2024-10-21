@@ -1,14 +1,14 @@
 #include <iostream>
 #include <set>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
-SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
+SIMDJSON2_PUSH_DISABLE_ALL_WARNINGS
 #ifndef __cpp_exceptions
 #define CXXOPTS_NO_EXCEPTIONS
 #endif
 #include "cxxopts.hpp"
-SIMDJSON_POP_DISABLE_WARNINGS
+SIMDJSON2_POP_DISABLE_WARNINGS
 
 size_t count_nonasciibytes(const uint8_t *input, size_t length) {
   size_t count = 0;
@@ -69,14 +69,14 @@ bool is_ascii(const std::string_view &v) {
   return true;
 }
 
-void recurse(simdjson::dom::element element, stat_t &s, size_t depth) {
+void recurse(simdjson2::dom::element element, stat_t &s, size_t depth) {
   if (depth > s.maximum_depth) {
     s.maximum_depth = depth;
   }
-  simdjson::error_code error;
-  if (element.is<simdjson::dom::array>()) {
+  simdjson2::error_code error;
+  if (element.is<simdjson2::dom::array>()) {
     s.array_count++;
-    simdjson::dom::array array;
+    simdjson2::dom::array array;
     if (not (error = element.get(array))) {
       size_t counter = 0;
       for (auto child : array) {
@@ -87,9 +87,9 @@ void recurse(simdjson::dom::element element, stat_t &s, size_t depth) {
         s.maximum_array_size = counter;
       }
     }
-  } else if (element.is<simdjson::dom::object>()) {
+  } else if (element.is<simdjson2::dom::object>()) {
     s.object_count++;
-    simdjson::dom::object object;
+    simdjson2::dom::object object;
     if (not (error = element.get(object))) {
       size_t counter = 0;
       for (auto [key, value] : object) {
@@ -125,7 +125,7 @@ void recurse(simdjson::dom::element element, stat_t &s, size_t depth) {
       // to check whether it is an integer first!!!
       int64_t v{};
       error = element.get(v);
-      SIMDJSON_ASSUME(!error);
+      SIMDJSON2_ASSUME(!error);
       if((v >= std::numeric_limits<int32_t>::min()) and (v <= std::numeric_limits<int32_t>::max()) ) {
         s.integer32_count++;
       }
@@ -140,7 +140,7 @@ void recurse(simdjson::dom::element element, stat_t &s, size_t depth) {
     } else if (element.is<bool>()) {
       bool v{};
       error = element.get(v);
-      SIMDJSON_ASSUME(!error);
+      SIMDJSON2_ASSUME(!error);
       if (v) {
         s.true_count++;
       } else {
@@ -152,7 +152,7 @@ void recurse(simdjson::dom::element element, stat_t &s, size_t depth) {
       s.string_count++;
       std::string_view v;
       error = element.get(v);
-      SIMDJSON_ASSUME(!error);
+      SIMDJSON2_ASSUME(!error);
       if (is_ascii(v)) {
         s.ascii_string_count++;
       }
@@ -161,15 +161,15 @@ void recurse(simdjson::dom::element element, stat_t &s, size_t depth) {
         s.string_maximum_length = v.size();
       }
     } else {
-      SIMDJSON_UNREACHABLE();
+      SIMDJSON2_UNREACHABLE();
     }
   }
 }
 
-stat_t simdjson_compute_stats(const simdjson::padded_string &p) {
+stat_t simdjson2_compute_stats(const simdjson2::padded_string &p) {
   stat_t s{};
-  simdjson::dom::parser parser;
-  simdjson::dom::element doc;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element doc;
   auto error = parser.parse(p).get(doc);
   if (error) {
     s.valid = false;
@@ -184,7 +184,7 @@ stat_t simdjson_compute_stats(const simdjson::padded_string &p) {
   s.byte_count = p.size();
   s.structural_indexes_count = parser.implementation->n_structural_indexes;
 
-  //  simdjson::document::iterator iter(doc);
+  //  simdjson2::document::iterator iter(doc);
   recurse(doc, s, 0);
   return s;
 }
@@ -224,13 +224,13 @@ int main(int argc, const char *argv[]) {
 
   const char *filename = result["file"].as<std::string>().c_str();
 
-  simdjson::padded_string p;
-  auto error = simdjson::padded_string::load(filename).get(p);
+  simdjson2::padded_string p;
+  auto error = simdjson2::padded_string::load(filename).get(p);
   if (error) {
     std::cerr << "Could not load the file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  stat_t s = simdjson_compute_stats(p);
+  stat_t s = simdjson2_compute_stats(p);
   if (!s.valid) {
     std::cerr << "not a valid JSON" << std::endl;
     return EXIT_FAILURE;

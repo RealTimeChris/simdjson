@@ -1,5 +1,5 @@
 #include "FuzzUtils.h"
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -13,11 +13,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   while (strings.size() < 1) {
     strings.emplace_back();
   }
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   try {
 #endif
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string padded(strings[0]);
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string padded(strings[0]);
     auto doc = parser.iterate(padded);
     if (doc.error()) {
       return 0;
@@ -25,47 +25,47 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     for (auto item : doc) {
       switch (action) {
       case 0: {
-        simdjson_unused auto x = item.get_string();
+        simdjson2_unused auto x = item.get_string();
       } break;
       case 1: {
-        simdjson_unused auto x = item.get_bool();
+        simdjson2_unused auto x = item.get_bool();
       } break;
       case 2: {
-        simdjson_unused auto x = item.get_array();
+        simdjson2_unused auto x = item.get_array();
       } break;
       case 3: {
-        simdjson_unused auto x = item.get_int64();
+        simdjson2_unused auto x = item.get_int64();
       } break;
       case 4: {
-        simdjson_unused auto x = item.get_double();
+        simdjson2_unused auto x = item.get_double();
       } break;
       case 5: {
-        simdjson_unused auto x = item.get_object();
+        simdjson2_unused auto x = item.get_object();
       } break;
       case 6: {
-        simdjson_unused auto x = item.get_uint64();
+        simdjson2_unused auto x = item.get_uint64();
       } break;
       case 7: {
-        simdjson_unused auto x = item.get_raw_json_string();
+        simdjson2_unused auto x = item.get_raw_json_string();
       } break;
       case 8: {
-        simdjson_unused auto x = item.is_null();
+        simdjson2_unused auto x = item.is_null();
       } break;
       case 9: {
-        simdjson_unused auto x = item.begin();
+        simdjson2_unused auto x = item.begin();
       } break;
       case 10: {
-        simdjson_unused auto x = item.end();
+        simdjson2_unused auto x = item.end();
       } break;
       case 11: {
         for (auto e : item) {
-          simdjson_unused auto x = e.is_null();
+          simdjson2_unused auto x = e.is_null();
         }
       } break;
       default:;
       }
     }
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   } catch (...) {
   }
 #endif

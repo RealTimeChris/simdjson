@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_SAJSON
+#ifdef SIMDJSON2_COMPETITION_SAJSON
 
 #include "find_tweet.h"
 
@@ -13,12 +13,12 @@ struct sajson {
   size_t *ast_buffer{nullptr};
   ~sajson() { free(ast_buffer); }
 
-  simdjson_inline std::string_view get_string_view(const ::sajson::value &obj, std::string_view key) {
+  simdjson2_inline std::string_view get_string_view(const ::sajson::value &obj, std::string_view key) {
     auto val = obj.get_value_of_key({key.data(), key.length()});
     if (val.get_type() != ::sajson::TYPE_STRING) { throw "field is not a string"; }
     return { val.as_cstring(), val.get_string_length() };
   }
-  simdjson_inline uint64_t get_str_uint64(const ::sajson::value &obj, std::string_view key) {
+  simdjson2_inline uint64_t get_str_uint64(const ::sajson::value &obj, std::string_view key) {
     // Since sajson only supports 53-bit numbers, and IDs in twitter.json can be > 53 bits, we read the corresponding id_str and parse that.
     auto val = obj.get_value_of_key({key.data(), key.length()});
     if (val.get_type() != ::sajson::TYPE_STRING) { throw "field not a string"; }
@@ -29,7 +29,7 @@ struct sajson {
     return result;
   }
 
-  bool run(simdjson::padded_string &json, uint64_t find_id, std::string_view &result) {
+  bool run(simdjson2::padded_string &json, uint64_t find_id, std::string_view &result) {
     if (!ast_buffer) {
       ast_buffer_size = json.size();
       ast_buffer = (size_t *)std::malloc(ast_buffer_size * sizeof(size_t));
@@ -64,5 +64,5 @@ BENCHMARK_TEMPLATE(find_tweet, sajson)->UseManualTime();
 
 } // namespace find_tweet
 
-#endif // SIMDJSON_COMPETITION_SAJSON
+#endif // SIMDJSON2_COMPETITION_SAJSON
 

@@ -1,7 +1,7 @@
 Contributing
 ============
 
-The simdjson library is an open project written in C++. Contributions are invited. Contributors
+The simdjson2 library is an open project written in C++. Contributions are invited. Contributors
 agree to the project's license.
 
 We have an extensive list of issues, and contributions toward any of these issues is invited.
@@ -12,7 +12,7 @@ In particular, the following contributions are invited:
 - The library is focused on performance. Well-documented performance optimization are invited.
 - Fixes to known or newly discovered bugs are always welcome. Typically, a bug fix should come with
   a test demonstrating that the bug has been fixed.
-- The simdjson library is advanced software and maintainability and flexibility are always a
+- The simdjson2 library is advanced software and maintainability and flexibility are always a
   concern. Specific contributions to improve maintainability and flexibility are invited.
 
 We discourage the following types of contributions:
@@ -41,7 +41,7 @@ We have few hard rules, but we have some:
 - Printing to standard output or standard error (`stderr`, `stdout`, `std::cerr`, `std::cout`) in the core library is forbidden. This follows from the [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html) manual which states that "Compiled code should not write to stdout or stderr".
 - Calls to `abort()` are forbidden in the core library. This follows from the [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html) manual which states that "Under no circumstances should your compiled code ever call abort or exit".
 - All source code files (.h, .cpp) must be ASCII.
-- All C macros introduced in public headers need to be prefixed with either `SIMDJSON_` or `simdjson_`.
+- All C macros introduced in public headers need to be prefixed with either `SIMDJSON2_` or `simdjson2_`.
 - We avoid trailing white space characters within lines. That is, your lines of code should not terminate with unnecessary spaces. Generally, please avoid making unnecessary changes to white-space characters when contributing code.
 
 Tools, tests and benchmarks are not held to these same strict rules.
@@ -80,7 +80,7 @@ Style
 -----
 
 Our formatting style is inspired by the LLVM style.
-The simdjson library is written using the snake case: when a variable or a function is a phrase,  each space is replaced by an underscore character, and the first letter of each word written in lowercase.  Compile-time constants are written entirely in uppercase with the same underscore convention.
+The simdjson2 library is written using the snake case: when a variable or a function is a phrase,  each space is replaced by an underscore character, and the first letter of each word written in lowercase.  Compile-time constants are written entirely in uppercase with the same underscore convention.
 
 Code of Conduct
 ---------------
@@ -99,5 +99,5 @@ Consider the following points when engaging with the project:
 Getting Started Hacking
 -----------------------
 
-An overview of simdjson's directory structure, with pointers to architecture and design
+An overview of simdjson2's directory structure, with pointers to architecture and design
 considerations and other helpful notes, can be found at [HACKING.md](HACKING.md).

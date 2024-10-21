@@ -1,15 +1,15 @@
-#ifndef SIMDJSON_SRC_IMPLEMENTATION_CPP
-#define SIMDJSON_SRC_IMPLEMENTATION_CPP
+#ifndef SIMDJSON2_SRC_IMPLEMENTATION_CPP
+#define SIMDJSON2_SRC_IMPLEMENTATION_CPP
 
 #include <base.h>
-#include <simdjson/generic/dependencies.h>
-#include <simdjson/implementation.h>
+#include <simdjson2/generic/dependencies.h>
+#include <simdjson2/implementation.h>
 #include <internal/isadetection.h>
 
 #include <initializer_list>
 #include <type_traits>
 
-namespace simdjson {
+namespace simdjson2 {
 
 bool implementation::supported_by_runtime_system() const {
   uint32_t required_instruction_sets = this->required_instruction_sets();
@@ -17,146 +17,146 @@ bool implementation::supported_by_runtime_system() const {
   return ((supported_instruction_sets & required_instruction_sets) == required_instruction_sets);
 }
 
-} // namespace simdjson
+} // namespace simdjson2
 
-#define SIMDJSON_CONDITIONAL_INCLUDE
+#define SIMDJSON2_CONDITIONAL_INCLUDE
 
-#if SIMDJSON_IMPLEMENTATION_ARM64
-#include <simdjson/arm64/implementation.h>
-namespace simdjson {
+#if SIMDJSON2_IMPLEMENTATION_ARM64
+#include <simdjson2/arm64/implementation.h>
+namespace simdjson2 {
 namespace internal {
 static const arm64::implementation* get_arm64_singleton() {
   static const arm64::implementation arm64_singleton{};
   return &arm64_singleton;
 }
 } // namespace internal
-} // namespace simdjson
-#endif // SIMDJSON_IMPLEMENTATION_ARM64
+} // namespace simdjson2
+#endif // SIMDJSON2_IMPLEMENTATION_ARM64
 
-#if SIMDJSON_IMPLEMENTATION_FALLBACK
-#include <simdjson/fallback/implementation.h>
-namespace simdjson {
+#if SIMDJSON2_IMPLEMENTATION_FALLBACK
+#include <simdjson2/fallback/implementation.h>
+namespace simdjson2 {
 namespace internal {
 static const fallback::implementation* get_fallback_singleton() {
   static const fallback::implementation fallback_singleton{};
   return &fallback_singleton;
 }
 } // namespace internal
-} // namespace simdjson
-#endif // SIMDJSON_IMPLEMENTATION_FALLBACK
+} // namespace simdjson2
+#endif // SIMDJSON2_IMPLEMENTATION_FALLBACK
 
 
-#if SIMDJSON_IMPLEMENTATION_HASWELL
-#include <simdjson/haswell/implementation.h>
-namespace simdjson {
+#if SIMDJSON2_IMPLEMENTATION_HASWELL
+#include <simdjson2/haswell/implementation.h>
+namespace simdjson2 {
 namespace internal {
 static const haswell::implementation* get_haswell_singleton() {
   static const haswell::implementation haswell_singleton{};
   return &haswell_singleton;
 }
 } // namespace internal
-} // namespace simdjson
+} // namespace simdjson2
 #endif
 
-#if SIMDJSON_IMPLEMENTATION_ICELAKE
-#include <simdjson/icelake/implementation.h>
-namespace simdjson {
-namespace internal {
-static const icelake::implementation* get_icelake_singleton() {
-  static const icelake::implementation icelake_singleton{};
-  return &icelake_singleton;
-}
-} // namespace internal
-} // namespace simdjson
+#if SIMDJSON2_IMPLEMENTATION_ICELAKE
+//#include <simdjson2/icelake/implementation.h>
+// namespace simdjson2 {
+// namespace internal {
+// static const icelake::implementation* get_icelake_singleton() {
+// static const icelake::implementation icelake_singleton{};
+// return &icelake_singleton;
+// }
+// } // namespace internal
+// } // namespace simdjson2
 #endif
 
-#if SIMDJSON_IMPLEMENTATION_PPC64
-#include <simdjson/ppc64/implementation.h>
-namespace simdjson {
+#if SIMDJSON2_IMPLEMENTATION_PPC64
+#include <simdjson2/ppc64/implementation.h>
+namespace simdjson2 {
 namespace internal {
 static const ppc64::implementation* get_ppc64_singleton() {
   static const ppc64::implementation ppc64_singleton{};
   return &ppc64_singleton;
 }
 } // namespace internal
-} // namespace simdjson
-#endif // SIMDJSON_IMPLEMENTATION_PPC64
+} // namespace simdjson2
+#endif // SIMDJSON2_IMPLEMENTATION_PPC64
 
-#if SIMDJSON_IMPLEMENTATION_WESTMERE
-#include <simdjson/westmere/implementation.h>
-namespace simdjson {
-namespace internal {
-static const simdjson::westmere::implementation* get_westmere_singleton() {
-  static const simdjson::westmere::implementation westmere_singleton{};
-  return &westmere_singleton;
-}
-} // namespace internal
-} // namespace simdjson
-#endif // SIMDJSON_IMPLEMENTATION_WESTMERE
+#if SIMDJSON2_IMPLEMENTATION_WESTMERE
+//#include <simdjson2/westmere/implementation.h>
+// namespace simdjson2 {
+// namespace internal {
+// static const simdjson2::westmere::implementation* get_westmere_singleton() {
+// static const simdjson2::westmere::implementation westmere_singleton{};
+// return &westmere_singleton;
+// }
+// } // namespace internal
+// } // namespace simdjson2
+#endif // SIMDJSON2_IMPLEMENTATION_WESTMERE
 
-#if SIMDJSON_IMPLEMENTATION_LSX
-#include <simdjson/lsx/implementation.h>
-namespace simdjson {
+#if SIMDJSON2_IMPLEMENTATION_LSX
+#include <simdjson2/lsx/implementation.h>
+namespace simdjson2 {
 namespace internal {
-static const simdjson::lsx::implementation* get_lsx_singleton() {
-  static const simdjson::lsx::implementation lsx_singleton{};
+static const simdjson2::lsx::implementation* get_lsx_singleton() {
+  static const simdjson2::lsx::implementation lsx_singleton{};
   return &lsx_singleton;
 }
 } // namespace internal
-} // namespace simdjson
-#endif // SIMDJSON_IMPLEMENTATION_LSX
+} // namespace simdjson2
+#endif // SIMDJSON2_IMPLEMENTATION_LSX
 
-#if SIMDJSON_IMPLEMENTATION_LASX
-#include <simdjson/lasx/implementation.h>
-namespace simdjson {
+#if SIMDJSON2_IMPLEMENTATION_LASX
+#include <simdjson2/lasx/implementation.h>
+namespace simdjson2 {
 namespace internal {
-static const simdjson::lasx::implementation* get_lasx_singleton() {
-  static const simdjson::lasx::implementation lasx_singleton{};
+static const simdjson2::lasx::implementation* get_lasx_singleton() {
+  static const simdjson2::lasx::implementation lasx_singleton{};
   return &lasx_singleton;
 }
 } // namespace internal
-} // namespace simdjson
-#endif // SIMDJSON_IMPLEMENTATION_LASX
+} // namespace simdjson2
+#endif // SIMDJSON2_IMPLEMENTATION_LASX
 
-#undef SIMDJSON_CONDITIONAL_INCLUDE
+#undef SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
+namespace simdjson2 {
 namespace internal {
 
 // When there is a single implementation, we should not pay a price
 // for dispatching to the best implementation. We should just use the
 // one we have. This is a compile-time check.
-#define SIMDJSON_SINGLE_IMPLEMENTATION (SIMDJSON_IMPLEMENTATION_ICELAKE \
-             + SIMDJSON_IMPLEMENTATION_HASWELL + SIMDJSON_IMPLEMENTATION_WESTMERE \
-             + SIMDJSON_IMPLEMENTATION_ARM64 + SIMDJSON_IMPLEMENTATION_PPC64 \
-             + SIMDJSON_IMPLEMENTATION_LSX + SIMDJSON_IMPLEMENTATION_LASX \
-             + SIMDJSON_IMPLEMENTATION_FALLBACK == 1)
+#define SIMDJSON2_SINGLE_IMPLEMENTATION (SIMDJSON2_IMPLEMENTATION_ICELAKE \
+             + SIMDJSON2_IMPLEMENTATION_HASWELL + SIMDJSON2_IMPLEMENTATION_WESTMERE \
+             + SIMDJSON2_IMPLEMENTATION_ARM64 + SIMDJSON2_IMPLEMENTATION_PPC64 \
+             + SIMDJSON2_IMPLEMENTATION_LSX + SIMDJSON2_IMPLEMENTATION_LASX \
+             + SIMDJSON2_IMPLEMENTATION_FALLBACK == 1)
 
-#if SIMDJSON_SINGLE_IMPLEMENTATION
+#if SIMDJSON2_SINGLE_IMPLEMENTATION
   static const implementation* get_single_implementation() {
     return
-#if SIMDJSON_IMPLEMENTATION_ICELAKE
+#if SIMDJSON2_IMPLEMENTATION_ICELAKE
     get_icelake_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_HASWELL
+#if SIMDJSON2_IMPLEMENTATION_HASWELL
     get_haswell_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_WESTMERE
+#if SIMDJSON2_IMPLEMENTATION_WESTMERE
     get_westmere_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_ARM64
+#if SIMDJSON2_IMPLEMENTATION_ARM64
     get_arm64_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_PPC64
+#if SIMDJSON2_IMPLEMENTATION_PPC64
     get_ppc64_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_LSX
+#if SIMDJSON2_IMPLEMENTATION_LSX
     get_lsx_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_LASX
+#if SIMDJSON2_IMPLEMENTATION_LASX
     get_lasx_singleton();
 #endif
-#if SIMDJSON_IMPLEMENTATION_FALLBACK
+#if SIMDJSON2_IMPLEMENTATION_FALLBACK
     get_fallback_singleton();
 #endif
 }
@@ -173,20 +173,20 @@ public:
   std::string name() const noexcept final { return set_best()->name(); }
   std::string description() const noexcept final { return set_best()->description(); }
   uint32_t required_instruction_sets() const noexcept final { return set_best()->required_instruction_sets(); }
-  simdjson_warn_unused error_code create_dom_parser_implementation(
+  simdjson2_warn_unused error_code create_dom_parser_implementation(
     size_t capacity,
     size_t max_length,
     std::unique_ptr<internal::dom_parser_implementation>& dst
   ) const noexcept final {
     return set_best()->create_dom_parser_implementation(capacity, max_length, dst);
   }
-  simdjson_warn_unused error_code minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept final {
+  simdjson2_warn_unused error_code minify(const uint8_t *buf, size_t len, uint8_t *dst, size_t &dst_len) const noexcept final {
     return set_best()->minify(buf, len, dst, dst_len);
   }
-  simdjson_warn_unused bool validate_utf8(const char * buf, size_t len) const noexcept final override {
+  simdjson2_warn_unused bool validate_utf8(const char * buf, size_t len) const noexcept final override {
     return set_best()->validate_utf8(buf, len);
   }
-  simdjson_inline detect_best_supported_implementation_on_first_use() noexcept : implementation("best_supported_detector", "Detects the best supported implementation and sets it", 0) {}
+  simdjson2_inline detect_best_supported_implementation_on_first_use() noexcept : implementation("best_supported_detector", "Detects the best supported implementation and sets it", 0) {}
 private:
   const implementation *set_best() const noexcept;
 };
@@ -195,29 +195,29 @@ static_assert(std::is_trivially_destructible<detect_best_supported_implementatio
 
 static const std::initializer_list<const implementation *>& get_available_implementation_pointers() {
   static const std::initializer_list<const implementation *> available_implementation_pointers {
-#if SIMDJSON_IMPLEMENTATION_ICELAKE
-    get_icelake_singleton(),
+#if SIMDJSON2_IMPLEMENTATION_ICELAKE
+    //get_icelake_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_HASWELL
+#if SIMDJSON2_IMPLEMENTATION_HASWELL
     get_haswell_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_WESTMERE
-    get_westmere_singleton(),
+#if SIMDJSON2_IMPLEMENTATION_WESTMERE
+    //get_westmere_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_ARM64
+#if SIMDJSON2_IMPLEMENTATION_ARM64
     get_arm64_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_PPC64
+#if SIMDJSON2_IMPLEMENTATION_PPC64
     get_ppc64_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_LSX
+#if SIMDJSON2_IMPLEMENTATION_LSX
     get_lsx_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_LASX
+#if SIMDJSON2_IMPLEMENTATION_LASX
     get_lasx_singleton(),
 #endif
-#if SIMDJSON_IMPLEMENTATION_FALLBACK
-    get_fallback_singleton(),
+#if SIMDJSON2_IMPLEMENTATION_FALLBACK
+    //get_fallback_singleton(),
 #endif
   }; // available_implementation_pointers
   return available_implementation_pointers;
@@ -226,17 +226,17 @@ static const std::initializer_list<const implementation *>& get_available_implem
 // So we can return UNSUPPORTED_ARCHITECTURE from the parser when there is no support
 class unsupported_implementation final : public implementation {
 public:
-  simdjson_warn_unused error_code create_dom_parser_implementation(
+  simdjson2_warn_unused error_code create_dom_parser_implementation(
     size_t,
     size_t,
     std::unique_ptr<internal::dom_parser_implementation>&
   ) const noexcept final {
     return UNSUPPORTED_ARCHITECTURE;
   }
-  simdjson_warn_unused error_code minify(const uint8_t *, size_t, uint8_t *, size_t &) const noexcept final override {
+  simdjson2_warn_unused error_code minify(const uint8_t *, size_t, uint8_t *, size_t &) const noexcept final override {
     return UNSUPPORTED_ARCHITECTURE;
   }
-  simdjson_warn_unused bool validate_utf8(const char *, size_t) const noexcept final override {
+  simdjson2_warn_unused bool validate_utf8(const char *, size_t) const noexcept final override {
     return false; // Just refuse to validate. Given that we have a fallback implementation
     // it seems unlikely that unsupported_implementation will ever be used. If it is used,
     // then it will flag all strings as invalid. The alternative is to return an error_code
@@ -276,10 +276,10 @@ const implementation *available_implementation_list::detect_best_supported() con
 }
 
 const implementation *detect_best_supported_implementation_on_first_use::set_best() const noexcept {
-  SIMDJSON_PUSH_DISABLE_WARNINGS
-  SIMDJSON_DISABLE_DEPRECATED_WARNING // Disable CRT_SECURE warning on MSVC: manually verified this is safe
-  char *force_implementation_name = getenv("SIMDJSON_FORCE_IMPLEMENTATION");
-  SIMDJSON_POP_DISABLE_WARNINGS
+  SIMDJSON2_PUSH_DISABLE_WARNINGS
+  SIMDJSON2_DISABLE_DEPRECATED_WARNING // Disable CRT_SECURE warning on MSVC: manually verified this is safe
+  char *force_implementation_name = getenv("SIMDJSON2_FORCE_IMPLEMENTATION");
+  SIMDJSON2_POP_DISABLE_WARNINGS
 
   if (force_implementation_name) {
     auto force_implementation = get_available_implementations()[force_implementation_name];
@@ -295,13 +295,13 @@ const implementation *detect_best_supported_implementation_on_first_use::set_bes
 
 } // namespace internal
 
-SIMDJSON_DLLIMPORTEXPORT const internal::available_implementation_list& get_available_implementations() {
+SIMDJSON2_DLLIMPORTEXPORT const internal::available_implementation_list& get_available_implementations() {
   static const internal::available_implementation_list available_implementations{};
   return available_implementations;
 }
 
-SIMDJSON_DLLIMPORTEXPORT internal::atomic_ptr<const implementation>& get_active_implementation() {
-#if SIMDJSON_SINGLE_IMPLEMENTATION
+SIMDJSON2_DLLIMPORTEXPORT internal::atomic_ptr<const implementation>& get_active_implementation() {
+#if SIMDJSON2_SINGLE_IMPLEMENTATION
   // We immediately select the only implementation we have, skipping the
   // detect_best_supported_implementation_on_first_use_singleton.
   static internal::atomic_ptr<const implementation> active_implementation{internal::get_single_implementation()};
@@ -313,18 +313,18 @@ SIMDJSON_DLLIMPORTEXPORT internal::atomic_ptr<const implementation>& get_active_
 #endif
 }
 
-simdjson_warn_unused error_code minify(const char *buf, size_t len, char *dst, size_t &dst_len) noexcept {
+simdjson2_warn_unused error_code minify(const char *buf, size_t len, char *dst, size_t &dst_len) noexcept {
   return get_active_implementation()->minify(reinterpret_cast<const uint8_t *>(buf), len, reinterpret_cast<uint8_t *>(dst), dst_len);
 }
-simdjson_warn_unused bool validate_utf8(const char *buf, size_t len) noexcept {
+simdjson2_warn_unused bool validate_utf8(const char *buf, size_t len) noexcept {
   return get_active_implementation()->validate_utf8(buf, len);
 }
 const implementation * builtin_implementation() {
-  static const implementation * builtin_impl = get_available_implementations()[SIMDJSON_STRINGIFY(SIMDJSON_BUILTIN_IMPLEMENTATION)];
+  static const implementation * builtin_impl = get_available_implementations()[SIMDJSON2_STRINGIFY(SIMDJSON2_BUILTIN_IMPLEMENTATION)];
   assert(builtin_impl);
   return builtin_impl;
 }
 
-} // namespace simdjson
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_IMPLEMENTATION_CPP
+#endif // SIMDJSON2_SRC_IMPLEMENTATION_CPP

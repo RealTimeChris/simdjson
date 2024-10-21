@@ -4,7 +4,7 @@
 #else
 #include <unistd.h>
 #endif
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstdio>
 // Returns the default size of the page in bytes on this system.
 long page_size() {
@@ -18,11 +18,11 @@ long page_size() {
   return pagesize;
 }
 
-// Returns true if the buffer + len + simdjson::SIMDJSON_PADDING crosses the
+// Returns true if the buffer + len + simdjson2::SIMDJSON2_PADDING crosses the
 // page boundary.
 bool need_allocation(const char *buf, size_t len) {
   return ((reinterpret_cast<uintptr_t>(buf + len - 1) % page_size())
-    + simdjson::SIMDJSON_PADDING > static_cast<uintptr_t>(page_size()));
+    + simdjson2::SIMDJSON2_PADDING > static_cast<uintptr_t>(page_size()));
 }
 
 bool check_need_allocation() {
@@ -41,15 +41,15 @@ bool check_need_allocation() {
   return true;
 }
 
-simdjson::padded_string_view
+simdjson2::padded_string_view
 get_padded_string_view(const char *buf, size_t len,
-                       simdjson::padded_string &jsonbuffer) {
+                       simdjson2::padded_string &jsonbuffer) {
   if (need_allocation(buf, len)) { // unlikely case
-    jsonbuffer = simdjson::padded_string(buf, len);
+    jsonbuffer = simdjson2::padded_string(buf, len);
     return jsonbuffer;
   } else { // no reallcation needed (very likely)
-    return simdjson::padded_string_view(buf, len,
-                                            len + simdjson::SIMDJSON_PADDING);
+    return simdjson2::padded_string_view(buf, len,
+                                            len + simdjson2::SIMDJSON2_PADDING);
   }
 }
 
@@ -65,14 +65,14 @@ int main() {
         }
     )";
   size_t len = strlen(jsonpoiner);
-  simdjson::padded_string jsonbuffer; // only allocate if needed
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc;
-  simdjson::error_code error =
+  simdjson2::padded_string jsonbuffer; // only allocate if needed
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc;
+  simdjson2::error_code error =
       parser.iterate(get_padded_string_view(jsonpoiner, len, jsonbuffer))
           .get(doc);
   if (error) {
-    printf("error: %s\n", simdjson::error_message(error));
+    printf("error: %s\n", simdjson2::error_message(error));
     return EXIT_FAILURE;
   }
   std::string_view value;

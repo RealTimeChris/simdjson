@@ -10,8 +10,8 @@ Whether we parse JSON or XML, or any other serialized format, there are relative
 
 We propose an approach that is as easy to use and often as flexible as the DOM approach, yet as fast and
 efficient as the schema-based or event-based approaches. We call this new approach "On-Demand". The
-simdjson On-Demand API offers a familiar, friendly DOM API and
-provides the performance of just-in-time parsing on top of the simdjson superior performance.
+simdjson2 On-Demand API offers a familiar, friendly DOM API and
+provides the performance of just-in-time parsing on top of the simdjson2 superior performance.
 
 To achieve ease of use, we mimicked the *form* of a traditional DOM API: you can iterate over
 arrays, look up fields in objects, and extract native values like `double`, `uint64_t`, `string` and `bool`.
@@ -94,7 +94,7 @@ approaches to parsing and parser APIs in use today.
 
 ### DOM Parsers
 
-Many of the most usable, popular JSON APIs (including simdjson) deserialize into a **DOM**: an intermediate tree of
+Many of the most usable, popular JSON APIs (including simdjson2) deserialize into a **DOM**: an intermediate tree of
 objects, arrays and values. In this model, we convert the input data all at once into a tree-like structure (the DOM).
 The DOM is then accessed by the programmer like any other in-memory data structure. The resulting API let
 you refer to each array or object separately, using familiar techniques like iteration (`for (auto value : array)`)
@@ -105,7 +105,7 @@ The DOM approach is conceptually simple and "programmer friendly". Using the
 DOM tree is often easy enough that many users use the DOM as-is instead of creating
 their own custom data structures.
 
-The DOM approach was the only way to parse JSON documents up to version 0.6 of the simdjson library.
+The DOM approach was the only way to parse JSON documents up to version 0.6 of the simdjson2 library.
 Our DOM API looks similar to our On-Demand example, except
 it calls `parse` instead of `iterate`:
 
@@ -131,7 +131,7 @@ Cons of the DOM approach:
 * Performance drain from [type blindness](#type-blindness).
 
 
-What the simdjson library demonstrates is that a DOM API may be quite fast indeed: we can parse files at speeds
+What the simdjson2 library demonstrates is that a DOM API may be quite fast indeed: we can parse files at speeds
 of several gigabytes per second. However, in some instances, it may be possible to achieve even higher speeds.
 
 ### Event-Based Parsers (SAX, SAJ, etc.)
@@ -300,18 +300,18 @@ To help visualize the algorithm, we'll walk through the example C++ given at the
    only happens if the new document is bigger than internal buffers can handle. The On-Demand
    API only ever allocates memory in the `iterate()` function call.
 
-   The simdjson library then preprocesses the JSON text at high speed, finding all tokens (i.e. the starting
+   The simdjson2 library then preprocesses the JSON text at high speed, finding all tokens (i.e. the starting
    position of any JSON value, as well as any important operators like `,`, `:`, `]` or `}`).
 
    Finally, a `document` iterator is created, initialized at the position of the first value in the
    `json` text input. The document iterator is bumped forward by array / object iterators and
    object[] lookup, and must be kept around until iteration is complete.
 
-   This operation can fail as this stage if the document in invalid! The result type is `simdjson_result<document>`.
-   The simdjson library uses `simdjson_result` when a value needs to be returned by a function that can fail given improper inputs.
-   The `simdjson_result` value contain an `error_code` and a `document`, and it was designed to allow you to use either error code
+   This operation can fail as this stage if the document in invalid! The result type is `simdjson2_result<document>`.
+   The simdjson2 library uses `simdjson2_result` when a value needs to be returned by a function that can fail given improper inputs.
+   The `simdjson2_result` value contain an `error_code` and a `document`, and it was designed to allow you to use either error code
    checking or C++ exceptions via a direct cast `document(parser.iterate(json))` you can use `get()`
-   to check the error and cast to a value, or cast directly to a value. However, the simdjson library
+   to check the error and cast to a value, or cast directly to a value. However, the simdjson2 library
    rely on error chaining, so it is possible to delay error checks: we shall shortly explain error
    chaining more fully.
 
@@ -374,12 +374,12 @@ To help visualize the algorithm, we'll walk through the example C++ given at the
    ```
 
    > NOTE: What is not explained in this code expansion is *error chaining*.
-   > Generally, you can use `document` methods on a `simdjson_result<...>` value; any errors will
+   > Generally, you can use `document` methods on a `simdjson2_result<...>` value; any errors will
    > just be passed down the chain. Many method calls
    > can be chained in this manner. So `for (object tweet : doc["statuses"])`, which is the equivalent of
    > `object tweet = *(doc.get_object()["statuses"].get_array().begin()).get_object()`, could fail in any of
    > 6 method calls, and the error will only be checked at the end,
-   > when you attempt to cast the final `simdjson_result<object>` to object. Upon casting, an exception is
+   > when you attempt to cast the final `simdjson2_result<object>` to object. Upon casting, an exception is
    > thrown if there was an error.
 
    ```json
@@ -407,11 +407,11 @@ To help visualize the algorithm, we'll walk through the example C++ given at the
    The second field is matched (`"text"`), so we validate the `:` and move to the actual value.
 
    > NOTE: `["text"]` does a *raw match*, comparing the key directly against the raw JSON. This
-   > allows simdjson to do field lookup very, very quickly when the keys you want to match have
+   > allows simdjson2 to do field lookup very, very quickly when the keys you want to match have
    > letters, numbers and punctuation. However, this means that fields with escapes in them will not
    > be matched.
 
-   To convert to a string, we check for `"` and use simdjson's fast unescaping algorithm to copy
+   To convert to a string, we check for `"` and use simdjson2's fast unescaping algorithm to copy
    `first!` (plus a terminating `\0`) into a buffer managed by the `document`. This buffer stores
    all strings from a single iteration. The next string will be written after the `\0`.
 
@@ -489,7 +489,7 @@ To help visualize the algorithm, we'll walk through the example C++ given at the
    }
    ```
 
-   Because of the cast to uint64_t, simdjson knows it's parsing an unsigned integer. This lets
+   Because of the cast to uint64_t, simdjson2 knows it's parsing an unsigned integer. This lets
    us use a fast parser which *only* knows how to parse digits. It validates that it is an integer
    by rejecting negative numbers, strings, and other values based on the fact that they are not the
    digits 0-9. This type specificity is part of why parsing with On-Demand is so fast: you lose all
@@ -607,7 +607,7 @@ Design Features
 ### String Parsing
 
 When the user requests strings, we unescape them to a single string buffer much like the DOM parser
-so that users enjoy the same string performance as the core simdjson. We do not write the length to the
+so that users enjoy the same string performance as the core simdjson2. We do not write the length to the
 string buffer, however; that is stored in the `string_view` instance we return to the user.
 
 ```C++
@@ -724,18 +724,18 @@ The On-Demand approach has some limitations:
 * Because it operates in streaming mode, you only have access to the current element in the JSON document. Furthermore, the document is traversed in order so the code is sensitive to the order of the JSON nodes in the same manner as an event-based approach (e.g., SAX). (The one exception to this is field lookup, which is more *performant* when the order of lookups matches the order of fields in the document, but which will still work with out-of-order fields, with a performance hit.)
 * The On-Demand approach is less safe than DOM: we only validate the components of the JSON document that are used and it is possible to begin ingesting an invalid document only to find out later that the document is invalid. Are you fine ingesting a large JSON document that starts with well formed JSON but ends with invalid JSON content?
 
-There are currently additional technical limitations which we expect to resolve in future releases of the simdjson library:
+There are currently additional technical limitations which we expect to resolve in future releases of the simdjson2 library:
 
-* The simdjson library offers runtime dispatching which allows you to compile one binary and have it run at full speed on different processors, taking advantage of the specific features of the processor. The On-Demand API has limited runtime dispatch support. Under x64 systems, to fully benefit from the On-Demand API, we recommend that you compile your code for a specific processor. E.g., if your processor supports AVX2 instructions, you should compile your binary executable with AVX2 instruction support (by using your compiler's commands). If you are sufficiently technically proficient, you can implement runtime dispatching within your application, by compiling your On-Demand code for different processors.
+* The simdjson2 library offers runtime dispatching which allows you to compile one binary and have it run at full speed on different processors, taking advantage of the specific features of the processor. The On-Demand API has limited runtime dispatch support. Under x64 systems, to fully benefit from the On-Demand API, we recommend that you compile your code for a specific processor. E.g., if your processor supports AVX2 instructions, you should compile your binary executable with AVX2 instruction support (by using your compiler's commands). If you are sufficiently technically proficient, you can implement runtime dispatching within your application, by compiling your On-Demand code for different processors.
 * There is an initial phase which scans the entire document quickly, irrespective of the size of the document. We plan to break this phase into distinct steps for large files in a future release as we have done with other components of our API (e.g., `parse_many`).
 
 ### Applicability of the On-Demand Approach
 
 At this time we recommend the On-Demand API in the following cases:
 
-1. The 64-bit hardware (CPU) used to run the software is known at compile time. If you need runtime dispatching because you cannot be certain of the hardware used to run your software, you will be better served with the core simdjson API. (This only applies to x64 (AMD/Intel). On 64-bit ARM hardware, runtime dispatching is unnecessary.)
-2. The used parts of JSON files do not need to be validated and the layout of the nodes follows a strict JSON dialect. If you are receiving JSON from other systems, you might be better served with core simdjson API as it fully validates the JSON inputs and allows you to navigate through the document at will.
-3. Speed and efficiency are of the utmost importance. Keep in mind that the core simdjson API is highly efficient so adopting the On-Demand API is not necessary for high efficiency.
+1. The 64-bit hardware (CPU) used to run the software is known at compile time. If you need runtime dispatching because you cannot be certain of the hardware used to run your software, you will be better served with the core simdjson2 API. (This only applies to x64 (AMD/Intel). On 64-bit ARM hardware, runtime dispatching is unnecessary.)
+2. The used parts of JSON files do not need to be validated and the layout of the nodes follows a strict JSON dialect. If you are receiving JSON from other systems, you might be better served with core simdjson2 API as it fully validates the JSON inputs and allows you to navigate through the document at will.
+3. Speed and efficiency are of the utmost importance. Keep in mind that the core simdjson2 API is highly efficient so adopting the On-Demand API is not necessary for high efficiency.
 4. As a developer, you value a clean, flexible and maintainable API.
 
 Good applications for the On-Demand API might be:
@@ -752,13 +752,13 @@ On relevant systems, the On-Demand API provides some support for runtime dispatc
 
 Some users wish to run at the best possible speed. Under recent Intel and AMD processors, these users should take additional steps to verify that their code is well optimized.
 
-Given that the On-Demand API offer limited runtime dispatching, it matters that your code is compiled against a specific CPU target. You should verify that the code is compiled against the target you expect. Thankfully, the simdjson library will tell you exactly what it detects as an implementation: `icelake` (AVX512 x64 processors), `haswell` (AVX2 x64 processors), `westmere` (SSE4 x64 processors), `arm64` (64-bit ARM), `ppc64` (64-bit POWER), `lasx` (LoongArch), `lsx` (LoongArch),  `fallback` (others). Under x64 processors, many programmers will want to target `haswell` whereas under ARM, most programmers will want to target `arm64` (and it should do so automatically). The `fallback` is probably only good for testing purposes, not for deployment.
+Given that the On-Demand API offer limited runtime dispatching, it matters that your code is compiled against a specific CPU target. You should verify that the code is compiled against the target you expect. Thankfully, the simdjson2 library will tell you exactly what it detects as an implementation: `icelake` (AVX512 x64 processors), `haswell` (AVX2 x64 processors), `westmere` (SSE4 x64 processors), `arm64` (64-bit ARM), `ppc64` (64-bit POWER), `lasx` (LoongArch), `lsx` (LoongArch),  `fallback` (others). Under x64 processors, many programmers will want to target `haswell` whereas under ARM, most programmers will want to target `arm64` (and it should do so automatically). The `fallback` is probably only good for testing purposes, not for deployment.
 
 ```C++
-  std::cout << simdjson::builtin_implementation()->name() << std::endl;
+  std::cout << simdjson2::builtin_implementation()->name() << std::endl;
 ```
 
-If the `simdjson::builtin_implementation()->name()` call does not return the architecture you wish to target, you may need to pass flags to your compiler.
+If the `simdjson2::builtin_implementation()->name()` call does not return the architecture you wish to target, you may need to pass flags to your compiler.
 
 If you are using CMake for your C++ project, then you can pass compilation flags to your compiler by using the `CMAKE_CXX_FLAGS` variable:
 
@@ -770,7 +770,7 @@ cmake --build build_haswell
 You can also pass the flags directly to your compiler when compiling 'by hand':
 
 ````
-c++ -march=haswell -O3 myproject.cpp simdjson.cpp
+c++ -march=haswell -O3 myproject.cpp simdjson2.cpp
 ````
 
 In these examples, the `-march=haswell` flags targets a haswell processor and the resulting binary will run on processors that support all features of the haswell processors.

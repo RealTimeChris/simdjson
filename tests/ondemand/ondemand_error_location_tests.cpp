@@ -1,7 +1,7 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace error_location_tests {
 
@@ -247,12 +247,12 @@ namespace error_location_tests {
       ondemand::parser parser;
       ondemand::document doc;
       ASSERT_SUCCESS(parser.iterate(json).get(doc));
-      simdjson_result<ondemand::value> a = doc["a"];
+      simdjson2_result<ondemand::value> a = doc["a"];
       ASSERT_SUCCESS(a);
       const char * ptr;
       ASSERT_SUCCESS(a.current_location().get(ptr));
       ASSERT_EQUAL(ptr, R"({"b": "c"}} )");
-      simdjson_result<ondemand::value> b = a["b"];
+      simdjson2_result<ondemand::value> b = a["b"];
       ASSERT_SUCCESS(b);
       ASSERT_SUCCESS(b.current_location().get(ptr));
       ASSERT_EQUAL(ptr, R"("c"}} )");

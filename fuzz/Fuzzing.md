@@ -1,13 +1,13 @@
 # Fuzzing
 
-[Fuzzing](https://en.wikipedia.org/wiki/Fuzzing) is efficient for finding bugs. Here are a few bugs in simdjson found by fuzzing:
+[Fuzzing](https://en.wikipedia.org/wiki/Fuzzing) is efficient for finding bugs. Here are a few bugs in simdjson2 found by fuzzing:
 
- - [#353](https://github.com/simdjson/simdjson/issues/353)
- - [#351](https://github.com/simdjson/simdjson/issues/351)
- - [#345](https://github.com/simdjson/simdjson/issues/345)
- - [oss-fuzz 18714](https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18714&sort=-opened&q=proj%3Asimdjson&can=1)
+ - [#353](https://github.com/simdjson2/simdjson2/issues/353)
+ - [#351](https://github.com/simdjson2/simdjson2/issues/351)
+ - [#345](https://github.com/simdjson2/simdjson2/issues/345)
+ - [oss-fuzz 18714](https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18714&sort=-opened&q=proj%3Asimdjson2&can=1)
 
-The simdjson library tries to follow [fuzzing best practises](https://google.github.io/oss-fuzz/advanced-topics/ideal-integration/#summary).
+The simdjson2 library tries to follow [fuzzing best practises](https://google.github.io/oss-fuzz/advanced-topics/ideal-integration/#summary).
 
 There is both "normal" fuzzers just feeding the api with fuzz data, as well as **differential** fuzzers. The differential fuzzers feed the same data to the multiple implementations (haswell, westmere and fallback) and ensure the same results are achieved. This makes sure the user will always get the same answer regardless of which implementation is in use.
 
@@ -22,7 +22,7 @@ Just invoke fuzz/quick_check.sh, it will download the latest corpus (kept up to 
 
 This requires linux with clang and cmake installed (recent Debian and Ubuntu are known to work fine).
 
-It is also possible to run the full oss-fuzz setup by following [these oss-fuzz instructions](https://google.github.io/oss-fuzz/getting-started/new-project-guide/#testing-locally) with PROJECT_NAME set to simdjson. You will need rights to run docker.
+It is also possible to run the full oss-fuzz setup by following [these oss-fuzz instructions](https://google.github.io/oss-fuzz/getting-started/new-project-guide/#testing-locally) with PROJECT_NAME set to simdjson2. You will need rights to run docker.
 
 ## Fuzzing as a CI job - x64
 
@@ -38,7 +38,7 @@ The CI job does the following
  - minimizes the corpus and uploads it (if on the master branch)
  - stores the corpus and valgrind output as artifacts
 
-The job is available under the actions tab, here is a [direct link](https://github.com/simdjson/simdjson/actions?query=workflow%3A%22Fuzz+and+run+valgrind%22).
+The job is available under the actions tab, here is a [direct link](https://github.com/simdjson2/simdjson2/actions?query=workflow%3A%22Fuzz+and+run+valgrind%22).
 
 The corpus will grow over time and easy to find bugs will be detected already during the pull request stage. Also, it will keep the fuzzer builds from bit rot.
 
@@ -49,34 +49,34 @@ There is also a job running the fuzzers on arm64 (see .drone.yml) to make sure a
 There is a fuzzing job similar to the arm64 one. It takes the corpus from the x64 fuzzer as a starting point and fuzzes it for a short while. See the "short fuzz on the power arch" github action job.
 
 ## Fuzzing on oss-fuzz
-The simdjson library is continuously fuzzed on [oss-fuzz](https://github.com/google/oss-fuzz). In case a bug is found, the offending input is minimized and tested for reproducibility. A report with the details is automatically filed, and the contact persons at simdjson are notified via email. An issue is opened at the oss-fuzz bugtracker with restricted view access. When the bug is fixed, the issue is automatically closed.
+The simdjson2 library is continuously fuzzed on [oss-fuzz](https://github.com/google/oss-fuzz). In case a bug is found, the offending input is minimized and tested for reproducibility. A report with the details is automatically filed, and the contact persons at simdjson2 are notified via email. An issue is opened at the oss-fuzz bugtracker with restricted view access. When the bug is fixed, the issue is automatically closed.
 
 Bugs are automatically made visible to the public after a period of time. An example of a bug that was found, fixed and closed can be seen here: [oss-fuzz 18714](https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18714).
 
 
 ## Currently open bugs
 
-You can find the currently open bugs (if any) at [bugs.chromium.org](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&q=proj%3Asimdjson&can=2): make sure not to miss the "Open Issues" selector. Bugs that are fixed by follow-up commits are automatically closed.
+You can find the currently open bugs (if any) at [bugs.chromium.org](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&q=proj%3Asimdjson2&can=2): make sure not to miss the "Open Issues" selector. Bugs that are fixed by follow-up commits are automatically closed.
 
 ## Integration with oss-fuzz
 
 Changes to the integration with oss-fuzz are made by making pull requests against the oss-fuzz github repo. An example can be seen at [oss-fuzz pull request 3013](https://github.com/google/oss-fuzz/pull/3013).
 
-As little code as possible is kept at oss-fuzz since it is inconvenient to change. The [oss-fuzz build script](https://github.com/google/oss-fuzz/blob/b96dd54183f727a5d90c786e0fb01ec986c74d30/projects/simdjson/build.sh#L18) invokes [the script from the simdjson repo](https://github.com/simdjson/simdjson/blob/master/fuzz/ossfuzz.sh).
+As little code as possible is kept at oss-fuzz since it is inconvenient to change. The [oss-fuzz build script](https://github.com/google/oss-fuzz/blob/b96dd54183f727a5d90c786e0fb01ec986c74d30/projects/simdjson2/build.sh#L18) invokes [the script from the simdjson2 repo](https://github.com/simdjson2/simdjson2/blob/master/fuzz/ossfuzz.sh).
 
 
 ## Corpus
 
-The simdjson library does not benefit from a corpus as much as other projects, because the library is very fast and explores the input space very well. With that said, it is still beneficial to have one. The CI job stores the corpus on a remote server between runs, and is available at [www.pauldreik.se](https://readonly:readonly@www.pauldreik.se/fuzzdata/index.php?project=simdjson).
+The simdjson2 library does not benefit from a corpus as much as other projects, because the library is very fast and explores the input space very well. With that said, it is still beneficial to have one. The CI job stores the corpus on a remote server between runs, and is available at [www.pauldreik.se](https://readonly:readonly@www.pauldreik.se/fuzzdata/index.php?project=simdjson2).
 
 One can also grab the corpus as an artifact from the github actions job if you are logged in at github. Pick a run, then go to artifacts and download.
 
 ## Fuzzing coverage
 
 The code coverage from fuzzing is most easily viewed on the [oss-fuzz status panel](https://oss-fuzz.com/fuzzer-stats). Viewing the coverage does not require login, but the direct link is not easy to find. Substitute the date in the URL to get a more recent link:
-[https://storage.googleapis.com/oss-fuzz-coverage/simdjson/reports/20200411/linux/src/simdjson/report.html](https://storage.googleapis.com/oss-fuzz-coverage/simdjson/reports/20200411/linux/src/simdjson/report.html)
+[https://storage.googleapis.com/oss-fuzz-coverage/simdjson2/reports/20200411/linux/src/simdjson2/report.html](https://storage.googleapis.com/oss-fuzz-coverage/simdjson2/reports/20200411/linux/src/simdjson2/report.html)
 
-Keeping the coverage up is a never ending job. See [issue 368](https://github.com/simdjson/simdjson/issues/368)
+Keeping the coverage up is a never ending job. See [issue 368](https://github.com/simdjson2/simdjson2/issues/368)
 
 ## Reproducing
 To reproduce a test case, use the local build instruction. Then invoke the fuzzer (the fuzz_parser is shown as an example below) with the testcase as a command line argument:

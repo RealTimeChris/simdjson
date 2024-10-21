@@ -1,9 +1,9 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 #include <string>
 using namespace std::string_literals;
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace json_pointer_tests {
     const padded_string TEST_JSON = R"(
@@ -48,7 +48,7 @@ namespace json_pointer_tests {
         std::string_view actual;
         ASSERT_SUCCESS(parser.iterate(json).get(doc));
         ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
-        ASSERT_SUCCESS(simdjson::to_json_string(val).get(actual));
+        ASSERT_SUCCESS(simdjson2::to_json_string(val).get(actual));
         ASSERT_EQUAL(actual,expected);
         // We want to see if the value is usable besides to_json_string.
         ASSERT_SUCCESS(parser.iterate(json).get(doc));
@@ -147,26 +147,26 @@ namespace json_pointer_tests {
         ASSERT_SUCCESS(parser.iterate(number_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson2::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking null"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(null_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson2::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking string"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(string_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson2::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking false"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(false_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson2::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking true"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(true_json).is_scalar().get(is_scalar));
         ASSERT_TRUE(is_scalar);
-        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson::SCALAR_DOCUMENT_AS_VALUE);
+        ASSERT_ERROR(doc.at_pointer("").get(val), simdjson2::SCALAR_DOCUMENT_AS_VALUE);
         std::cout << "  checking object"<< std::endl;
         ASSERT_SUCCESS(parser.iterate(object_json).get(doc));
         ASSERT_SUCCESS(doc.is_scalar().get(is_scalar));
@@ -230,13 +230,13 @@ namespace json_pointer_tests {
         ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(v));
         std::cout << "\t- invalid_escape_value_at_jp" << std::endl;
         ASSERT_SUCCESS(parser.iterate(invalid_escape_value_at_jp).get(doc));
-        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson::STRING_ERROR);
+        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson2::STRING_ERROR);
         std::cout << "\t- unclosed_object" << std::endl;
         ASSERT_SUCCESS(parser.iterate(unclosed_object).get(doc));
-        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson::INCOMPLETE_ARRAY_OR_OBJECT);
+        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson2::INCOMPLETE_ARRAY_OR_OBJECT);
         std::cout << "\t- missing_bracket_before" << std::endl;
         ASSERT_SUCCESS(parser.iterate(missing_bracket_before).get(doc));
-        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson::TAPE_ERROR);
+        ASSERT_ERROR(doc.at_pointer(json_pointer).get(val), simdjson2::TAPE_ERROR);
         std::cout << "\t- missing_bracket_after" << std::endl;
         ASSERT_SUCCESS(parser.iterate(missing_bracket_after).get(doc));
         ASSERT_SUCCESS(doc.at_pointer(json_pointer).get(val));
@@ -346,7 +346,7 @@ namespace json_pointer_tests {
         TEST_SUCCEED();
     }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     bool json_pointer_invalidation_exceptions() {
         TEST_START();
         auto cars_json = R"( [
@@ -386,7 +386,7 @@ namespace json_pointer_tests {
 #endif
 
     bool issue2154() { // mistakenly taking value as path should not raise INVALID_JSON_POINTER
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
       std::cout << "issue 2154" << std::endl;
       auto example_json = R"__({
             "obj": {
@@ -416,7 +416,7 @@ namespace json_pointer_tests {
     bool run() {
         return
                 issue2154() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
                 json_pointer_invalidation_exceptions() &&
 #endif
                 many_json_pointers_array() &&

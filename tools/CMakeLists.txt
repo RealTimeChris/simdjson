@@ -5,7 +5,7 @@ if(TARGET cxxopts) # we only build the tools if cxxopts is available
     simdjson_apply_props("${tool}")
     target_link_libraries(
         "${tool}" PRIVATE
-        simdjson simdjson-internal-flags simdjson-windows-headers cxxopts
+        simdjson2 simdjson2-internal-flags simdjson2-windows-headers cxxopts
     )
   endforeach()
 else()

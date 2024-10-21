@@ -1,11 +1,11 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace object_tests {
   using namespace std;
-  using simdjson::ondemand::json_type;
+  using simdjson2::ondemand::json_type;
 
   bool object_find_field_unordered() {
     TEST_START();
@@ -22,8 +22,8 @@ namespace object_tests {
       ASSERT_ERROR( object.find_field_unordered("d"), NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::object> object;
+    SUBTEST("simdjson2_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::object> object;
       object = doc_result.get_object();
 
       ASSERT_EQUAL( object.find_field_unordered("a").get_uint64().value_unsafe(), 1 );
@@ -51,7 +51,7 @@ namespace object_tests {
       ASSERT_ERROR( doc.find_field_unordered("d"), NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       ASSERT_EQUAL( doc_result.find_field_unordered("a").get_uint64().value_unsafe(), 1 );
       ASSERT_EQUAL( doc_result.find_field_unordered("b").get_uint64().value_unsafe(), 2 );
       ASSERT_EQUAL( doc_result.find_field_unordered("c/d").get_uint64().value_unsafe(), 3 );
@@ -77,8 +77,8 @@ namespace object_tests {
       ASSERT_ERROR( object.find_field_unordered("d"), NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::value> object = doc_result.find_field_unordered("outer");
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::value> object = doc_result.find_field_unordered("outer");
       ASSERT_EQUAL( object.find_field_unordered("a").get_uint64().value_unsafe(), 1 );
       ASSERT_EQUAL( object.find_field_unordered("b").get_uint64().value_unsafe(), 2 );
       ASSERT_EQUAL( object.find_field_unordered("c/d").get_uint64().value_unsafe(), 3 );
@@ -105,8 +105,8 @@ namespace object_tests {
       ASSERT_ERROR( object.find_field("d"), NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::object> object;
+    SUBTEST("simdjson2_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::object> object;
       object = doc_result.get_object();
 
       ASSERT_EQUAL( object.find_field("a").get_uint64().value_unsafe(), 1 );
@@ -134,7 +134,7 @@ namespace object_tests {
       ASSERT_ERROR( doc.find_field("d"), NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
+    SUBTEST("simdjson2_result<ondemand::document>", test_ondemand_doc(json, [&](auto doc_result) {
       ASSERT_EQUAL( doc_result.find_field("a").get_uint64().value_unsafe(), 1 );
       ASSERT_EQUAL( doc_result.find_field("b").get_uint64().value_unsafe(), 2 );
       ASSERT_EQUAL( doc_result.find_field("c/d").get_uint64().value_unsafe(), 3 );
@@ -160,8 +160,8 @@ namespace object_tests {
       ASSERT_ERROR( object.find_field("d"), NO_SUCH_FIELD );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::value> object = doc_result.find_field("outer");
+    SUBTEST("simdjson2_result<ondemand::value>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::value> object = doc_result.find_field("outer");
       ASSERT_EQUAL( object.find_field("a").get_uint64().value_unsafe(), 1 );
       ASSERT_EQUAL( object.find_field("b").get_uint64().value_unsafe(), 2 );
       ASSERT_EQUAL( object.find_field("c/d").get_uint64().value_unsafe(), 3 );

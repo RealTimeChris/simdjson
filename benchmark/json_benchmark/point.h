@@ -19,7 +19,7 @@ struct result_differ<point, point> {
   }
 };
 
-static simdjson_unused std::ostream &operator<<(std::ostream &o, const point &p) {
+static simdjson2_unused std::ostream &operator<<(std::ostream &o, const point &p) {
   return o << p.x << "," << p.y << "," << p.z << std::endl;
 }
 

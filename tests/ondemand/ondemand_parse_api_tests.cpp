@@ -1,7 +1,7 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace parse_api_tests {
   using namespace std;
@@ -24,7 +24,7 @@ namespace parse_api_tests {
       ondemand::parser parser;
       auto error = parser.iterate(json).get(doc);
       remove(tmpfilename);
-      if(error != simdjson::EMPTY) {
+      if(error != simdjson2::EMPTY) {
         std::cerr << "Was expecting empty but got " << error << std::endl;
         return false;
       }
@@ -73,7 +73,7 @@ namespace parse_api_tests {
     {
       cout << "- string" << endl;
       std::string json = "12";
-      json.reserve(json.length() + SIMDJSON_PADDING);
+      json.reserve(json.length() + SIMDJSON2_PADDING);
       auto doc = parser.iterate(json);
       ASSERT_SUCCESS( doc.get_double() );
     }
@@ -104,7 +104,7 @@ namespace parse_api_tests {
     {
       cout << "- padded_string_view(string)" << endl;
       std::string json = "12";
-      json.reserve(json.length() + SIMDJSON_PADDING);
+      json.reserve(json.length() + SIMDJSON2_PADDING);
       auto doc = parser.iterate(padded_string_view(json));
       ASSERT_SUCCESS( doc.get_double() );
     }
@@ -126,7 +126,7 @@ namespace parse_api_tests {
     ASSERT_EQUAL(sizeof(json_str), 65);
     ASSERT_EQUAL(strlen(json_str), 2);
     ASSERT_EQUAL(padded_string_view(json_str, strlen(json_str), sizeof(json_str)).padding(), 63);
-    ASSERT_EQUAL(SIMDJSON_PADDING, 64);
+    ASSERT_EQUAL(SIMDJSON2_PADDING, 64);
 
     {
       cout << "- char*, 63 padding" << endl;
@@ -161,12 +161,12 @@ namespace parse_api_tests {
     TEST_SUCCEED();
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   bool parser_iterate_exception() {
     TEST_START();
     ondemand::parser parser;
     auto doc = parser.iterate(BASIC_JSON);
-    simdjson_unused ondemand::array array = doc;
+    simdjson2_unused ondemand::array array = doc;
     TEST_SUCCEED();
   }
 
@@ -186,7 +186,7 @@ namespace parse_api_tests {
 
     ASSERT_SUCCESS( parser.iterate(json).get(doc) );
 
-    ASSERT_SUCCESS(simdjson::to_json_string(doc).get(output));
+    ASSERT_SUCCESS(simdjson2::to_json_string(doc).get(output));
     std::cout << output << std::endl;
 
     std::cout << "correct document (2)" << std::endl;
@@ -196,7 +196,7 @@ namespace parse_api_tests {
       std::cout << "field: " << field.key() << std::endl;
     }
     std::cout << "unclosed string document " << std::endl;
-    simdjson::error_code error;
+    simdjson2::error_code error;
     if((error = parser.iterate(jsonunclosedstring).get(doc)) == SUCCESS) {
       // fallback kernel:
       ASSERT_EQUAL( doc.get_object().find_field("coordinates").error(), TAPE_ERROR );
@@ -207,7 +207,7 @@ namespace parse_api_tests {
 
     std::cout << "truncated document " << std::endl;
     ASSERT_SUCCESS( parser.iterate(jsonbad).get(doc) );
-    ASSERT_EQUAL( simdjson::to_json_string(doc).get(output), TAPE_ERROR );
+    ASSERT_EQUAL( simdjson2::to_json_string(doc).get(output), TAPE_ERROR );
 
     std::cout << "correct document with new doc" << std::endl;
     ondemand::document doc2;
@@ -226,7 +226,7 @@ namespace parse_api_tests {
 
     std::cout << "unclosed string document " << std::endl;
     ASSERT_SUCCESS( parser.iterate(jsonbad).get(doc) );
-    ASSERT_EQUAL( simdjson::to_json_string(doc).get(output), TAPE_ERROR );
+    ASSERT_EQUAL( simdjson2::to_json_string(doc).get(output), TAPE_ERROR );
 
     // next two lines are terrible code.
     doc.~document();
@@ -236,7 +236,7 @@ namespace parse_api_tests {
     std::cout << "correct document (4)" << std::endl;
 
     ASSERT_SUCCESS( parser.iterate(json).get(doc) );
-    ASSERT_SUCCESS( simdjson::to_json_string(doc).get(output) );
+    ASSERT_SUCCESS( simdjson2::to_json_string(doc).get(output) );
     std::cout << output << std::endl;
 
     std::cout << "unclosed string document " << std::endl;
@@ -257,12 +257,12 @@ namespace parse_api_tests {
     std::cout << "correct document (5)" << std::endl;
 
     ASSERT_SUCCESS( parser.iterate(json).get(doc) );
-    ASSERT_SUCCESS( simdjson::to_json_string(doc).get(output) );
+    ASSERT_SUCCESS( simdjson2::to_json_string(doc).get(output) );
     std::cout << output << std::endl;
 
     TEST_SUCCEED();
   }
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool run() {
     return parser_iterate_empty() &&
@@ -270,10 +270,10 @@ namespace parse_api_tests {
            parser_iterate_padded() &&
            parser_iterate_padded_string_view() &&
            parser_iterate_insufficient_padding() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            parser_document_reuse() &&
            parser_iterate_exception() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            true;
   }
 }

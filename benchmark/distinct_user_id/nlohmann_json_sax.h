@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "distinct_user_id.h"
 
@@ -46,7 +46,7 @@ struct nlohmann_json_sax {
         bool parse_error(std::size_t position, const std::string& last_token, const json::exception& ex) override { return false; }
     }; // Handler
 
-    bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+    bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
         Handler handler(result);
         json::sax_parse(json.data(), &handler);
 
@@ -56,4 +56,4 @@ struct nlohmann_json_sax {
 BENCHMARK_TEMPLATE(distinct_user_id, nlohmann_json_sax)->UseManualTime();
 } // namespace distinct_user_id
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

@@ -4,10 +4,10 @@
  * indicate inconsistency. Also, it gets the non-default backend
  * some fuzzing love.
  *
- * Copyright Paul Dreik 20200909 for the simdjson project.
+ * Copyright Paul Dreik 20200909 for the simdjson2 project.
  */
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -21,15 +21,15 @@
 // which would make things easier to debug in case this fuzzer ever
 // catches anything
 struct Impl {
-    explicit Impl(const simdjson::implementation* im=nullptr) : impl(im),parser(),element(),error(),output(){}
+    explicit Impl(const simdjson2::implementation* im=nullptr) : impl(im),parser(),element(),error(),output(){}
     //silence -Weffc++
     Impl(const Impl&)=delete;
     Impl& operator=(const Impl&)=delete;
 
-    const simdjson::implementation* impl;
-    simdjson::dom::parser parser;
-    simdjson::dom::element element;
-    simdjson::error_code error;
+    const simdjson2::implementation* impl;
+    simdjson2::dom::parser parser;
+    simdjson2::dom::element element;
+    simdjson2::error_code error;
     std::string output;
 };
 
@@ -93,7 +93,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     std::size_t nerrors=0;
     for(std::size_t i=0; i<Nimplementations; ++i) {
         auto& e=implementations[i];
-        simdjson::get_active_implementation()=e.impl;
+        simdjson2::get_active_implementation()=e.impl;
         e.error=e.parser.parse(Data,Size).get(e.element);
         if(e.error) {
             ++nerrors;

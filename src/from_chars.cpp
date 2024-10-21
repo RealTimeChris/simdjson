@@ -1,5 +1,5 @@
-#ifndef SIMDJSON_SRC_FROM_CHARS_CPP
-#define SIMDJSON_SRC_FROM_CHARS_CPP
+#ifndef SIMDJSON2_SRC_FROM_CHARS_CPP
+#define SIMDJSON2_SRC_FROM_CHARS_CPP
 
 #include <base.h>
 
@@ -7,7 +7,7 @@
 #include <cstring>
 #include <limits>
 
-namespace simdjson {
+namespace simdjson2 {
 namespace internal {
 
 /**
@@ -601,6 +601,6 @@ double from_chars(const char *first, const char *end) noexcept {
 }
 
 } // internal
-} // simdjson
+} // simdjson2
 
-#endif // SIMDJSON_SRC_FROM_CHARS_CPP
+#endif // SIMDJSON2_SRC_FROM_CHARS_CPP

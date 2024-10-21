@@ -9,28 +9,28 @@ namespace large_amazon_cellphones {
 const bool UNTHREADED = false;
 const bool THREADED = true;
 
-static const simdjson::padded_string &get_built_json();
+static const simdjson2::padded_string &get_built_json();
 
 using namespace json_benchmark;
 
 struct brand {
     double cumulative_rating;
     uint64_t reviews_count;
-    simdjson_inline bool operator==(const brand &other) const {
+    simdjson2_inline bool operator==(const brand &other) const {
         return cumulative_rating == other.cumulative_rating &&
             reviews_count == other.reviews_count;
     }
-    simdjson_inline bool operator!=(const brand &other) const { return !(*this == other); }
+    simdjson2_inline bool operator!=(const brand &other) const { return !(*this == other); }
 };
 
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const brand &b) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const brand &b) {
   o << "cumulative_rating: " << b.cumulative_rating << std::endl;
   o << "reviews_count: " << b.reviews_count << std::endl;
   return o;
 }
 
 template<typename StringType>
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const std::pair<const StringType, brand> &p) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const std::pair<const StringType, brand> &p) {
   o << "brand: " << p.first << std::endl;
 	o << p.second;
   return o;
@@ -79,16 +79,16 @@ static std::string build_json(size_t N) {
   return answer;
 }
 
-static const simdjson::padded_string &get_built_json() {
-  static simdjson::padded_string json = build_json(10*1024*1024);
+static const simdjson2::padded_string &get_built_json() {
+  static simdjson2::padded_string json = build_json(10*1024*1024);
   return json;
 }
 
 template<bool threaded>
-struct simdjson_dom;
+struct simdjson2_dom;
 
-template<typename I> simdjson_inline static void large_amazon_cellphones(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_dom<UNTHREADED>>>(state);
+template<typename I> simdjson2_inline static void large_amazon_cellphones(benchmark::State &state) {
+  run_json_benchmark<runner<I>, runner<simdjson2_dom<UNTHREADED>>>(state);
 }
 
 }   // namespace large_amazon_cellphones

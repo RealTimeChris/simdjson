@@ -1,16 +1,16 @@
 
-// this tests https://github.com/simdjson/simdjson/issues/696
+// this tests https://github.com/simdjson2/simdjson2/issues/696
 
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 int main() {
-    simdjson::padded_string buf;
+    simdjson2::padded_string buf;
 #if COMPILATION_TEST_USE_FAILING_CODE
-    simdjson::dom::element tree = simdjson::dom::parser().parse(buf);
+    simdjson2::dom::element tree = simdjson2::dom::parser().parse(buf);
 #else
-    simdjson::dom::parser parser;
-    simdjson::dom::element tree = parser.parse(buf);
+    simdjson2::dom::parser parser;
+    simdjson2::dom::element tree = parser.parse(buf);
 #endif
     std::cout << tree["type"] << std::endl;
 }

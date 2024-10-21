@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "top_tweet.h"
 
@@ -86,7 +86,7 @@ struct nlohmann_json_sax {
         bool parse_error(std::size_t position, const std::string& last_token, const json::exception& ex) override { return false; }
     }; // Handler
 
-    bool run(simdjson::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
+    bool run(simdjson2::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
         result.retweet_count = -1;
         Handler handler(result,max_retweet_count);
         json::sax_parse(json.data(), &handler);
@@ -96,4 +96,4 @@ struct nlohmann_json_sax {
 BENCHMARK_TEMPLATE(top_tweet, nlohmann_json_sax)->UseManualTime();
 } // namespace top_tweet
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

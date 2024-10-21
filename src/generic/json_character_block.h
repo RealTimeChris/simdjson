@@ -1,23 +1,23 @@
-#ifndef SIMDJSON_SRC_GENERIC_JSON_CHARACTER_BLOCK_H
+#ifndef SIMDJSON2_SRC_GENERIC_JSON_CHARACTER_BLOCK_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_JSON_CHARACTER_BLOCK_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_JSON_CHARACTER_BLOCK_H
 #include <generic/base.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 
 struct json_character_block {
-  static simdjson_inline json_character_block
-  classify(const simd::simd8x64<uint8_t> (&in)[4]);
+  static simdjson2_inline json_character_block
+  classify(const simd::simd8<uint8_t> (&in)[8]);
 
-  simdjson_inline simd::simd8<uint8_t> whitespace() const noexcept {
+  simdjson2_inline simd::simd8<uint8_t> whitespace() const noexcept {
     return _whitespace;
   }
-  simdjson_inline simd::simd8<uint8_t> op() const noexcept { return _op; }
-  simdjson_inline simd::simd8<uint8_t> scalar() const noexcept {
+  simdjson2_inline simd::simd8<uint8_t> op() const noexcept { return _op; }
+  simdjson2_inline simd::simd8<uint8_t> scalar() const noexcept {
     return ~(op() | whitespace());
   }
 
@@ -26,7 +26,7 @@ struct json_character_block {
 };
 
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_JSON_CHARACTER_BLOCK_H
+#endif // SIMDJSON2_SRC_GENERIC_JSON_CHARACTER_BLOCK_H

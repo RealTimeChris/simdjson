@@ -1,9 +1,9 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
 #include <cstdint>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace iterate_many_csv_tests {
 using namespace std;
@@ -120,7 +120,7 @@ bool check_parsed_values() {
   TEST_SUCCEED();
 }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 bool leading_comma() {
   TEST_START();
@@ -133,7 +133,7 @@ bool leading_comma() {
     auto begin = doc_stream.begin();
     auto end = doc_stream.end();
     for (auto it = begin; it != end; ++it) {}
-  } catch (simdjson_error& e) {
+  } catch (simdjson2_error& e) {
     ASSERT_ERROR(e.error(), TAPE_ERROR);
   }
 
@@ -147,7 +147,7 @@ bool run() {
          small_batch_size() &&
          trailing_comma() &&
          check_parsed_values() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
          leading_comma() &&
 #endif
          true;

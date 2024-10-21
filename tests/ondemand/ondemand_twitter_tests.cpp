@@ -1,8 +1,8 @@
 #include <set>
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace twitter_tests {
   using namespace std;
@@ -19,7 +19,7 @@ namespace twitter_tests {
     }));
     TEST_SUCCEED();
   }
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   bool twitter_example() {
     TEST_START();
     padded_string json;
@@ -40,7 +40,7 @@ namespace twitter_tests {
     }
     TEST_SUCCEED();
   }
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool twitter_default_profile() {
     TEST_START();
@@ -105,7 +105,7 @@ namespace twitter_tests {
     TEST_SUCCEED();
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   bool twitter_count_exception() {
     TEST_START();
@@ -174,19 +174,19 @@ namespace twitter_tests {
     TEST_SUCCEED();
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
   bool run() {
     return
            twitter_count() &&
            twitter_default_profile() &&
            twitter_image_sizes() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            twitter_count_exception() &&
            twitter_example() &&
            twitter_default_profile_exception() &&
            twitter_image_sizes_exception() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            true;
   }
 

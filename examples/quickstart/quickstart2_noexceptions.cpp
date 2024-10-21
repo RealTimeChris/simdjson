@@ -1,9 +1,9 @@
 #include <iostream>
-#include "simdjson.h"
+#include "simdjson2.h"
 
 int main(void) {
-  simdjson::dom::parser parser;
-  simdjson::dom::element tweets;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element tweets;
   auto error = parser.load("twitter.json").get(tweets);
   if(error) { std::cerr << error << std::endl; return EXIT_FAILURE; }
   uint64_t identifier;

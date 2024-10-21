@@ -1,10 +1,10 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace key_string_tests {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   bool parser_key_value() {
     TEST_START();
     ondemand::parser parser;
@@ -31,13 +31,13 @@ namespace key_string_tests {
     return true;
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
   bool run() {
     return
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
       parser_key_value() &&
       parser_escaped_key() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
       true;
   }
 

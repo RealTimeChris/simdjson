@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_BOOSTJSON
+#ifdef SIMDJSON2_COMPETITION_BOOSTJSON
 
 #include "find_tweet.h"
 
@@ -9,7 +9,7 @@ namespace find_tweet {
 struct boostjson {
   using StringType=std::string;
 
-  bool run(simdjson::padded_string &json, uint64_t find_id, std::string &result) {
+  bool run(simdjson2::padded_string &json, uint64_t find_id, std::string &result) {
 
     auto root = boost::json::parse(json);
     for (const auto &tweet : root.at("statuses").as_array()) {
@@ -27,4 +27,4 @@ BENCHMARK_TEMPLATE(find_tweet, boostjson)->UseManualTime();
 
 } // namespace find_tweet
 
-#endif // SIMDJSON_COMPETITION_BOOSTJSON
+#endif // SIMDJSON2_COMPETITION_BOOSTJSON

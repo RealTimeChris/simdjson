@@ -9,7 +9,7 @@ namespace kostya {
 
 using namespace json_benchmark;
 
-static const simdjson::padded_string &get_built_json_array();
+static const simdjson2::padded_string &get_built_json_array();
 
 template<typename I>
 struct runner : public string_runner<I> {
@@ -72,15 +72,15 @@ static std::string build_json_array(size_t N) {
   return answer;
 }
 
-static const simdjson::padded_string &get_built_json_array() {
-  static simdjson::padded_string json = build_json_array(524288);
+static const simdjson2::padded_string &get_built_json_array() {
+  static simdjson2::padded_string json = build_json_array(524288);
   return json;
 }
 
-struct simdjson_dom;
+struct simdjson2_dom;
 
-template<typename I> simdjson_inline static void kostya(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_dom>>(state);
+template<typename I> simdjson2_inline static void kostya(benchmark::State &state) {
+  run_json_benchmark<runner<I>, runner<simdjson2_dom>>(state);
 }
 
 } // namespace kostya

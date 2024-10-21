@@ -1,5 +1,5 @@
 
-# Tape structure in simdjson
+# Tape structure in simdjson2
 
 We parse a JSON document to a tape. A tape is an array of 64-bit values. Each node encountered in the JSON document is written to the tape using one or more 64-bit tape elements; the layout of the tape is in "document order": elements are stored as they are encountered in the JSON document.
 

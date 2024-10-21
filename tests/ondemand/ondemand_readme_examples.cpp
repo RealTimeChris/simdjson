@@ -1,25 +1,25 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 #if __cpp_lib_optional >= 201606L
 #include <optional>
 #endif
-#if SIMDJSON_CPLUSPLUS17
+#if SIMDJSON2_CPLUSPLUS17
 #include <charconv>
 #endif
 using namespace std;
-using namespace simdjson;
-using error_code=simdjson::error_code;
+using namespace simdjson2;
+using error_code=simdjson2::error_code;
 
 bool string1() {
   const char * data = "my data"; // 7 bytes
-  simdjson::padded_string my_padded_data(data, 7); // copies to a padded buffer
+  simdjson2::padded_string my_padded_data(data, 7); // copies to a padded buffer
   std::cout << my_padded_data << std::endl;
   return true;
 }
 
 bool string2() {
   std::string data = "my data";
-  simdjson::padded_string my_padded_data(data); // copies to a padded buffer
+  simdjson2::padded_string my_padded_data(data); // copies to a padded buffer
   std::cout << my_padded_data << std::endl;
   return true;
 }
@@ -51,10 +51,10 @@ struct Car {
 
 #ifndef __cpp_concepts
 template <>
-simdjson_inline simdjson_result<std::vector<double>>
-simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<std::vector<double>>
+simdjson2::ondemand::value::get() noexcept {
   // This works on a value, if the std::vector<double> is the document, we need to also implement
-  // simdjson::ondemand::document::get<std::vector<double>>.
+  // simdjson2::ondemand::document::get<std::vector<double>>.
   ondemand::array array;
   auto error = get_array().get(array);
   if(error) { return error; }
@@ -71,7 +71,7 @@ simdjson::ondemand::value::get() noexcept {
 
 
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::value::get() noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::value::get() noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) { return error; }
@@ -106,7 +106,7 @@ int custom_type_without_exceptions() {
 
 
 template <>
-simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() & noexcept {
+simdjson2_inline simdjson2_result<Car> simdjson2::ondemand::document::get() & noexcept {
   ondemand::object obj;
   auto error = get_object().get(obj);
   if (error) {
@@ -136,7 +136,7 @@ simdjson_inline simdjson_result<Car> simdjson::ondemand::document::get() & noexc
   return car;
 }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 void main_capture() {
   padded_string json_padded = "{\"a\":[1,2,3], \"b\": 2, \"c\": \"hello\"}"_padded;
@@ -201,10 +201,10 @@ bool to_string_example() {
 
 bool gen_raw1() {
   TEST_START();
-  simdjson::ondemand::parser parser;
-  simdjson::padded_string docdata =  R"({"value":123})"_padded;
-  simdjson::ondemand::document doc = parser.iterate(docdata);
-  simdjson::ondemand::object obj = doc.get_object();
+  simdjson2::ondemand::parser parser;
+  simdjson2::padded_string docdata =  R"({"value":123})"_padded;
+  simdjson2::ondemand::document doc = parser.iterate(docdata);
+  simdjson2::ondemand::object obj = doc.get_object();
   string_view token = obj.raw_json(); // gives you `{"value":123}`
   ASSERT_EQUAL(token, R"({"value":123})");
   TEST_SUCCEED();
@@ -212,10 +212,10 @@ bool gen_raw1() {
 
 bool gen_raw2() {
   TEST_START();
-  simdjson::ondemand::parser parser;
-  simdjson::padded_string docdata =  R"([1,2,3])"_padded;
-  simdjson::ondemand::document doc = parser.iterate(docdata);
-  simdjson::ondemand::array arr = doc.get_array();
+  simdjson2::ondemand::parser parser;
+  simdjson2::padded_string docdata =  R"([1,2,3])"_padded;
+  simdjson2::ondemand::document doc = parser.iterate(docdata);
+  simdjson2::ondemand::array arr = doc.get_array();
   string_view token = arr.raw_json(); // gives you `[1,2,3]`
   ASSERT_EQUAL(token, R"([1,2,3])");
   TEST_SUCCEED();
@@ -236,10 +236,10 @@ bool jsondollar() {
 
 bool gen_raw3() {
   TEST_START();
-  simdjson::ondemand::parser parser;
-  simdjson::padded_string docdata =  R"({"value":123})"_padded;
-  simdjson::ondemand::document doc = parser.iterate(docdata);
-  simdjson::ondemand::object obj = doc.get_object();
+  simdjson2::ondemand::parser parser;
+  simdjson2::padded_string docdata =  R"({"value":123})"_padded;
+  simdjson2::ondemand::document doc = parser.iterate(docdata);
+  simdjson2::ondemand::object obj = doc.get_object();
   string_view token = obj.raw_json(); // gives you `{"value":123}`
   ASSERT_EQUAL(token, R"({"value":123})");
   obj.reset(); // revise the object
@@ -402,7 +402,7 @@ bool examplecrt_realloc() {
   TEST_SUCCEED();
 }
 
-#if SIMDJSON_CPLUSPLUS17
+#if SIMDJSON2_CPLUSPLUS17
 bool big_int_array() {
   TEST_START();
   ondemand::parser parser;
@@ -669,7 +669,7 @@ bool basics_1() {
   auto json = padded_string::load("twitter.json");
   ondemand::document doc = parser.iterate(json); // load and parse a file
 
-  simdjson_unused auto unused_doc = doc.get_object();
+  simdjson2_unused auto unused_doc = doc.get_object();
 
   TEST_SUCCEED();
 }
@@ -678,10 +678,10 @@ bool basics_2() {
   TEST_START();
 
   ondemand::parser parser;
-  auto json = "[1,2,3]"_padded; // The _padded suffix creates a simdjson::padded_string instance
+  auto json = "[1,2,3]"_padded; // The _padded suffix creates a simdjson2::padded_string instance
   ondemand::document doc = parser.iterate(json); // parse a string
 
-  simdjson_unused auto unused_doc = doc.get_array();
+  simdjson2_unused auto unused_doc = doc.get_array();
 
   TEST_SUCCEED();
 }
@@ -690,11 +690,11 @@ bool basics_3() {
   TEST_START();
 
   ondemand::parser parser;
-  char json[3+SIMDJSON_PADDING];
+  char json[3+SIMDJSON2_PADDING];
   strcpy(json, "[1]");
   ondemand::document doc = parser.iterate(json, strlen(json), sizeof(json));
 
-  simdjson_unused auto unused_doc = doc.get_array();
+  simdjson2_unused auto unused_doc = doc.get_array();
 
   TEST_SUCCEED();
 }
@@ -772,7 +772,7 @@ bool json_array_count_complex() {
   std::cout << "Number of elements: " <<  count << std::endl;
   size_t c = 0;
   for(ondemand::object elem : test_array) {
-    std::cout << simdjson::to_json_string(elem);
+    std::cout << simdjson2::to_json_string(elem);
     c++;
   }
   std::cout << std::endl;
@@ -832,10 +832,10 @@ bool using_the_parsed_json_2() {
 
   bool big_integer() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
-    simdjson::ondemand::document doc = parser.iterate(docdata);
-    simdjson::ondemand::object obj = doc.get_object();
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({"value":12321323213213213213213213213211223})"_padded;
+    simdjson2::ondemand::document doc = parser.iterate(docdata);
+    simdjson2::ondemand::object obj = doc.get_object();
     string_view token = obj["value"].raw_json_token();
     std::cout << token << std::endl;
     // token == "12321323213213213213213213213211223"
@@ -844,10 +844,10 @@ bool using_the_parsed_json_2() {
 
   bool big_integer_in_string() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
-    simdjson::ondemand::document doc = parser.iterate(docdata);
-    simdjson::ondemand::object obj = doc.get_object();
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({"value":"12321323213213213213213213213211223"})"_padded;
+    simdjson2::ondemand::document doc = parser.iterate(docdata);
+    simdjson2::ondemand::object obj = doc.get_object();
     string_view token = obj["value"].raw_json_token();
     std::cout << token << std::endl;
     // token == "\"12321323213213213213213213213211223\""
@@ -930,7 +930,7 @@ bool using_the_parsed_json_rewind() {
 
   auto doc = parser.iterate(cars_json);
   size_t count = 0;
-  for (simdjson_unused ondemand::object car : doc) {
+  for (simdjson2_unused ondemand::object car : doc) {
     if(car["make"] == "Toyota") { count++; }
   }
   std::cout << "We have " << count << " Toyota cars.\n";
@@ -955,7 +955,7 @@ bool using_the_parsed_json_rewind_array() {
   auto doc = parser.iterate(cars_json);
   ondemand::array arr = doc.get_array();
   size_t count = 0;
-  for (simdjson_unused ondemand::object car : arr) {
+  for (simdjson2_unused ondemand::object car : arr) {
     if(car["make"] == "Toyota") { count++; }
   }
   std::cout << "We have " << count << " Toyota cars.\n";
@@ -1006,7 +1006,7 @@ bool using_the_parsed_json_5() {
   TEST_SUCCEED();
 }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
 
 
@@ -1272,8 +1272,8 @@ bool json_pointer_rewind() {
 bool iterate_many_example() {
   TEST_START();
   auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} [1,2,3]  )"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document_stream stream;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document_stream stream;
   ASSERT_SUCCESS(parser.iterate_many(json).get(stream));
   auto i = stream.begin();
   size_t count{0};
@@ -1299,8 +1299,8 @@ std::string my_string(ondemand::document& doc) {
 bool iterate_many_truncated_example() {
   TEST_START();
   auto json = R"([1,2,3]  {"1":1,"2":3,"4":4} {"key":"intentionally unclosed string  )"_padded;
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document_stream stream;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document_stream stream;
   ASSERT_SUCCESS( parser.iterate_many(json,json.size()).get(stream) );
   std::string_view expected[2] = {"[1,2,3]", R"({"1":1,"2":3,"4":4})"};
   size_t count{0};
@@ -1343,7 +1343,7 @@ bool stream_capacity_example() {
     } else {
       ondemand::value val;
       error = doc.at_pointer("/4").get(val);
-      // error == simdjson::CAPACITY
+      // error == simdjson2::CAPACITY
       if(error) {
         std::cerr << error << std::endl;
         // We left 293 bytes unprocessed at the tail end of the input.
@@ -1365,7 +1365,7 @@ bool simple_error_example() {
     if( parser.iterate(json).get(doc) != SUCCESS ) { return false; }
     double x;
     auto error = doc["bad number"].get_double().get(x);
-    // returns "simdjson::NUMBER_ERROR"
+    // returns "simdjson2::NUMBER_ERROR"
     if(error != SUCCESS) {
       std::cout << error << std::endl;
       return false;
@@ -1375,13 +1375,13 @@ bool simple_error_example() {
 }
 
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <iostream>
 
   // prints the content of the array as hexadecimal 64-bit integers
-  void f(simdjson::ondemand::array v) {
+  void f(simdjson2::ondemand::array v) {
     for(uint64_t val : v) {
       std::cout << "0x" << std::hex << val << std::endl;
     }
@@ -1389,9 +1389,9 @@ bool simple_error_example() {
 
 
   int callf(void) {
-    simdjson::padded_string json = R"( [ 897314173811950000, 3122321 ])"_padded;
-    simdjson::ondemand::parser parser;
-    simdjson::ondemand::document doc = parser.iterate(json);
+    simdjson2::padded_string json = R"( [ 897314173811950000, 3122321 ])"_padded;
+    simdjson2::ondemand::parser parser;
+    simdjson2::ondemand::document doc = parser.iterate(json);
     f(doc.get_array());
     return EXIT_SUCCESS;
   }
@@ -1412,7 +1412,7 @@ bool simple_error_example() {
     TEST_START();
     auto json = R"( {"name": "Jack The Ripper \u0033"} )"_padded;
     // We create a buffer large enough to store all strings we need:
-    std::unique_ptr<uint8_t[]> buffer(new uint8_t[json.size() + simdjson::SIMDJSON_PADDING]);
+    std::unique_ptr<uint8_t[]> buffer(new uint8_t[json.size() + simdjson2::SIMDJSON2_PADDING]);
     uint8_t * ptr = buffer.get();
     ondemand::parser parser;
     ondemand::document doc = parser.iterate(json);
@@ -1440,7 +1440,7 @@ bool simple_error_example() {
       double x = doc["bad number"].get_double();
       std::cout << "Got " << x << std::endl;
       TEST_SUCCEED();
-    } catch(simdjson_error& e) {
+    } catch(simdjson2_error& e) {
       // e.error() == NUMBER_ERROR
       std::cout << e.error() << std::endl;
       TEST_FAIL("I did not expect an exception");
@@ -1455,7 +1455,7 @@ bool simple_error_example() {
     try {
       doc = parser.iterate(broken_json);
       return int64_t(doc["integer"]);
-    } catch(simdjson_error& err) {
+    } catch(simdjson2_error& err) {
       std::cout << err.error() << std::endl;
       std::cout << doc.current_location() << std::endl;
       TEST_SUCCEED();
@@ -1467,8 +1467,8 @@ bool simple_error_example() {
 
 int load_example() {
   TEST_START();
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document tweets;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document tweets;
   padded_string json;
   auto error = padded_string::load("twitter.json").get(json);
   if(error) { std::cerr << error << std::endl; return EXIT_FAILURE; }
@@ -1484,7 +1484,7 @@ int load_example() {
 
 int example_1() {
   TEST_START();
-  simdjson::ondemand::parser parser;
+  simdjson2::ondemand::parser parser;
   //auto error = padded_string::load("twitter.json").get(json);
   // if(error) { std::cerr << error << std::endl; return EXIT_FAILURE; }
   padded_string json = R"( {
@@ -1501,10 +1501,10 @@ int example_1() {
   }
 } )"_padded;
 
-  simdjson::ondemand::document tweets;
+  simdjson2::ondemand::document tweets;
   auto error = parser.iterate(json).get(tweets);
   if( error ) { return EXIT_FAILURE; }
-  simdjson::ondemand::value res;
+  simdjson2::ondemand::value res;
   error = tweets["search_metadata"]["count"].get(res);
   if (error != SUCCESS) {
     std::cerr << "could not access keys" << std::endl;
@@ -1513,27 +1513,27 @@ int example_1() {
   std::cout << res << " results." << std::endl;
   return true;
 }
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 int load_example_except() {
   TEST_START();
-  simdjson::ondemand::parser parser;
+  simdjson2::ondemand::parser parser;
   padded_string json = padded_string::load("twitter.json");
-  simdjson::ondemand::document tweets = parser.iterate(json);
+  simdjson2::ondemand::document tweets = parser.iterate(json);
   uint64_t identifier = tweets["statuses"].at(0)["id"];
   std::cout << identifier << std::endl;
   return EXIT_SUCCESS;
 }
 int load_example_except_morecomplete(void) {
   TEST_START();
-  simdjson::ondemand::parser parser;
-  simdjson::padded_string json_string;
-  simdjson::ondemand::document doc;
+  simdjson2::ondemand::parser parser;
+  simdjson2::padded_string json_string;
+  simdjson2::ondemand::document doc;
   try {
     json_string = padded_string::load("twitter.json");
     doc = parser.iterate(json_string);
     uint64_t identifier = doc["statuses"].at(0)["id"];
     std::cout << identifier << std::endl;
-  } catch (simdjson::simdjson_error &error) {
+  } catch (simdjson2::simdjson2_error &error) {
     std::cerr << "JSON error: " << error.what() << " near "
               << doc.current_location() << " in " << json_string << std::endl;
   }
@@ -1581,8 +1581,8 @@ bool issue2215() {
 #endif
 bool test_load_example() {
   TEST_START();
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document tweets;
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document tweets;
   padded_string json = R"( {"statuses":[{"id":1234}]} )"_padded;
   auto error = parser.iterate(json).get(tweets);
   if(error) { std::cerr << error << std::endl; return false; }
@@ -1673,7 +1673,7 @@ struct ZuluBBox {
               << std::endl;
   }
 };
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 bool example1956() {
 
@@ -1885,10 +1885,10 @@ bool value_raw_json_object() {
 #endif
 bool run() {
   return true
-#if SIMDJSON_EXCEPTIONS
-#if SIMDJSON_CPLUSPLUS17
+#if SIMDJSON2_EXCEPTIONS
+#if SIMDJSON2_CPLUSPLUS17
     && big_int_array()
-#endif // SIMDJSON_CPLUSPLUS17
+#endif // SIMDJSON2_CPLUSPLUS17
     && jsondollar()
     && big_int_array_as_double()
     && key_raw_json_token()
@@ -1939,7 +1939,7 @@ bool run() {
     && current_location_out_of_bounds()
     && current_location_no_error()
     && to_string_example_no_except()
-  #if SIMDJSON_EXCEPTIONS
+  #if SIMDJSON2_EXCEPTIONS
     && issue2215()
     && to_string_example()
     && raw_string()

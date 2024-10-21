@@ -44,10 +44,10 @@ struct runner : public file_runner<I> {
   }
 };
 
-struct simdjson_dom;
+struct simdjson2_dom;
 
-template<typename I> simdjson_inline static void distinct_user_id(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_dom>>(state);
+template<typename I> simdjson2_inline static void distinct_user_id(benchmark::State &state) {
+  run_json_benchmark<runner<I>, runner<simdjson2_dom>>(state);
 }
 
 } // namespace distinct_user_id

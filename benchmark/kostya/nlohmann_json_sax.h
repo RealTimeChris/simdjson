@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "kostya.h"
 
@@ -62,7 +62,7 @@ struct nlohmann_json_sax {
         bool parse_error(std::size_t position, const std::string& last_token, const json::exception& ex) override { return false; }
     }; // Handler
 
-    bool run(simdjson::padded_string &json, std::vector<point> &result) {
+    bool run(simdjson2::padded_string &json, std::vector<point> &result) {
         Handler handler(result);
         json::sax_parse(json.data(), &handler);
         return true;
@@ -71,4 +71,4 @@ struct nlohmann_json_sax {
 BENCHMARK_TEMPLATE(kostya, nlohmann_json_sax)->UseManualTime();
 } // namespace kostya
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

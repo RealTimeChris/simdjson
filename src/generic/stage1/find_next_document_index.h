@@ -1,13 +1,13 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE1_FIND_NEXT_DOCUMENT_INDEX_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE1_FIND_NEXT_DOCUMENT_INDEX_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE1_FIND_NEXT_DOCUMENT_INDEX_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE1_FIND_NEXT_DOCUMENT_INDEX_H
 #include <generic/stage1/base.h>
-#include <simdjson/generic/dom_parser_implementation.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#include <simdjson2/generic/dom_parser_implementation.h>
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage1 {
 
@@ -36,7 +36,7 @@ namespace stage1 {
   * complete document, therefore the last json buffer location is the end of the
   * batch.
   */
-simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &parser) {
+simdjson2_inline uint32_t find_next_document_index(dom_parser_implementation &parser) {
   // Variant: do not count separately, just figure out depth
   if(parser.n_structural_indexes == 0) { return 0; }
   auto arr_cnt = 0;
@@ -99,7 +99,7 @@ simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &par
 
 } // namespace stage1
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE1_FIND_NEXT_DOCUMENT_INDEX_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE1_FIND_NEXT_DOCUMENT_INDEX_H

@@ -1,7 +1,7 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace wrong_type_error_tests {
   using namespace std;

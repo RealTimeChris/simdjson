@@ -1,7 +1,7 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace json_package_tests {
 using namespace std;
@@ -15,7 +15,7 @@ bool baby() {
   ondemand::document doc;
   ASSERT_SUCCESS(parser.iterate(json).get(doc));
 
-  simdjson::ondemand::object main_object;
+  simdjson2::ondemand::object main_object;
   ASSERT_SUCCESS(doc.get_object().get(main_object));
   std::string name;
   ASSERT_SUCCESS(main_object["name"].get_string(name));
@@ -101,11 +101,11 @@ bool thirtysecondsofcode() {
   ondemand::document doc;
   ASSERT_SUCCESS(parser.iterate(json).get(doc));
 
-  simdjson::ondemand::object main_object;
+  simdjson2::ondemand::object main_object;
   ASSERT_SUCCESS(doc.get_object().get(main_object));
 
-  simdjson::ondemand::raw_json_string key;
-  simdjson::ondemand::value value;
+  simdjson2::ondemand::raw_json_string key;
+  simdjson2::ondemand::value value;
 
   for (auto field : main_object) {
     // Throw error if getting key or value fails.
@@ -121,27 +121,27 @@ bool thirtysecondsofcode() {
       ASSERT_SUCCESS(value.get_string(main));
       // unused
     } else if (key == "exports") {
-      simdjson::ondemand::json_type exports_type;
+      simdjson2::ondemand::json_type exports_type;
       if (!value.type().get(exports_type)) {
         std::string_view exports;
         switch (exports_type) {
-        case simdjson::ondemand::json_type::object: {
-          simdjson::ondemand::object exports_object;
+        case simdjson2::ondemand::json_type::object: {
+          simdjson2::ondemand::object exports_object;
           if (!value.get_object().get(exports_object) &&
               !exports_object.raw_json().get(exports)) {
             // unused
           }
           break;
         }
-        case simdjson::ondemand::json_type::array: {
-          simdjson::ondemand::array exports_array;
+        case simdjson2::ondemand::json_type::array: {
+          simdjson2::ondemand::array exports_array;
           if (!value.get_array().get(exports_array) &&
               !exports_array.raw_json().get(exports)) {
             // unused
           }
           break;
         }
-        case simdjson::ondemand::json_type::string: {
+        case simdjson2::ondemand::json_type::string: {
           if (!value.get_string().get(exports)) {
             ASSERT_EQUAL(exports, "./index.js");
           }
@@ -152,12 +152,12 @@ bool thirtysecondsofcode() {
         }
       }
     } else if (key == "imports") {
-      simdjson::ondemand::json_type imports_type;
+      simdjson2::ondemand::json_type imports_type;
       if (!value.type().get(imports_type)) {
         std::string_view imports;
         switch (imports_type) {
-        case simdjson::ondemand::json_type::object: {
-          simdjson::ondemand::object imports_object;
+        case simdjson2::ondemand::json_type::object: {
+          simdjson2::ondemand::object imports_object;
           if (!value.get_object().get(imports_object) &&
               !imports_object.raw_json().get(imports)) {
             ASSERT_EQUAL(imports, R"({
@@ -172,15 +172,15 @@ bool thirtysecondsofcode() {
           }
           break;
         }
-        case simdjson::ondemand::json_type::array: {
-          simdjson::ondemand::array imports_array;
+        case simdjson2::ondemand::json_type::array: {
+          simdjson2::ondemand::array imports_array;
           if (!value.get_array().get(imports_array) &&
               !imports_array.raw_json().get(imports)) {
             // unused
           }
           break;
         }
-        case simdjson::ondemand::json_type::string: {
+        case simdjson2::ondemand::json_type::string: {
           if (!value.get_string().get(imports)) {
             // unused
           }

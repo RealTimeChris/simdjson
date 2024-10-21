@@ -2,7 +2,7 @@
 #include <iostream>
 #include <limits>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_macros.h"
 
 // we define our own asserts to get around NDEBUG
@@ -14,7 +14,7 @@
 }
 #endif
 
-using namespace simdjson;
+using namespace simdjson2;
 
 static const std::string make_json(const std::string value) {
   const std::string s = "{\"key\": ";
@@ -30,9 +30,9 @@ template <typename T>
 static bool parse_and_validate(const std::string src, T expected) {
   std::cout << "src: " << src << ", ";
   const padded_string pstr{src};
-  simdjson::dom::parser parser;
+  simdjson2::dom::parser parser;
 
-  SIMDJSON_IF_CONSTEXPR (std::is_same<int64_t, T>::value) {
+  SIMDJSON2_IF_CONSTEXPR (std::is_same<int64_t, T>::value) {
     int64_t actual{};
     ASSERT_SUCCESS( parser.parse(pstr)["key"].get(actual) );
     std::cout << std::boolalpha << "test: " << (expected == actual) << std::endl;
@@ -49,8 +49,8 @@ static bool parse_and_validate(const std::string src, T expected) {
 static bool parse_and_check_signed(const std::string src) {
   std::cout << "src: " << src << ", expecting signed" << std::endl;
   const padded_string pstr{src};
-  simdjson::dom::parser parser;
-  simdjson::dom::element value;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element value;
   ASSERT_SUCCESS( parser.parse(pstr).get_object()["key"].get(value) );
   ASSERT_EQUAL( value.is<int64_t>(), true );
   return true;
@@ -59,8 +59,8 @@ static bool parse_and_check_signed(const std::string src) {
 static bool parse_and_check_unsigned(const std::string src) {
   std::cout << "src: " << src << ", expecting signed" << std::endl;
   const padded_string pstr{src};
-  simdjson::dom::parser parser;
-  simdjson::dom::element value;
+  simdjson2::dom::parser parser;
+  simdjson2::dom::element value;
   ASSERT_SUCCESS( parser.parse(pstr).get_object()["key"].get(value) );
   ASSERT_EQUAL( value.is<uint64_t>(), true );
   return true;

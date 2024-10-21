@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
 #include <string>
@@ -6,15 +6,15 @@
 
 
 namespace custom_types_tests {
-#if SIMDJSON_EXCEPTIONS && SIMDJSON_SUPPORTS_DESERIALIZATION
+#if SIMDJSON2_EXCEPTIONS && SIMDJSON2_SUPPORTS_DESERIALIZATION
 struct Car {
   std::string make{};
   std::string model{};
   int year{};
   std::vector<double> tire_pressure{};
 
-  friend simdjson::error_code tag_invoke(simdjson::deserialize_tag, auto &val, Car& car) {
-    simdjson::ondemand::object obj;
+  friend simdjson2::error_code tag_invoke(simdjson2::deserialize_tag, auto &val, Car& car) {
+    simdjson2::ondemand::object obj;
     auto error = val.get_object().get(obj);
     if (error) {
       return error;
@@ -22,7 +22,7 @@ struct Car {
     // Instead of repeatedly obj["something"], we iterate through the object
     // which we expect to be faster.
     for (auto field : obj) {
-      simdjson::ondemand::raw_json_string key;
+      simdjson2::ondemand::raw_json_string key;
       error = field.key().get(key);
       if (error) {
         return error;
@@ -49,15 +49,15 @@ struct Car {
         }
       }
     }
-    return simdjson::SUCCESS;
+    return simdjson2::SUCCESS;
   }
 };
 
-static_assert(simdjson::custom_deserializable<std::unique_ptr<Car>>, "It should be deserializable");
+static_assert(simdjson2::custom_deserializable<std::unique_ptr<Car>>, "It should be deserializable");
 
 bool custom_uniqueptr_test() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] },
   { "make": "Kia",    "model": "Soul",   "year": 2012,
@@ -66,8 +66,8 @@ bool custom_uniqueptr_test() {
        "tire_pressure": [ 29.8, 30.0 ] }
 ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   for (auto val : doc) {
     std::unique_ptr<Car> c(val);
     if (c->make != "Toyota" && c->make != "Kia") {
@@ -91,7 +91,7 @@ bool custom_uniqueptr_test() {
 
 bool custom_test() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] },
   { "make": "Kia",    "model": "Soul",   "year": 2012,
@@ -100,8 +100,8 @@ bool custom_test() {
        "tire_pressure": [ 29.8, 30.0 ] }
 ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   for (auto val : doc) {
     Car c(val);
     if (c.make != "Toyota" && c.make != "Kia") {
@@ -125,7 +125,7 @@ bool custom_test() {
 
 bool custom_test_crazy() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] },
   { "make": "Kia",    "model": "Soul",   "year": 2012,
@@ -134,8 +134,8 @@ bool custom_test_crazy() {
        "tire_pressure": [ 29.8, 30.0 ] }
 ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   for (auto val : doc) {
     Car c(val);
     std::cout << c.year << std::endl;
@@ -158,7 +158,7 @@ bool custom_test_crazy() {
 
 bool custom_no_except() {
   TEST_START();
-  simdjson::padded_string json =
+  simdjson2::padded_string json =
       R"( [ { "make": "Toyota", "model": "Camry",  "year": 2018,
        "tire_pressure": [ 40.1, 39.9 ] },
   { "make": "Kia",    "model": "Soul",   "year": 2012,
@@ -167,24 +167,24 @@ bool custom_no_except() {
        "tire_pressure": [ 29.8, 30.0 ] }
 ])"_padded;
 
-  simdjson::ondemand::parser parser;
-  simdjson::ondemand::document doc = parser.iterate(json);
+  simdjson2::ondemand::parser parser;
+  simdjson2::ondemand::document doc = parser.iterate(json);
   for (auto val : doc) {
     Car c;
     auto error = val.get(c);
-    if(error) { std::cerr << simdjson::error_message(error) << std::endl; return false; }
+    if(error) { std::cerr << simdjson2::error_message(error) << std::endl; return false; }
   }
 
   TEST_SUCCEED();
 }
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 bool run() {
   return
-#if SIMDJSON_EXCEPTIONS && SIMDJSON_SUPPORTS_DESERIALIZATION
+#if SIMDJSON2_EXCEPTIONS && SIMDJSON2_SUPPORTS_DESERIALIZATION
       custom_test() &&
       custom_uniqueptr_test() &&
       custom_no_except() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
       true;
 }
 

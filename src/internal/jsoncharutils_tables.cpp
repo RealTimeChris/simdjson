@@ -1,9 +1,9 @@
-#ifndef SIMDJSON_SRC_JSONCHARUTILS_TABLES_CPP
-#define SIMDJSON_SRC_JSONCHARUTILS_TABLES_CPP
+#ifndef SIMDJSON2_SRC_JSONCHARUTILS_TABLES_CPP
+#define SIMDJSON2_SRC_JSONCHARUTILS_TABLES_CPP
 
-#include <simdjson/base.h>
+#include <simdjson2/base.h>
 
-namespace simdjson {
+namespace simdjson2 {
 namespace internal {
 
 // structural chars here are
@@ -11,7 +11,7 @@ namespace internal {
 // we are also interested in the four whitespace characters
 // space 0x20, linefeed 0x0a, horizontal tab 0x09 and carriage return 0x0d
 
-SIMDJSON_DLLIMPORTEXPORT const bool structural_or_whitespace_negated[256] = {
+SIMDJSON2_DLLIMPORTEXPORT const bool structural_or_whitespace_negated[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1,
@@ -28,7 +28,7 @@ SIMDJSON_DLLIMPORTEXPORT const bool structural_or_whitespace_negated[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-SIMDJSON_DLLIMPORTEXPORT const bool structural_or_whitespace[256] = {
+SIMDJSON2_DLLIMPORTEXPORT const bool structural_or_whitespace[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -41,7 +41,7 @@ SIMDJSON_DLLIMPORTEXPORT const bool structural_or_whitespace[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-SIMDJSON_DLLIMPORTEXPORT const uint32_t digit_to_val32[886] = {
+SIMDJSON2_DLLIMPORTEXPORT const uint32_t digit_to_val32[886] = {
     0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
     0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
     0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
@@ -192,6 +192,6 @@ SIMDJSON_DLLIMPORTEXPORT const uint32_t digit_to_val32[886] = {
     0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 
 } // namespace internal
-} // namespace simdjson
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_JSONCHARUTILS_TABLES_CPP
+#endif // SIMDJSON2_SRC_JSONCHARUTILS_TABLES_CPP

@@ -1,6 +1,6 @@
-#ifndef SIMDJSON_SRC_BASE_H
-#define SIMDJSON_SRC_BASE_H
+#ifndef SIMDJSON2_SRC_BASE_H
+#define SIMDJSON2_SRC_BASE_H
 
-#include <simdjson/base.h>
+#include <simdjson2/base.h>
 
-#endif // SIMDJSON_SRC_BASE_H
+#endif // SIMDJSON2_SRC_BASE_H

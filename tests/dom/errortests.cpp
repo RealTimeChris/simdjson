@@ -9,9 +9,9 @@
 #include <set>
 #include <unistd.h>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 using namespace std;
 
 #include "test_macros.h"
@@ -117,14 +117,14 @@ namespace parser_load {
   bool parser_load_chain() {
     TEST_START();
     dom::parser parser;
-    simdjson_unused uint64_t foo;
+    simdjson2_unused uint64_t foo;
     ASSERT_ERROR( parser.load(NONEXISTENT_FILE)["foo"].get(foo), IO_ERROR);
     TEST_SUCCEED();
   }
   bool parser_load_many_chain() {
     TEST_START();
     dom::parser parser;
-    simdjson_unused dom::document_stream stream;
+    simdjson2_unused dom::document_stream stream;
     ASSERT_ERROR( parser.load_many(NONEXISTENT_FILE).get(stream), IO_ERROR );
     TEST_SUCCEED();
   }
@@ -180,7 +180,7 @@ namespace adversarial {
   }
   bool run() {
     constexpr size_t filler_size = 65;
-    static_assert(filler_size > SIMDJSON_PADDING, "corruption test doesn't have enough padding"); // 33 = std::strlen(PADDING_FILLED_WITH_NUMBERS)
+    static_assert(filler_size > SIMDJSON2_PADDING, "corruption test doesn't have enough padding"); // 33 = std::strlen(PADDING_FILLED_WITH_NUMBERS)
     return (std::strlen(PADDING_FILLED_WITH_NUMBERS) == filler_size)
       && number_overrun_at_root()
       && number_overrun_in_array()
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
   while ((c = getopt(argc, argv, "a:")) != -1) {
     switch (c) {
     case 'a': {
-      const simdjson::implementation *impl = simdjson::get_available_implementations()[optarg];
+      const simdjson2::implementation *impl = simdjson2::get_available_implementations()[optarg];
       if (!impl) {
         fprintf(stderr, "Unsupported architecture value -a %s\n", optarg);
         return EXIT_FAILURE;
@@ -204,7 +204,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "The selected implementation does not match your current CPU: -a %s\n", optarg);
         return EXIT_FAILURE;
       }
-      simdjson::get_active_implementation() = impl;
+      simdjson2::get_active_implementation() = impl;
       break;
     }
     default:
@@ -215,12 +215,12 @@ int main(int argc, char *argv[]) {
 
   // this is put here deliberately to check that the documentation is correct (README),
   // should this fail to compile, you should update the documentation:
-  if (simdjson::get_active_implementation()->name() == "unsupported") {
+  if (simdjson2::get_active_implementation()->name() == "unsupported") {
     printf("unsupported CPU\n");
   }
   // We want to know what we are testing.
-  std::cout << "Running tests against this implementation: " << simdjson::get_active_implementation()->name();
-  std::cout << " (" << simdjson::get_active_implementation()->description() << ")" << std::endl;
+  std::cout << "Running tests against this implementation: " << simdjson2::get_active_implementation()->name();
+  std::cout << " (" << simdjson2::get_active_implementation()->description() << ")" << std::endl;
   std::cout << "------------------------------------------------------------" << std::endl;
   std::cout << "Running error tests." << std::endl;
   if (!(true

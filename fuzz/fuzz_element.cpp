@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -23,8 +23,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     case 3: cb(int64_t{});break;
     case 4: cb(std::string_view{});break;
     case 5: cb(constcharstar{});break;
-    case 6: cb(simdjson::dom::array{});break;
-    case 7: cb(simdjson::dom::object{});break;
+    case 6: cb(simdjson2::dom::array{});break;
+    case 7: cb(simdjson2::dom::object{});break;
     }
   };
 
@@ -41,24 +41,24 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   if (!fd)
     return 0;
 
-  simdjson::dom::parser parser;
-  simdjson_unused simdjson::dom::element elem;
-  simdjson_unused auto error = parser.parse(strings[1]).get(elem);
+  simdjson2::dom::parser parser;
+  simdjson2_unused simdjson2::dom::element elem;
+  simdjson2_unused auto error = parser.parse(strings[1]).get(elem);
 
   if (error)
     return 0;
 
 #define CASE(num, fun)                                                         \
   case num: {                                                                  \
-    simdjson_unused auto v = elem.fun();                                                       \
+    simdjson2_unused auto v = elem.fun();                                                       \
     break;                                                                     \
   }
 #define CASE2(num, fun)                                                        \
   case num: {                                                                  \
-    simdjson_unused auto v = elem fun;                                                         \
+    simdjson2_unused auto v = elem fun;                                                         \
     break;                                                                     \
   }
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   try {
 #endif
 
@@ -84,27 +84,27 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
       CASE(18, is_null);
       // element.is<>() :
     case 19: {
-        invoke_with_type([&elem](auto t){ simdjson_unused auto v = elem.is<decltype (t)>();  });
+        invoke_with_type([&elem](auto t){ simdjson2_unused auto v = elem.is<decltype (t)>();  });
       } break;
 
       // CASE(xx,get);
       case 20: {
-          invoke_with_type([&elem](auto t){ simdjson_unused auto v = elem.get<decltype (t)>();  });
+          invoke_with_type([&elem](auto t){ simdjson2_unused auto v = elem.get<decltype (t)>();  });
         } break;
 
       // CASE(xx,tie);
       case 21: {
           invoke_with_type([&elem](auto t){
-            simdjson::error_code ec;
-            simdjson::dom::element{elem}.tie(t,ec);  });
+            simdjson2::error_code ec;
+            simdjson2::dom::element{elem}.tie(t,ec);  });
         } break;
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
       // cast to type
       case 22: {
           invoke_with_type([&elem](auto t){
             using T=decltype(t);
-            simdjson_unused auto v = static_cast<T>(elem);  });
+            simdjson2_unused auto v = static_cast<T>(elem);  });
         } break;
 
       CASE(23, begin);
@@ -117,14 +117,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
       CASE2(29, .at_key(str));
       CASE2(30, .at_key_case_insensitive(str));
       case 31: { NulOStream os;
-        simdjson_unused auto dumpstatus = elem.dump_raw_tape(os);} ;break;
+        simdjson2_unused auto dumpstatus = elem.dump_raw_tape(os);} ;break;
     default:
       return 0;
     }
 #undef CASE
 #undef CASE2
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
   } catch (std::exception &) {
     // do nothing
   }

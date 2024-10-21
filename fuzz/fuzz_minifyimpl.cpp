@@ -6,10 +6,10 @@
  * indicate inconsistency. Also, it gets the non-default backend
  * some fuzzing love.
  *
- * Copyright Paul Dreik 20200912 for the simdjson project.
+ * Copyright Paul Dreik 20200912 for the simdjson2 project.
  */
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
@@ -22,7 +22,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   static const auto implementations=get_runtime_supported_implementations();
 
     using Buffer=std::vector<uint8_t>;
-    auto minify=[Data,Size](const simdjson::implementation* impl) -> Buffer {
+    auto minify=[Data,Size](const simdjson2::implementation* impl) -> Buffer {
         Buffer ret(Size);
         std::size_t retsize=0;
         auto err=impl->minify(Data,Size,ret.data(),retsize);

@@ -1,16 +1,16 @@
-#ifndef SIMDJSON_SRC_GENERIC_STAGE2_STRINGPARSING_H
+#ifndef SIMDJSON2_SRC_GENERIC_STAGE2_STRINGPARSING_H
 
-#ifndef SIMDJSON_CONDITIONAL_INCLUDE
-#define SIMDJSON_SRC_GENERIC_STAGE2_STRINGPARSING_H
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#define SIMDJSON2_SRC_GENERIC_STAGE2_STRINGPARSING_H
 #include <generic/stage2/base.h>
-#include <simdjson/generic/jsoncharutils.h>
-#endif // SIMDJSON_CONDITIONAL_INCLUDE
+#include <simdjson2/generic/jsoncharutils.h>
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
 
 // This file contains the common code every implementation uses
 // It is intended to be included multiple times and compiled multiple times
 
-namespace simdjson {
-namespace SIMDJSON_IMPLEMENTATION {
+namespace simdjson2 {
+namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 /// @private
 namespace stringparsing {
@@ -47,8 +47,8 @@ static const uint8_t escape_map[256] = {
 // dest will advance a variable amount (return via pointer)
 // return true if the unicode codepoint was valid
 // We work in little-endian then swap at write time
-simdjson_warn_unused
-simdjson_inline bool handle_unicode_codepoint(const uint8_t **src_ptr,
+simdjson2_warn_unused
+simdjson2_inline bool handle_unicode_codepoint(const uint8_t **src_ptr,
                                             uint8_t **dst_ptr, bool allow_replacement) {
   // Use the default Unicode Character 'REPLACEMENT CHARACTER' (U+FFFD)
   constexpr uint32_t substitution_code_point = 0xfffd;
@@ -105,8 +105,8 @@ simdjson_inline bool handle_unicode_codepoint(const uint8_t **src_ptr,
 // dest will advance a variable amount (return via pointer)
 // return true if the unicode codepoint was valid
 // We work in little-endian then swap at write time
-simdjson_warn_unused
-simdjson_inline bool handle_unicode_codepoint_wobbly(const uint8_t **src_ptr,
+simdjson2_warn_unused
+simdjson2_inline bool handle_unicode_codepoint_wobbly(const uint8_t **src_ptr,
                                             uint8_t **dst_ptr) {
   // It is not ideal that this function is nearly identical to handle_unicode_codepoint.
   //
@@ -145,9 +145,9 @@ simdjson_inline bool handle_unicode_codepoint_wobbly(const uint8_t **src_ptr,
  * position as pointer. In case of error (e.g., the string has bad escaped codes),
  * then null_ptr is returned. It is assumed that the output buffer is large
  * enough. E.g., if src points at 'joe"', then dst needs to have four free bytes +
- * SIMDJSON_PADDING bytes.
+ * SIMDJSON2_PADDING bytes.
  */
-simdjson_warn_unused simdjson_inline uint8_t *parse_string(const uint8_t *src, uint8_t *dst, bool allow_replacement) {
+simdjson2_warn_unused simdjson2_inline uint8_t *parse_string(const uint8_t *src, uint8_t *dst, bool allow_replacement) {
   while (1) {
     // Copy the next n bytes, and find the backslash and quote in them.
     auto bs_quote = backslash_and_quote::copy_and_find(src, dst);
@@ -191,7 +191,7 @@ simdjson_warn_unused simdjson_inline uint8_t *parse_string(const uint8_t *src, u
   }
 }
 
-simdjson_warn_unused simdjson_inline uint8_t *parse_wobbly_string(const uint8_t *src, uint8_t *dst) {
+simdjson2_warn_unused simdjson2_inline uint8_t *parse_wobbly_string(const uint8_t *src, uint8_t *dst) {
   // It is not ideal that this function is nearly identical to parse_string.
   while (1) {
     // Copy the next n bytes, and find the backslash and quote in them.
@@ -238,7 +238,7 @@ simdjson_warn_unused simdjson_inline uint8_t *parse_wobbly_string(const uint8_t 
 
 } // namespace stringparsing
 } // unnamed namespace
-} // namespace SIMDJSON_IMPLEMENTATION
-} // namespace simdjson
+} // namespace SIMDJSON2_IMPLEMENTATION
+} // namespace simdjson2
 
-#endif // SIMDJSON_SRC_GENERIC_STAGE2_STRINGPARSING_H
+#endif // SIMDJSON2_SRC_GENERIC_STAGE2_STRINGPARSING_H

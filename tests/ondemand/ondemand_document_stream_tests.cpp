@@ -1,10 +1,10 @@
 #include <string>
 using namespace std::string_literals;
 
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace document_stream_tests {
 
@@ -274,12 +274,12 @@ namespace document_stream_tests {
             auto err = (*i).get(doc);
             if(err == SUCCESS) { if(!process_doc(doc)) {return false; } }
             currindex = i.current_index();
-            if (err == simdjson::CAPACITY) {
+            if (err == simdjson2::CAPACITY) {
                 ASSERT_EQUAL(currindex, 24);
                 ASSERT_EQUAL(odstream.truncated_bytes(), 305);
                 break;
             } else if (err) {
-               TEST_FAIL("ondemand: error accessing jsonpointer: "s + simdjson::error_message(err));
+               TEST_FAIL("ondemand: error accessing jsonpointer: "s + simdjson2::error_message(err));
             }
         }
         ASSERT_EQUAL(odstream.truncated_bytes(), 305);
@@ -287,7 +287,7 @@ namespace document_stream_tests {
         // iterate line-by-line
         std::stringstream ss(json);
         std::string oneline;
-        oneline.reserve(json.size() + SIMDJSON_PADDING);
+        oneline.reserve(json.size() + SIMDJSON2_PADDING);
         while (getline(ss, oneline)) {
             ondemand::document doc;
             ASSERT_SUCCESS(odparser.iterate(oneline).get(doc));
@@ -347,7 +347,7 @@ namespace document_stream_tests {
         ++i;
 
         ASSERT_EQUAL(i.source(),expected[counter++]);
-        simdjson_result<ondemand::document_reference> xxx = *i;
+        simdjson2_result<ondemand::document_reference> xxx = *i;
         ASSERT_SUCCESS( xxx.find_field("a").get(x) );
         ASSERT_EQUAL(x,1);
         ++i;
@@ -402,7 +402,7 @@ namespace document_stream_tests {
         ++i;
 
         ASSERT_EQUAL(i.source(),expected[counter++]);
-        simdjson_result<ondemand::document_reference> xxx = *i;
+        simdjson2_result<ondemand::document_reference> xxx = *i;
         ASSERT_SUCCESS( xxx.find_field("a").get(x) );
         ASSERT_EQUAL(x,1);
         ++i;
@@ -570,7 +570,7 @@ namespace document_stream_tests {
             input.push_back('1');
             input.push_back(i < 1023 ? ',' : ']');
         }
-        auto json = simdjson::padded_string(input.data(),input.size());
+        auto json = simdjson2::padded_string(input.data(),input.size());
         ondemand::parser parser;
         size_t window_size{1024}; // deliberately too small
         ondemand::document_stream stream;
@@ -675,7 +675,7 @@ namespace document_stream_tests {
 
         for(size_t batch_size = 1000; batch_size < 2000; batch_size += (batch_size>1050?10:1)) {
             fflush(NULL);
-            simdjson::padded_string str(data);
+            simdjson2::padded_string str(data);
             ondemand::parser parser;
             ondemand::document_stream stream;
             size_t count{0};
@@ -771,7 +771,7 @@ namespace document_stream_tests {
 
         for(size_t batch_size = 1000; batch_size < 2000; batch_size += (batch_size>1050?10:1)) {
             fflush(NULL);
-            simdjson::padded_string str(data);
+            simdjson2::padded_string str(data);
             ondemand::parser parser;
             ondemand::document_stream stream;
             size_t count{0};
@@ -803,7 +803,7 @@ namespace document_stream_tests {
 
     bool stress_data_race_with_error() {
         TEST_START();
-        #if SIMDJSON_THREAD_ENABLED
+        #if SIMDJSON2_THREAD_ENABLED
         std::cout << "ENABLED" << std::endl;
         #endif
         // Intentionally broken
@@ -839,7 +839,7 @@ namespace document_stream_tests {
           bool b;
           if(doc.get_bool().get(b) == SUCCESS) { bool_count +=b; }
           // If we don't access the document at all, other than get_bool(),
-          // then some simdjson kernels will allow you to iterate through
+          // then some simdjson2 kernels will allow you to iterate through
           // 3 'documents'. By asking for the type, we make the iteration
           // terminate after the first 'document'.
           ondemand::json_type t;

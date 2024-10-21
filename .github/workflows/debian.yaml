@@ -30,4 +30,4 @@ jobs:
         cmake --install build
 
     - name: Test pkg-config
-      run: g++ examples/quickstart/quickstart.cpp $(pkg-config --cflags --libs simdjson)
+      run: g++ examples/quickstart/quickstart.cpp $(pkg-config --cflags --libs simdjson2)

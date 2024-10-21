@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "find_tweet.h"
 
@@ -55,7 +55,7 @@ struct nlohmann_json_sax {
         bool parse_error(std::size_t position, const std::string& last_token, const json::exception& ex) override { return false; }
     }; // Handler
 
-    bool run(simdjson::padded_string &json, uint64_t find_id, std::string &result) {
+    bool run(simdjson2::padded_string &json, uint64_t find_id, std::string &result) {
         Handler handler(result,find_id);
         json::sax_parse(json.data(), &handler);
 
@@ -65,4 +65,4 @@ struct nlohmann_json_sax {
 BENCHMARK_TEMPLATE(find_tweet, nlohmann_json_sax)->UseManualTime();
 } // namespace find_tweet
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

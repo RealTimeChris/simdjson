@@ -1,15 +1,15 @@
-#define SIMDJSON_VERBOSE_LOGGING 1
-#include "simdjson.h"
+#define SIMDJSON2_VERBOSE_LOGGING 1
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
 #include <iostream>
 #include <string>
 #include <stdlib.h>
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace log_error_tests {
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
 using namespace std;
 
@@ -22,7 +22,7 @@ bool tape_error()
     ondemand::document doc = parser.iterate(json);
     std::cout << doc["a"] << std::endl;
     TEST_FAIL("Should have thrown an exception!")
-  } catch (simdjson_error& e) {
+  } catch (simdjson2_error& e) {
     ASSERT_ERROR(e.error(), TAPE_ERROR);
   }
   TEST_SUCCEED();
@@ -37,26 +37,26 @@ bool no_such_field()
     ondemand::document doc = parser.iterate(json);
     std::cout << doc["missing_key"] << std::endl;
     TEST_FAIL("Should have thrown an exception!")
-  } catch (simdjson_error& e) {
+  } catch (simdjson2_error& e) {
     ASSERT_ERROR(e.error(), NO_SUCH_FIELD);
   }
   TEST_SUCCEED();
 }
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
 bool run()
 {
-  SIMDJSON_PUSH_DISABLE_WARNINGS
-  SIMDJSON_DISABLE_DEPRECATED_WARNING // Disable CRT_SECURE warning on MSVC: manually verified this is safe
-  std::string str = "SIMDJSON_LOG_LEVEL=ERROR";
+  SIMDJSON2_PUSH_DISABLE_WARNINGS
+  SIMDJSON2_DISABLE_DEPRECATED_WARNING // Disable CRT_SECURE warning on MSVC: manually verified this is safe
+  std::string str = "SIMDJSON2_LOG_LEVEL=ERROR";
   putenv(str.data());
   bool rc =
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
             tape_error() &&
             no_such_field() &&
-#endif // #if SIMDJSON_EXCEPTIONS
+#endif // #if SIMDJSON2_EXCEPTIONS
             true;
-  SIMDJSON_POP_DISABLE_WARNINGS
+  SIMDJSON2_POP_DISABLE_WARNINGS
   return rc;
 }
 

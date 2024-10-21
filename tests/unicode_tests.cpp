@@ -1,4 +1,4 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -100,7 +100,7 @@ std::vector<uint8_t> RandomUTF8::generate(size_t output_bytes, long seed) {
 }
 
 // credit: based on code from Google Fuchsia (Apache Licensed)
-simdjson_warn_unused bool basic_validate_utf8(const char *buf, size_t len) noexcept {
+simdjson2_warn_unused bool basic_validate_utf8(const char *buf, size_t len) noexcept {
   const uint8_t *data = (const uint8_t *)buf;
   uint64_t pos = 0;
   uint64_t next_pos = 0;
@@ -163,7 +163,7 @@ void brute_force_tests() {
   for (size_t i = 0; i < total; i++) {
 
     auto UTF8 = gen_1_2_3_4.generate(rand() % 256);
-    if (!simdjson::validate_utf8((const char *)UTF8.data(), UTF8.size())) {
+    if (!simdjson2::validate_utf8((const char *)UTF8.data(), UTF8.size())) {
       std::cerr << "bug" << std::endl;
       abort();
     }
@@ -172,7 +172,7 @@ void brute_force_tests() {
       const int bitflip{1 << (rand() % 8)};
       UTF8[rand() % UTF8.size()] = uint8_t(bitflip); // we flip exactly one bit
       bool is_ok =
-          simdjson::validate_utf8((const char *)UTF8.data(), UTF8.size());
+          simdjson2::validate_utf8((const char *)UTF8.data(), UTF8.size());
       bool is_ok_basic =
           basic_validate_utf8((const char *)UTF8.data(), UTF8.size());
       if (is_ok != is_ok_basic) {
@@ -229,14 +229,14 @@ void test() {
       "\x20\x0b\x01\x01\x01\x64\x3a\x64\x3a\x64\x3a\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x5b\x30\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x80\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"};
   for (size_t i = 0; i < sizeof(goodsequences)/sizeof(goodsequences[0]); i++) {
     size_t len = std::strlen(goodsequences[i]);
-    if (!simdjson::validate_utf8(goodsequences[i], len)) {
+    if (!simdjson2::validate_utf8(goodsequences[i], len)) {
       printf("bug goodsequences[%zu]\n", i);
       abort();
     }
   }
   for (size_t i = 0; i < sizeof(badsequences)/sizeof(badsequences[0]); i++) {
     size_t len = std::strlen(badsequences[i]);
-    if (simdjson::validate_utf8(badsequences[i], len)) {
+    if (simdjson2::validate_utf8(badsequences[i], len)) {
       printf("bug lookup2 badsequences[%zu]\n", i);
       abort();
     }
@@ -255,7 +255,7 @@ void puzzler() {
   }
   std::cout << "\"" << std::endl;
   bool is_ok{true};
-  for(const auto& e: simdjson::get_available_implementations()) {
+  for(const auto& e: simdjson2::get_available_implementations()) {
       if(!e->supported_by_runtime_system()) { continue; }
       const bool current = e->validate_utf8(bad64, length);
       std::cout << e->name() << " returns " << current << std::endl;

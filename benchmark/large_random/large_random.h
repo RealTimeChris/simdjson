@@ -6,11 +6,11 @@
 
 namespace large_random {
 
-static const simdjson::padded_string &get_built_json_array();
+static const simdjson2::padded_string &get_built_json_array();
 
 using namespace json_benchmark;
 
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const point &p) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const point &p) {
   return o << p.x << "," << p.y << "," << p.z << std::endl;
 }
 
@@ -59,15 +59,15 @@ static std::string build_json_array(size_t N) {
   return answer;
 }
 
-static const simdjson::padded_string &get_built_json_array() {
-  static simdjson::padded_string json = build_json_array(1000000);
+static const simdjson2::padded_string &get_built_json_array() {
+  static simdjson2::padded_string json = build_json_array(1000000);
   return json;
 }
 
-struct simdjson_dom;
+struct simdjson2_dom;
 
 template<typename T> static void large_random(benchmark::State &state) {
-  run_json_benchmark<runner<T>, runner<simdjson_dom>>(state);
+  run_json_benchmark<runner<T>, runner<simdjson2_dom>>(state);
 }
 
 } // namespace large_random

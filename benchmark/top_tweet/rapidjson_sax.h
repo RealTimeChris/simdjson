@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "top_tweet.h"
 #include <string.h>
@@ -86,7 +86,7 @@ struct rapidjson_sax {
         bool EndArray(SizeType elementCount) { return true; }
     }; // handler
 
-    bool run(simdjson::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
+    bool run(simdjson2::padded_string &json, int64_t max_retweet_count, top_tweet_result<StringType> &result) {
         result.retweet_count = -1;
         Reader reader;
         Handler handler(result,max_retweet_count);
@@ -98,4 +98,4 @@ struct rapidjson_sax {
 BENCHMARK_TEMPLATE(top_tweet, rapidjson_sax)->UseManualTime();
 } // namespace top_tweet
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

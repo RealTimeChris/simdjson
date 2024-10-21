@@ -5,14 +5,14 @@
 #endif
 #include <unistd.h>
 
-#include "simdjson.h"
+#include "simdjson2.h"
 
-SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
+SIMDJSON2_PUSH_DISABLE_ALL_WARNINGS
 #ifndef __cpp_exceptions
 #define CXXOPTS_NO_EXCEPTIONS
 #endif
 #include "cxxopts.hpp"
-SIMDJSON_POP_DISABLE_WARNINGS
+SIMDJSON2_POP_DISABLE_WARNINGS
 
 cxxopts::Options options("minify", "Runs the parser against the given json files in a loop, measuring speed and other statistics.");
 
@@ -32,7 +32,7 @@ int main(int argc, const char *argv[]) {
   std::stringstream ss;
   ss << "Parser implementation (by default, detects the most advanced implementation supported on the host machine)."  << std::endl;
   ss << "Available parser implementations:" << std::endl;
-  for (auto impl : simdjson::get_available_implementations()) {
+  for (auto impl : simdjson2::get_available_implementations()) {
     if(impl->supported_by_runtime_system()) {
       ss << "-a " << std::left << std::setw(9) << impl->name() << " - Use the " << impl->description() << " parser implementation." << std::endl;
     }
@@ -57,7 +57,7 @@ int main(int argc, const char *argv[]) {
     return EXIT_FAILURE;
   }
   if(result.count("arch")) {
-    const simdjson::implementation *impl = simdjson::get_available_implementations()[result["arch"].as<std::string>().c_str()];
+    const simdjson2::implementation *impl = simdjson2::get_available_implementations()[result["arch"].as<std::string>().c_str()];
     if(!impl) {
       usage("Unsupported implementation.");
       return EXIT_FAILURE;
@@ -66,20 +66,20 @@ int main(int argc, const char *argv[]) {
       usage("The selected implementation does not match your current CPU.");
       return EXIT_FAILURE;
     }
-    simdjson::get_active_implementation() = impl;
+    simdjson2::get_active_implementation() = impl;
   }
 
   std::string filename = result["file"].as<std::string>();
 
-  simdjson::padded_string p;
-  auto error = simdjson::padded_string::load(filename).get(p);
+  simdjson2::padded_string p;
+  auto error = simdjson2::padded_string::load(filename).get(p);
   if (error) {
     std::cerr << "Could not load the file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  simdjson::padded_string copy(p.length()); // does not need to be padded after all!
+  simdjson2::padded_string copy(p.length()); // does not need to be padded after all!
   size_t copy_len;
-  error = simdjson::get_active_implementation()->minify((const uint8_t*)p.data(), p.length(), (uint8_t*)copy.data(), copy_len);
+  error = simdjson2::get_active_implementation()->minify((const uint8_t*)p.data(), p.length(), (uint8_t*)copy.data(), copy_len);
   if (error) { std::cerr << error << std::endl; return EXIT_FAILURE; }
   /**
    * If a user only wants to time the required time, we do not output
@@ -91,13 +91,13 @@ int main(int argc, const char *argv[]) {
       uint64_t beforens = std::chrono::duration_cast<::std::chrono::nanoseconds>(
              std::chrono::steady_clock::now().time_since_epoch())
              .count();
-      error = simdjson::get_active_implementation()->minify((const uint8_t*)p.data(), p.length(), (uint8_t*)copy.data(), copy_len);
+      error = simdjson2::get_active_implementation()->minify((const uint8_t*)p.data(), p.length(), (uint8_t*)copy.data(), copy_len);
       uint64_t afterns = std::chrono::duration_cast<::std::chrono::nanoseconds>(
              std::chrono::steady_clock::now().time_since_epoch())
              .count();
       size_t times = 1;
       while(afterns - beforens < 1000000000) {
-          error = simdjson::get_active_implementation()->minify((const uint8_t*)p.data(), p.length(), (uint8_t*)copy.data(), copy_len);
+          error = simdjson2::get_active_implementation()->minify((const uint8_t*)p.data(), p.length(), (uint8_t*)copy.data(), copy_len);
           afterns = std::chrono::duration_cast<::std::chrono::nanoseconds>(
              std::chrono::steady_clock::now().time_since_epoch())
              .count();

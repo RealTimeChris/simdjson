@@ -1,8 +1,8 @@
 #include <cmath>
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace number_tests {
 
@@ -48,7 +48,7 @@ namespace number_tests {
                                 if(actual!=expected) {
                                   std::cerr << "JSON '" << buf << " parsed to ";
                                   std::fprintf( stderr," %18.18g instead of %18.18g\n", actual, expected); // formatting numbers is easier with printf
-                                  SIMDJSON_SHOW_DEFINE(FLT_EVAL_METHOD);
+                                  SIMDJSON2_SHOW_DEFINE(FLT_EVAL_METHOD);
                                   return false;
                                 }
                                 return true;
@@ -151,7 +151,7 @@ namespace number_tests {
                                 if(actual!=expected) {
                                   std::cerr << "JSON '" << buf.data() << " parsed to ";
                                   std::fprintf( stderr," %18.18g instead of %18.18g\n", actual, expected); // formatting numbers is easier with printf
-                                  SIMDJSON_SHOW_DEFINE(FLT_EVAL_METHOD);
+                                  SIMDJSON2_SHOW_DEFINE(FLT_EVAL_METHOD);
                                   return false;
                                 }
                                 return true;
@@ -164,16 +164,16 @@ namespace number_tests {
 
   void github_issue_1273() {
     padded_string bad(std::string_view("0.0300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000122978293824"));
-    simdjson::ondemand::parser parser;
-    simdjson_unused auto blah=parser.iterate(bad);
+    simdjson2::ondemand::parser parser;
+    simdjson2_unused auto blah=parser.iterate(bad);
     double x;
-    simdjson_unused auto blah2=blah.get(x);
+    simdjson2_unused auto blah2=blah.get(x);
   }
 
   bool issue_1898() {
     TEST_START();
     padded_string negative_zero_string(std::string_view("-1e-999"));
-    simdjson::ondemand::parser parser;
+    simdjson2::ondemand::parser parser;
     ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(negative_zero_string).get(doc));
     double x;
@@ -199,7 +199,7 @@ namespace number_tests {
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
     ASSERT_TRUE(doc.is_alive());
     size_t count{0};
-    for(simdjson_unused simdjson_result<ondemand::value> val : doc) {
+    for(simdjson2_unused simdjson2_result<ondemand::value> val : doc) {
       ASSERT_ERROR(val.error(), INCOMPLETE_ARRAY_OR_OBJECT);
       count++;
     }
@@ -230,7 +230,7 @@ namespace number_tests {
     ondemand::array arr;
     ASSERT_SUCCESS(doc.get_array().get(arr));
     size_t counter{0};
-    for(simdjson_result<ondemand::value> valr : arr) {
+    for(simdjson2_result<ondemand::value> valr : arr) {
       ondemand::value val;
       ASSERT_SUCCESS(valr.get(val));
       ondemand::number_type nt{};

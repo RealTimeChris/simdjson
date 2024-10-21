@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_YYJSON
+#ifdef SIMDJSON2_COMPETITION_YYJSON
 
 #include "distinct_user_id.h"
 
@@ -43,20 +43,20 @@ struct yyjson_base {
 };
 
 struct yyjson : yyjson_base {
-  bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
     return yyjson_base::run(yyjson_read(json.data(), json.size(), 0), result);
   }
 };
 BENCHMARK_TEMPLATE(distinct_user_id, yyjson)->UseManualTime();
 
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 struct yyjson_insitu : yyjson_base {
-  bool run(simdjson::padded_string &json, std::vector<uint64_t> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<uint64_t> &result) {
     return yyjson_base::run(yyjson_read_opts(json.data(), json.size(), YYJSON_READ_INSITU, 0, 0), result);
   }
 };
 BENCHMARK_TEMPLATE(distinct_user_id, yyjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace distinct_user_id
 
-#endif // SIMDJSON_COMPETITION_YYJSON
+#endif // SIMDJSON2_COMPETITION_YYJSON

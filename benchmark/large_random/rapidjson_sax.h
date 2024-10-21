@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "large_random.h"
 
@@ -55,7 +55,7 @@ struct rapidjson_sax {
         bool EndArray(SizeType elementCount) { return true; }
     }; // handler
 
-    bool run(simdjson::padded_string &json, std::vector<point> &result) {
+    bool run(simdjson2::padded_string &json, std::vector<point> &result) {
         Reader reader;
         Handler handler(result);
         InsituStringStream ss(json.data());
@@ -66,4 +66,4 @@ struct rapidjson_sax {
 BENCHMARK_TEMPLATE(large_random, rapidjson_sax)->UseManualTime();
 } // namespace large_random
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

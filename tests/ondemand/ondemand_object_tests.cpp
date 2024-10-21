@@ -1,11 +1,11 @@
-#include "simdjson.h"
+#include "simdjson2.h"
 #include "test_ondemand.h"
 
-using namespace simdjson;
+using namespace simdjson2;
 
 namespace object_tests {
   using namespace std;
-  using simdjson::ondemand::json_type;
+  using simdjson2::ondemand::json_type;
 
   bool issue1979() {
     TEST_START();
@@ -88,8 +88,8 @@ namespace object_tests {
 
   bool issue1723() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({
     "contents":
     {
       "bids":[
@@ -101,7 +101,7 @@ namespace object_tests {
 
     }
     })"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::document doc;
     auto error = parser.iterate(docdata).get(doc);
     if(error) { return false; }
     ondemand::object content;
@@ -143,21 +143,21 @@ namespace object_tests {
   // In this test, no non-trivial object in an array have a missing key
   bool no_missing_keys() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"([{"a":"a"},{}])"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"([{"a":"a"},{}])"_padded;
+    simdjson2::ondemand::document doc;
     auto error = parser.iterate(docdata).get(doc);
-    if(error != simdjson::SUCCESS) { return false; }
-    simdjson::ondemand::array a;
+    if(error != simdjson2::SUCCESS) { return false; }
+    simdjson2::ondemand::array a;
     error = doc.get_array().get(a);
-    if(error != simdjson::SUCCESS) { return false; }
+    if(error != simdjson2::SUCCESS) { return false; }
     size_t counter{0};
     for(auto elem : a) {
       error = elem.find_field_unordered("a").error();
       if(counter == 0) {
-        ASSERT_EQUAL( error, simdjson::SUCCESS);
+        ASSERT_EQUAL( error, simdjson2::SUCCESS);
       } else {
-        ASSERT_EQUAL( error, simdjson::NO_SUCH_FIELD);
+        ASSERT_EQUAL( error, simdjson2::NO_SUCH_FIELD);
       }
       counter++;
     }
@@ -166,9 +166,9 @@ namespace object_tests {
 
   bool missing_key_continue() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({"a":0, "b":1, "c":2})"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({"a":0, "b":1, "c":2})"_padded;
+    simdjson2::ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
     int64_t num;
     ASSERT_SUCCESS(doc["a"].get(num));
@@ -185,7 +185,7 @@ namespace object_tests {
     ASSERT_EQUAL(num, 2);
     // Start again, but request a missing key
     ASSERT_SUCCESS(parser.iterate(docdata).get(doc));
-    simdjson::ondemand::object obj;
+    simdjson2::ondemand::object obj;
     ASSERT_SUCCESS(doc.get_object().get(obj));
     ASSERT_SUCCESS(obj["a"].get(num));
     ASSERT_EQUAL(num, 0);
@@ -223,17 +223,17 @@ namespace object_tests {
 
   bool missing_keys() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"([{"a":"a"},{}])"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"([{"a":"a"},{}])"_padded;
+    simdjson2::ondemand::document doc;
     auto error = parser.iterate(docdata).get(doc);
-    if(error != simdjson::SUCCESS) { return false; }
-    simdjson::ondemand::array a;
+    if(error != simdjson2::SUCCESS) { return false; }
+    simdjson2::ondemand::array a;
     error = doc.get_array().get(a);
-    if(error != simdjson::SUCCESS) { return false; }
+    if(error != simdjson2::SUCCESS) { return false; }
     for(auto elem : a) {
       error = elem.find_field_unordered("keynotfound").error();
-      if(error != simdjson::NO_SUCH_FIELD) {
+      if(error != simdjson2::NO_SUCH_FIELD) {
         std::cout << error << std::endl;
         return false;
       }
@@ -243,33 +243,33 @@ namespace object_tests {
 
   bool missing_keys_for_empty_top_level_object() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata = "{}"_padded;
-    simdjson::ondemand::document doc;
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata = "{}"_padded;
+    simdjson2::ondemand::document doc;
     auto error = parser.iterate(docdata).get(doc);
-    if(error != simdjson::SUCCESS) { return false; }
+    if(error != simdjson2::SUCCESS) { return false; }
     error = doc.find_field_unordered("keynotfound").error();
-    if(error != simdjson::NO_SUCH_FIELD) {
+    if(error != simdjson2::NO_SUCH_FIELD) {
       std::cout << error << std::endl;
       return false;
     }
     return true;
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   bool issue1965() {
     TEST_START();
     std::string str = "{\"query\":\"ah\"}";
-    std::unique_ptr<char[]> buffer(new char[str.size() + simdjson::SIMDJSON_PADDING]);
+    std::unique_ptr<char[]> buffer(new char[str.size() + simdjson2::SIMDJSON2_PADDING]);
     memcpy(buffer.get(), str.data(), str.size());
-    simdjson::padded_string_view view(buffer.get(), str.size(), str.size() + simdjson::SIMDJSON_PADDING);
-    simdjson::ondemand::parser parser;
-    simdjson::ondemand::document doc = parser.iterate(view);
-    simdjson::ondemand::object root = doc.get_object();
-    simdjson::ondemand::value query = root.find_field("query");
-    simdjson::ondemand::raw_json_string raw = query.get_raw_json_string();
-    std::unique_ptr<uint8_t[]> dst_buffer(new uint8_t[3 + simdjson::SIMDJSON_PADDING]);
+    simdjson2::padded_string_view view(buffer.get(), str.size(), str.size() + simdjson2::SIMDJSON2_PADDING);
+    simdjson2::ondemand::parser parser;
+    simdjson2::ondemand::document doc = parser.iterate(view);
+    simdjson2::ondemand::object root = doc.get_object();
+    simdjson2::ondemand::value query = root.find_field("query");
+    simdjson2::ondemand::raw_json_string raw = query.get_raw_json_string();
+    std::unique_ptr<uint8_t[]> dst_buffer(new uint8_t[3 + simdjson2::SIMDJSON2_PADDING]);
     uint8_t * dst = dst_buffer.get();
     std::string_view fieldstring = parser.unescape(raw, dst);
     std::cout << fieldstring << std::endl;
@@ -320,8 +320,8 @@ namespace object_tests {
 
   bool issue1723_except() {
     TEST_START();
-    simdjson::ondemand::parser parser;
-    simdjson::padded_string docdata =  R"({
+    simdjson2::ondemand::parser parser;
+    simdjson2::padded_string docdata =  R"({
     "contents":
     {
       "bids":[
@@ -333,7 +333,7 @@ namespace object_tests {
 
     }
     })"_padded;
-    simdjson::ondemand::document doc = parser.iterate(docdata);
+    simdjson2::ondemand::document doc = parser.iterate(docdata);
     ondemand::object content = doc.get_object().find_field("contents");
     ondemand::array bids = content["bids"].get_array();
     std::cout << "bids:" << std::endl;
@@ -358,7 +358,7 @@ namespace object_tests {
   void broken_descend(ondemand::object node) {
     if(auto type = node.find_field_unordered("type"); type.error() == SUCCESS && type.get_string().value() == "child") {
       auto n = node.find_field_unordered("name");
-      if(n.error() == simdjson::SUCCESS) {
+      if(n.error() == simdjson2::SUCCESS) {
           std::cout << std::string_view(n) << std::endl;
       }
     } else {
@@ -373,7 +373,7 @@ namespace object_tests {
     ondemand::document file_tree = parser.iterate(json);
     try {
       broken_descend(file_tree);
-    } catch(simdjson::simdjson_error& e) {
+    } catch(simdjson2::simdjson2_error& e) {
       std::cout << "The document is valid JSON: " << json << std::endl;
       TEST_FAIL(e.error());
     }
@@ -388,7 +388,7 @@ namespace object_tests {
     ondemand::document file_tree = parser.iterate(json);
     try {
       broken_descend(file_tree);
-    } catch(simdjson::simdjson_error& e) {
+    } catch(simdjson2::simdjson2_error& e) {
       std::cout << "The document is valid JSON: " << json << std::endl;
       TEST_FAIL(e.error());
     }
@@ -400,7 +400,7 @@ namespace object_tests {
   void descend(ondemand::object node) {
     auto n = node.find_field_unordered("name");
     if(auto type = node.find_field_unordered("type"); type.error() == SUCCESS && type.get_string().value() == "child") {
-      if(n.error() == simdjson::SUCCESS) {
+      if(n.error() == simdjson2::SUCCESS) {
           std::cout << std::string_view(n) << std::endl;
       }
     } else {
@@ -415,7 +415,7 @@ namespace object_tests {
     ondemand::document file_tree = parser.iterate(json);
     try {
       descend(file_tree);
-    } catch(simdjson::simdjson_error& e) {
+    } catch(simdjson2::simdjson2_error& e) {
       std::cout << "The document is valid JSON: " << json << std::endl;
       TEST_FAIL(e.error());
     }
@@ -490,8 +490,8 @@ namespace object_tests {
       ASSERT_EQUAL( i*sizeof(uint64_t), sizeof(expected_value) );
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::object> object_result = doc_result.get_object();
+    SUBTEST("simdjson2_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::object> object_result = doc_result.get_object();
       size_t i = 0;
       for (auto field : object_result) {
         ASSERT_SUCCESS( field.error() );
@@ -666,14 +666,14 @@ namespace object_tests {
     SUBTEST("ondemand::object", test_ondemand_doc(json, [&](auto doc_result) {
       ondemand::object object;
       ASSERT_SUCCESS( doc_result.get(object) );
-      for (simdjson_unused auto field : object) {
+      for (simdjson2_unused auto field : object) {
         TEST_FAIL("Unexpected field");
       }
       return true;
     }));
-    SUBTEST("simdjson_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
-      simdjson_result<ondemand::object> object_result = doc_result.get_object();
-      for (simdjson_unused auto field : object_result) {
+    SUBTEST("simdjson2_result<ondemand::object>", test_ondemand_doc(json, [&](auto doc_result) {
+      simdjson2_result<ondemand::object> object_result = doc_result.get_object();
+      for (simdjson2_unused auto field : object_result) {
         TEST_FAIL("Unexpected field");
       }
       return true;
@@ -755,7 +755,7 @@ namespace object_tests {
       return true;
     }));
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
     SUBTEST("ondemand::issue_1480::object-iteration", test_ondemand_doc(json, [&](auto doc_result) {
       ondemand::object object;
       ASSERT_SUCCESS( doc_result.get(object) );
@@ -810,7 +810,7 @@ namespace object_tests {
     TEST_SUCCEED();
   }
 
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
 
   bool iterate_object_exception() {
     TEST_START();
@@ -835,7 +835,7 @@ namespace object_tests {
     auto json = R"({})"_padded;
 
     ASSERT_TRUE(test_ondemand_doc(json, [&](auto doc_result) {
-      for (simdjson_unused ondemand::field field : doc_result.get_object()) {
+      for (simdjson2_unused ondemand::field field : doc_result.get_object()) {
         TEST_FAIL("Unexpected field");
       }
       return true;
@@ -901,19 +901,19 @@ namespace object_tests {
     TEST_SUCCEED();
   }
 
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
 
-  bool empty(simdjson::ondemand::object obj) {
+  bool empty(simdjson2::ondemand::object obj) {
     bool is_empty;
     ASSERT_SUCCESS(obj.is_empty().get(is_empty));
     ASSERT_TRUE(is_empty);
     return true;
   }
-  bool value_to_object(simdjson::ondemand::value val) {
+  bool value_to_object(simdjson2::ondemand::value val) {
     ondemand::json_type t;
     ASSERT_SUCCESS(val.type().get(t));
     ASSERT_EQUAL(t, ondemand::json_type::object);
-    simdjson::ondemand::object obj;
+    simdjson2::ondemand::object obj;
     ASSERT_SUCCESS(val.get_object().get(obj));
     if(empty(obj) != true) { return false; }
     return true;
@@ -929,11 +929,11 @@ namespace object_tests {
     if(!value_to_object(val)) { return false; }
     TEST_SUCCEED();
   }
-#if SIMDJSON_EXCEPTIONS
-  bool value_to_object_except(simdjson::ondemand::value val) {
+#if SIMDJSON2_EXCEPTIONS
+  bool value_to_object_except(simdjson2::ondemand::value val) {
     ondemand::json_type t = val.type();
     ASSERT_EQUAL(t, ondemand::json_type::object);
-    if(empty(simdjson::ondemand::object(val)) != true) { return false; }
+    if(empty(simdjson2::ondemand::object(val)) != true) { return false; }
     return true;
   }
   bool empty_rewind_convoluted_with_exceptions() {
@@ -1031,10 +1031,10 @@ namespace object_tests {
     ondemand::parser parser;
     ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(json).get(doc));
-    simdjson::ondemand::array data;
+    simdjson2::ondemand::array data;
     ASSERT_SUCCESS(doc["result"]["data"].get_array().get(data));
     for (auto d : data) {
-      simdjson::ondemand::object obj;
+      simdjson2::ondemand::object obj;
       ASSERT_SUCCESS(d.get_object().get(obj));
       size_t count;
       ASSERT_SUCCESS(obj.count_fields().get(count));
@@ -1069,7 +1069,7 @@ namespace object_tests {
     ondemand::parser parser;
     ondemand::document doc;
     ASSERT_SUCCESS(parser.iterate(json).get(doc));
-    simdjson::ondemand::array data;
+    simdjson2::ondemand::array data;
     ASSERT_SUCCESS(doc["result"]["data"].get_array().get(data));
     for (auto d : data) {
       size_t count;
@@ -1192,7 +1192,7 @@ namespace object_tests {
     TEST_START();
     padded_string bad_jsons[4] = {R"( {"a":5 "b":3} )"_padded, R"( {"a":5, 3} )"_padded, R"( {"a":5, "b": } )"_padded, R"( {"a":5, "b":3 )"_padded};
     std::string names[4] = {"missing_comma", "missing_key", "missing_value", "missing_bracket"};
-    simdjson::error_code errors[4] = {TAPE_ERROR, TAPE_ERROR, TAPE_ERROR, INCOMPLETE_ARRAY_OR_OBJECT};
+    simdjson2::error_code errors[4] = {TAPE_ERROR, TAPE_ERROR, TAPE_ERROR, INCOMPLETE_ARRAY_OR_OBJECT};
     size_t count{0};
 
     for (auto name : names) {
@@ -1312,7 +1312,7 @@ namespace object_tests {
   bool run() {
     return issue1979() &&
            issue1977() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            issue1965() &&
 #endif
            issue1974a() &&
@@ -1329,7 +1329,7 @@ namespace object_tests {
            no_missing_keys() &&
            missing_keys() &&
            missing_keys_for_empty_top_level_object() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            issue1745_with_exceptions() &&
            issue1723_except() &&
            fixed_broken_issue_1521() &&
@@ -1341,10 +1341,10 @@ namespace object_tests {
            iterate_object_partial_children() &&
            issue_1480() &&
            empty_rewind_convoluted() &&
-#if SIMDJSON_EXCEPTIONS
+#if SIMDJSON2_EXCEPTIONS
            iterate_object_exception() &&
            empty_rewind_convoluted_with_exceptions() &&
-#endif // SIMDJSON_EXCEPTIONS
+#endif // SIMDJSON2_EXCEPTIONS
            iterate_empty_object_count() &&
            iterate_basic_object_count() &&
            iterate_complex_object_count() &&

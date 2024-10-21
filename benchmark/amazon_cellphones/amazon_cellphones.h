@@ -15,21 +15,21 @@ using namespace json_benchmark;
 struct brand {
     double cumulative_rating;
     uint64_t reviews_count;
-    simdjson_inline bool operator==(const brand &other) const {
+    simdjson2_inline bool operator==(const brand &other) const {
         return cumulative_rating == other.cumulative_rating &&
             reviews_count == other.reviews_count;
     }
-    simdjson_inline bool operator!=(const brand &other) const { return !(*this == other); }
+    simdjson2_inline bool operator!=(const brand &other) const { return !(*this == other); }
 };
 
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const brand &b) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const brand &b) {
   o << "cumulative_rating: " << b.cumulative_rating << std::endl;
   o << "reviews_count: " << b.reviews_count << std::endl;
   return o;
 }
 
 template<typename StringType>
-simdjson_unused static std::ostream &operator<<(std::ostream &o, const std::pair<const StringType, brand> &p) {
+simdjson2_unused static std::ostream &operator<<(std::ostream &o, const std::pair<const StringType, brand> &p) {
   o << "brand: " << p.first << std::endl;
 	o << p.second;
   return o;
@@ -64,10 +64,10 @@ struct runner : public file_runner<I> {
 };
 
 template<bool threaded>
-struct simdjson_dom;
+struct simdjson2_dom;
 
-template<typename I> simdjson_inline static void amazon_cellphones(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_dom<UNTHREADED>>>(state);
+template<typename I> simdjson2_inline static void amazon_cellphones(benchmark::State &state) {
+  run_json_benchmark<runner<I>, runner<simdjson2_dom<UNTHREADED>>>(state);
 }
 
 }   // namespace amazon_cellphones

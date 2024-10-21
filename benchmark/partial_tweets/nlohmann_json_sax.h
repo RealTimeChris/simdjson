@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_NLOHMANN_JSON
+#ifdef SIMDJSON2_COMPETITION_NLOHMANN_JSON
 
 #include "partial_tweets.h"
 
@@ -146,7 +146,7 @@ struct nlohmann_json_sax {
         bool parse_error(std::size_t position, const std::string& last_token, const json::exception& ex) override { return false; }
     }; // Handler
 
-    bool run(simdjson::padded_string &json, std::vector<tweet<std::string>> &result) {
+    bool run(simdjson2::padded_string &json, std::vector<tweet<std::string>> &result) {
         Handler handler(result);
         json::sax_parse(json.data(), &handler);
 
@@ -156,4 +156,4 @@ struct nlohmann_json_sax {
 BENCHMARK_TEMPLATE(partial_tweets, nlohmann_json_sax)->UseManualTime();
 } // namespace partial_tweets
 
-#endif // SIMDJSON_COMPETITION_NLOHMANN_JSON
+#endif // SIMDJSON2_COMPETITION_NLOHMANN_JSON

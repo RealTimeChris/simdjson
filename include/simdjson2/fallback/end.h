@@ -1,0 +1,5 @@
+#ifndef SIMDJSON2_CONDITIONAL_INCLUDE
+#include "simdjson2/fallback/base.h"
+#endif // SIMDJSON2_CONDITIONAL_INCLUDE
+
+#undef SIMDJSON2_IMPLEMENTATION

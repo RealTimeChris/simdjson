@@ -17,7 +17,7 @@ jobs:
       ! contains(toJSON(github.event.commits.*.message), '[skip github]')
     runs-on: ubuntu-latest
     env:
-      # fuzzers that change behaviour with SIMDJSON_FORCE_IMPLEMENTATION
+      # fuzzers that change behaviour with SIMDJSON2_FORCE_IMPLEMENTATION
       defaultimplfuzzers: atpointer dump dump_raw_tape element minify parser print_json
       # fuzzers that loop over the implementations themselves, or don't need to switch.
       implfuzzers: implementations minifyimpl ndjson ondemand padded utf8
@@ -90,7 +90,7 @@ jobs:
           # get input from everyone else (corpus cross pollination)
           others=$(find out -type d -not -name $fuzzer -not -name out -not -name cmin)
           for implementation in $implementations; do
-            export SIMDJSON_FORCE_IMPLEMENTATION=$implementation
+            export SIMDJSON2_FORCE_IMPLEMENTATION=$implementation
             build-sanitizers$OPTLEVEL/fuzz/fuzz_$fuzzer out/$fuzzer $others seedcorpus -max_total_time=20 $MAXLEN
           done
           echo now have $(ls out/$fuzzer |wc -l) files in corpus
@@ -133,7 +133,7 @@ jobs:
     - name: Store the corpus externally
       run: |
         gzip --keep corpus.tar
-        curl -F"filedata=@corpus.tar.gz" https://simdjson:${{ secrets.fuzzdatapassword }}@www.pauldreik.se/fuzzdata/index.php
+        curl -F"filedata=@corpus.tar.gz" https://simdjson2:${{ secrets.fuzzdatapassword }}@www.pauldreik.se/fuzzdata/index.php
 
     # This takes a subset of the minimized corpus and run it through valgrind. It is slow,
     # therefore take a "random" subset. The random selection is accomplished by sorting on filenames,

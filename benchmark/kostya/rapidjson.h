@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef SIMDJSON_COMPETITION_RAPIDJSON
+#ifdef SIMDJSON2_COMPETITION_RAPIDJSON
 
 #include "kostya.h"
 
@@ -13,7 +13,7 @@ struct rapidjson_base {
 
   Document doc;
 
-  simdjson_inline double get_double(Value &object, std::string_view key) {
+  simdjson2_inline double get_double(Value &object, std::string_view key) {
     auto field = object.FindMember(key.data());
     if (field == object.MemberEnd()) { throw "Missing double field"; }
     if (!field->value.IsNumber()) { throw "Field is not double"; }
@@ -34,29 +34,29 @@ struct rapidjson_base {
     return true;
   }
 };
-#if SIMDJSON_COMPETITION_ONDEMAND_APPROX
+#if SIMDJSON2_COMPETITION_ONDEMAND_APPROX
 struct rapidjson_approx : rapidjson_base {
-  bool run(simdjson::padded_string &json, std::vector<point> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<point> &result) {
     return rapidjson_base::run(doc.Parse<kParseValidateEncodingFlag>(json.data()), result);
   }
 };
 BENCHMARK_TEMPLATE(kostya, rapidjson_approx)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_APPROX
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_APPROX
 
 struct rapidjson : rapidjson_base {
-  bool run(simdjson::padded_string &json, std::vector<point> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<point> &result) {
     return rapidjson_base::run(doc.Parse<kParseValidateEncodingFlag | kParseFullPrecisionFlag>(json.data()), result);
   }
 };
 BENCHMARK_TEMPLATE(kostya, rapidjson)->UseManualTime();
-#if SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#if SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 struct rapidjson_insitu : rapidjson_base {
-  bool run(simdjson::padded_string &json, std::vector<point> &result) {
+  bool run(simdjson2::padded_string &json, std::vector<point> &result) {
     return rapidjson_base::run(doc.ParseInsitu<kParseValidateEncodingFlag|kParseInsituFlag>(json.data()), result);
   }
 };
 BENCHMARK_TEMPLATE(kostya, rapidjson_insitu)->UseManualTime();
-#endif // SIMDJSON_COMPETITION_ONDEMAND_INSITU
+#endif // SIMDJSON2_COMPETITION_ONDEMAND_INSITU
 } // namespace kostya
 
-#endif // SIMDJSON_COMPETITION_RAPIDJSON
+#endif // SIMDJSON2_COMPETITION_RAPIDJSON

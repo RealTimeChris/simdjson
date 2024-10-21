@@ -34,10 +34,10 @@ testfuzzer=testfuzzer.cpp
 /bin/echo -e "#include <cstddef>\n#include <cstdint>\nextern \"C\" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {return 0;}" >$testfuzzer
 if clang++$CLANGSUFFIX -o testfuzzer $testfuzzer -fsanitize=fuzzer && ./testfuzzer -runs=1 >/dev/null 2>&1 ; then
    echo "will use -fsanitize=fuzzer to link libFuzzer"
-   SIMDJSON_FUZZ_LDFLAGS="-fsanitize=fuzzer"
+   SIMDJSON2_FUZZ_LDFLAGS="-fsanitize=fuzzer"
 elif clang++$CLANGSUFFIX -o testfuzzer $testfuzzer -fsanitize=fuzzer-no-link -lFuzzer  && ./testfuzzer -runs=1 >/dev/null 2>&1 ; then
    echo "will use -lFuzzer to link libFuzzer"
-   SIMDJSON_FUZZ_LDFLAGS="-lFuzzer"
+   SIMDJSON2_FUZZ_LDFLAGS="-lFuzzer"
 else
   echo "could not link to the fuzzer with -fsanitize=fuzzer or -lFuzzer"
   exit 1
@@ -48,7 +48,7 @@ if [ -e $testfuzzer ] ; then rm $testfuzzer; fi
 
 # common options
 CXX_CLAGS_COMMON=-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-COMMON="-GNinja -DCMAKE_CXX_COMPILER=clang++$CLANGSUFFIX -DCMAKE_C_COMPILER=clang$CLANGSUFFIX -DSIMDJSON_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=ON -DSIMDJSON_ENABLE_FUZZING=On -DSIMDJSON_COMPETITION=OFF -DSIMDJSON_GOOGLE_BENCHMARKS=OFF -DSIMDJSON_DISABLE_DEPRECATED_API=On -DSIMDJSON_FUZZ_LDFLAGS=$SIMDJSON_FUZZ_LDFLAGS"
+COMMON="-GNinja -DCMAKE_CXX_COMPILER=clang++$CLANGSUFFIX -DCMAKE_C_COMPILER=clang$CLANGSUFFIX -DSIMDJSON2_DEVELOPER_MODE=ON -DBUILD_SHARED_LIBS=ON -DSIMDJSON2_ENABLE_FUZZING=On -DSIMDJSON2_COMPETITION=OFF -DSIMDJSON2_GOOGLE_BENCHMARKS=OFF -DSIMDJSON2_DISABLE_DEPRECATED_API=On -DSIMDJSON2_FUZZ_LDFLAGS=$SIMDJSON2_FUZZ_LDFLAGS"
 
 # A replay build, as plain as it gets. For use with valgrind/gdb.
 variant=replay
@@ -59,7 +59,7 @@ if [ ! -d build-$variant ] ; then
     cmake .. \
 	  $COMMON \
 	  -DCMAKE_BUILD_TYPE=Debug \
-	  -DSIMDJSON_FUZZ_LINKMAIN=On
+	  -DSIMDJSON2_FUZZ_LINKMAIN=On
 
     ninja all_fuzzers
     cd ..
@@ -90,7 +90,7 @@ variant=sanitizers-O3
 	      -DCMAKE_CXX_FLAGS="-O3 -fsanitize=fuzzer-no-link,address,undefined -fno-sanitize-recover=undefined $CXX_CLAGS_COMMON" \
 	      -DCMAKE_C_FLAGS="-O3 -fsanitize=fuzzer-no-link,address,undefined -fno-sanitize-recover=undefined" \
 	      -DCMAKE_BUILD_TYPE=Debug \
-	      -DSIMDJSON_FUZZ_LINKMAIN=Off
+	      -DSIMDJSON2_FUZZ_LINKMAIN=Off
 
 	ninja all_fuzzers
 	cd ..
@@ -107,7 +107,7 @@ variant=sanitizers-O0
 	      -DCMAKE_CXX_FLAGS="-O0 -fsanitize=fuzzer-no-link,address,undefined -fno-sanitize-recover=undefined $CXX_CLAGS_COMMON" \
 	      -DCMAKE_C_FLAGS="-O0 -fsanitize=fuzzer-no-link,address,undefined -fno-sanitize-recover=undefined" \
 	      -DCMAKE_BUILD_TYPE=Debug \
-	      -DSIMDJSON_FUZZ_LINKMAIN=Off
+	      -DSIMDJSON2_FUZZ_LINKMAIN=Off
 
 	ninja all_fuzzers
 	cd ..
@@ -126,7 +126,7 @@ variant=fast
 	      -DCMAKE_CXX_FLAGS="-fsanitize=fuzzer-no-link $CXX_CLAGS_COMMON" \
 	      -DCMAKE_C_FLAGS="-fsanitize=fuzzer-no-link" \
 	      -DCMAKE_BUILD_TYPE=Release \
-	      -DSIMDJSON_FUZZ_LINKMAIN=Off
+	      -DSIMDJSON2_FUZZ_LINKMAIN=Off
 
 	ninja all_fuzzers
 	cd ..
