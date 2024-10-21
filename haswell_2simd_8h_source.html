@@ -334,189 +334,190 @@ $(document).ready(function(){initNavTree('haswell_2simd_8h_source.html',''); ini
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="comment">// Splat constructor</span></div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    simdjson_inline simd8(uint8_t _value) : simd8(splat(_value)) {}</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="comment">// Array constructor</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    simdjson_inline simd8(<span class="keyword">const</span> uint8_t values[32]) : simd8(load(values)) {}</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <span class="comment">// Member-by-member initialization</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    simdjson_inline simd8(</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      uint8_t v0,  uint8_t v1,  uint8_t v2,  uint8_t v3,  uint8_t v4,  uint8_t v5,  uint8_t v6,  uint8_t v7,</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      uint8_t v8,  uint8_t v9,  uint8_t v10, uint8_t v11, uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15,</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      uint8_t v16, uint8_t v17, uint8_t v18, uint8_t v19, uint8_t v20, uint8_t v21, uint8_t v22, uint8_t v23,</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      uint8_t v24, uint8_t v25, uint8_t v26, uint8_t v27, uint8_t v28, uint8_t v29, uint8_t v30, uint8_t v31</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    ) : simd8(_mm256_setr_epi8(</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      v0, v1, v2, v3, v4, v5, v6, v7,</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      v8, v9, v10,v11,v12,v13,v14,v15,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      v16,v17,v18,v19,v20,v21,v22,v23,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      v24,v25,v26,v27,v28,v29,v30,v31</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    )) {}</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="comment">// Repeat 16 values as many times as necessary (usually for lookup tables)</span></div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    simdjson_inline <span class="keyword">static</span> simd8&lt;uint8_t&gt; repeat_16(</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;      uint8_t v0,  uint8_t v1,  uint8_t v2,  uint8_t v3,  uint8_t v4,  uint8_t v5,  uint8_t v6,  uint8_t v7,</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      uint8_t v8,  uint8_t v9,  uint8_t v10, uint8_t v11, uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    ) {</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;      <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        v0, v1, v2, v3, v4, v5, v6, v7,</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        v8, v9, v10,v11,v12,v13,v14,v15,</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        v0, v1, v2, v3, v4, v5, v6, v7,</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        v8, v9, v10,v11,v12,v13,v14,v15</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;      );</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="comment">// Saturated math</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; saturating_add(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_adds_epu8(*<span class="keyword">this</span>, other); }</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; saturating_sub(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_subs_epu8(*<span class="keyword">this</span>, other); }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="comment">// Order-specific operations</span></div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; max_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_max_epu8(*<span class="keyword">this</span>, other); }</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; min_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_min_epu8(other, *<span class="keyword">this</span>); }</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="comment">// Same as &gt;, but only guarantees true is nonzero (&lt; guarantees true = -1)</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; gt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> this-&gt;saturating_sub(other); }</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="comment">// Same as &lt;, but only guarantees true is nonzero (&lt; guarantees true = -1)</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; lt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> other.saturating_sub(*<span class="keyword">this</span>); }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&lt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> other.max_val(*<span class="keyword">this</span>) == other; }</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&gt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> other.min_val(*<span class="keyword">this</span>) == other; }</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&gt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> this-&gt;gt_bits(other).any_bits_set(); }</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&lt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> this-&gt;lt_bits(other).any_bits_set(); }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="comment">// Bit-specific operations</span></div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    simdjson_inline simd8&lt;bool&gt; bits_not_set()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> *<span class="keyword">this</span> == uint8_t(0); }</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    simdjson_inline simd8&lt;bool&gt; bits_not_set(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (*<span class="keyword">this</span> &amp; bits).bits_not_set(); }</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    simdjson_inline simd8&lt;bool&gt; any_bits_set()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ~this-&gt;bits_not_set(); }</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    simdjson_inline simd8&lt;bool&gt; any_bits_set(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ~this-&gt;bits_not_set(bits); }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> is_ascii()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_movemask_epi8(*<span class="keyword">this</span>) == 0; }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> bits_not_set_anywhere()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_testz_si256(*<span class="keyword">this</span>, *<span class="keyword">this</span>); }</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> any_bits_set_anywhere()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> !bits_not_set_anywhere(); }</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> bits_not_set_anywhere(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_testz_si256(*<span class="keyword">this</span>, bits); }</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> any_bits_set_anywhere(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> !bits_not_set_anywhere(bits); }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; shr()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(_mm256_srli_epi16(*<span class="keyword">this</span>, N)) &amp; uint8_t(0xFFu &gt;&gt; N); }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; shl()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(_mm256_slli_epi16(*<span class="keyword">this</span>, N)) &amp; uint8_t(0xFFu &lt;&lt; N); }</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="comment">// Get one of the bits and make a bitmask out of it.</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="comment">// e.g. value.get_bit&lt;7&gt;() gets the high bit</span></div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    simdjson_inline <span class="keywordtype">int</span> get_bit()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_movemask_epi8(_mm256_slli_epi16(*<span class="keyword">this</span>, 7-N)); }</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; set_lsb(<span class="keywordtype">bool</span> valueNew) <span class="keyword">const</span> noexcept {</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;      simd8&lt;uint8_t&gt; mask{0x01u, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>,</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                          <span class="charliteral">&#39;\0&#39;</span>,  <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>,</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    simdjson_inline simd8(<span class="keyword">const</span> uint8_t values[32])</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        : simd8(load(values)){}</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="comment">// Member-by-member initialization</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    simdjson_inline simd8(</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      uint8_t v0,  uint8_t v1,  uint8_t v2,  uint8_t v3,  uint8_t v4,  uint8_t v5,  uint8_t v6,  uint8_t v7,</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      uint8_t v8,  uint8_t v9,  uint8_t v10, uint8_t v11, uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15,</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      uint8_t v16, uint8_t v17, uint8_t v18, uint8_t v19, uint8_t v20, uint8_t v21, uint8_t v22, uint8_t v23,</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;      uint8_t v24, uint8_t v25, uint8_t v26, uint8_t v27, uint8_t v28, uint8_t v29, uint8_t v30, uint8_t v31</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    ) : simd8(_mm256_setr_epi8(</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      v0, v1, v2, v3, v4, v5, v6, v7,</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      v8, v9, v10,v11,v12,v13,v14,v15,</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      v16,v17,v18,v19,v20,v21,v22,v23,</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;      v24,v25,v26,v27,v28,v29,v30,v31</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    )) {}</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="comment">// Repeat 16 values as many times as necessary (usually for lookup tables)</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    simdjson_inline <span class="keyword">static</span> simd8&lt;uint8_t&gt; repeat_16(</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      uint8_t v0,  uint8_t v1,  uint8_t v2,  uint8_t v3,  uint8_t v4,  uint8_t v5,  uint8_t v6,  uint8_t v7,</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;      uint8_t v8,  uint8_t v9,  uint8_t v10, uint8_t v11, uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    ) {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        v0, v1, v2, v3, v4, v5, v6, v7,</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        v8, v9, v10,v11,v12,v13,v14,v15,</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        v0, v1, v2, v3, v4, v5, v6, v7,</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        v8, v9, v10,v11,v12,v13,v14,v15</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;      );</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="comment">// Saturated math</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; saturating_add(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_adds_epu8(*<span class="keyword">this</span>, other); }</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; saturating_sub(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_subs_epu8(*<span class="keyword">this</span>, other); }</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="comment">// Order-specific operations</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; max_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_max_epu8(*<span class="keyword">this</span>, other); }</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; min_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_min_epu8(other, *<span class="keyword">this</span>); }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="comment">// Same as &gt;, but only guarantees true is nonzero (&lt; guarantees true = -1)</span></div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; gt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> this-&gt;saturating_sub(other); }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="comment">// Same as &lt;, but only guarantees true is nonzero (&lt; guarantees true = -1)</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; lt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> other.saturating_sub(*<span class="keyword">this</span>); }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&lt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> other.max_val(*<span class="keyword">this</span>) == other; }</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&gt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> other.min_val(*<span class="keyword">this</span>) == other; }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&gt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> this-&gt;gt_bits(other).any_bits_set(); }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    simdjson_inline simd8&lt;bool&gt; operator&lt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> this-&gt;lt_bits(other).any_bits_set(); }</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="comment">// Bit-specific operations</span></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    simdjson_inline simd8&lt;bool&gt; bits_not_set()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> *<span class="keyword">this</span> == uint8_t(0); }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    simdjson_inline simd8&lt;bool&gt; bits_not_set(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (*<span class="keyword">this</span> &amp; bits).bits_not_set(); }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    simdjson_inline simd8&lt;bool&gt; any_bits_set()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ~this-&gt;bits_not_set(); }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    simdjson_inline simd8&lt;bool&gt; any_bits_set(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ~this-&gt;bits_not_set(bits); }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> is_ascii()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_movemask_epi8(*<span class="keyword">this</span>) == 0; }</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> bits_not_set_anywhere()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_testz_si256(*<span class="keyword">this</span>, *<span class="keyword">this</span>); }</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> any_bits_set_anywhere()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> !bits_not_set_anywhere(); }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> bits_not_set_anywhere(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_testz_si256(*<span class="keyword">this</span>, bits); }</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> any_bits_set_anywhere(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> !bits_not_set_anywhere(bits); }</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; shr()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(_mm256_srli_epi16(*<span class="keyword">this</span>, N)) &amp; uint8_t(0xFFu &gt;&gt; N); }</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; shl()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(_mm256_slli_epi16(*<span class="keyword">this</span>, N)) &amp; uint8_t(0xFFu &lt;&lt; N); }</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="comment">// Get one of the bits and make a bitmask out of it.</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="comment">// e.g. value.get_bit&lt;7&gt;() gets the high bit</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    simdjson_inline <span class="keywordtype">int</span> get_bit()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _mm256_movemask_epi8(_mm256_slli_epi16(*<span class="keyword">this</span>, 7-N)); }</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    simdjson_inline simd8&lt;uint8_t&gt; set_lsb(<span class="keywordtype">bool</span> valueNew) <span class="keyword">const</span> noexcept {</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;      simd8&lt;uint8_t&gt; mask{0x01u, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>,</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                          <span class="charliteral">&#39;\0&#39;</span>,  <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>,</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                          <span class="charliteral">&#39;\0&#39;</span>,  <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>};</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;      <span class="keywordflow">return</span> valueNew ? _mm256_or_si256(*<span class="keyword">this</span>, mask)</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                      : _mm256_andnot_si256(mask, *this);</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> get_msb() const noexcept {</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;      <span class="keyword">auto</span> result =</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;          _mm256_and_si256(*<span class="keyword">this</span>, _mm256_set_epi64x(0x8000000000000000ll,</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                                                    0x00ll, 0x00ll, 0x00ll));</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;      <span class="keywordflow">return</span> !_mm256_testz_si256(result, result);</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    }</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> test() noexcept {</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;      <span class="keywordflow">return</span> !_mm256_testz_si256(*<span class="keyword">this</span>, *<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    }</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    simdjson_inline <span class="keywordtype">int</span> to_bitmask()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;      <span class="keywordflow">return</span> _mm256_movemask_epi8(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    }</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    simdjson_inline <span class="keyword">static</span> simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    convert_to_mask(<span class="keyword">const</span> simd8&lt;uint8_t&gt; (&amp;values)[8]) {</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;      simd8&lt;uint8_t&gt; return_values{};</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;      return_values =</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 0);</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;      return_values =</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 1);</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;      return_values =</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 2);</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      return_values =</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 3);</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;      return_values =</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 4);</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;      return_values =</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 5);</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      return_values =</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 6);</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;      return_values =</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 7);</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      <span class="keywordflow">return</span> return_values;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    }</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  };</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  <span class="keyword">struct </span>simd8x64 {</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> NUM_CHUNKS = 64 / <span class="keyword">sizeof</span>(simd8&lt;T&gt;);</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    static_assert(NUM_CHUNKS == 2, <span class="stringliteral">&quot;Haswell kernel should use two registers per 64-byte block.&quot;</span>);</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keyword">const</span> simd8&lt;T&gt; chunks[NUM_CHUNKS];</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    simd8x64(<span class="keyword">const</span> simd8x64&lt;T&gt;&amp; o) = <span class="keyword">delete</span>; <span class="comment">// no copy allowed</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    simd8x64&lt;T&gt;&amp; operator=(<span class="keyword">const</span> simd8&lt;T&gt;&amp; other) = <span class="keyword">delete</span>; <span class="comment">// no assignment allowed</span></div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    simd8x64() = <span class="keyword">delete</span>; <span class="comment">// no default constructor allowed</span></div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    simdjson_inline simd8x64(<span class="keyword">const</span> simd8&lt;T&gt; chunk0, <span class="keyword">const</span> simd8&lt;T&gt; chunk1) : chunks{chunk0, chunk1} {}</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    simdjson_inline simd8x64(<span class="keyword">const</span> T ptr[64]) : chunks{simd8&lt;T&gt;::load(ptr), simd8&lt;T&gt;::load(ptr+32)} {}</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160; </div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    simdjson_inline uint64_t compress(uint64_t mask, T * output)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;      uint32_t mask1 = uint32_t(mask);</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;      uint32_t mask2 = uint32_t(mask &gt;&gt; 32);</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      this-&gt;chunks[0].compress(mask1, output);</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;      this-&gt;chunks[1].compress(mask2, output + 32 - count_ones(mask1));</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;      <span class="keywordflow">return</span> 64 - count_ones(mask);</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    simdjson_inline <span class="keywordtype">void</span> store(T ptr[64])<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;      this-&gt;chunks[0].store(ptr+<span class="keyword">sizeof</span>(simd8&lt;T&gt;)*0);</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;      this-&gt;chunks[1].store(ptr+<span class="keyword">sizeof</span>(simd8&lt;T&gt;)*1);</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    }</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160; </div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    simdjson_inline uint64_t to_bitmask()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;      uint64_t r_lo = uint32_t(this-&gt;chunks[0].to_bitmask());</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;      uint64_t r_hi =                       this-&gt;chunks[1].to_bitmask();</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;      <span class="keywordflow">return</span> r_lo | (r_hi &lt;&lt; 32);</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    }</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    simdjson_inline simd8&lt;T&gt; reduce_or()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;      <span class="keywordflow">return</span> this-&gt;chunks[0] | this-&gt;chunks[1];</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    }</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160; </div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    simdjson_inline simd8x64&lt;T&gt; bit_or(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;      <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;      <span class="keywordflow">return</span> simd8x64&lt;T&gt;(</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        this-&gt;chunks[0] | mask,</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        this-&gt;chunks[1] | mask</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;      );</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    }</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    simdjson_inline uint64_t eq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;      <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;      <span class="keywordflow">return</span>  simd8x64&lt;bool&gt;(</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;        this-&gt;chunks[0] == mask,</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        this-&gt;chunks[1] == mask</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;      ).to_bitmask();</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    }</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    simdjson_inline uint64_t eq(<span class="keyword">const</span> simd8x64&lt;uint8_t&gt; &amp;other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;      <span class="keywordflow">return</span>  simd8x64&lt;bool&gt;(</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;        this-&gt;chunks[0] == other.chunks[0],</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        this-&gt;chunks[1] == other.chunks[1]</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      ).to_bitmask();</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    }</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    simdjson_inline uint64_t lteq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;      <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;      <span class="keywordflow">return</span>  simd8x64&lt;bool&gt;(</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        this-&gt;chunks[0] &lt;= mask,</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        this-&gt;chunks[1] &lt;= mask</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;      ).to_bitmask();</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    }</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  }; <span class="comment">// struct simd8x64&lt;T&gt;</span></div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;} <span class="comment">// namespace simd</span></div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160; </div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;} <span class="comment">// unnamed namespace</span></div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;} <span class="comment">// namespace haswell</span></div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;} <span class="comment">// namespace simdjson</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_HASWELL_SIMD_H</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                          <span class="charliteral">&#39;\0&#39;</span>,  <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>,</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                          <span class="charliteral">&#39;\0&#39;</span>,  <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>, <span class="charliteral">&#39;\0&#39;</span>};</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;      <span class="keywordflow">return</span> valueNew ? _mm256_or_si256(*<span class="keyword">this</span>, mask)</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                      : _mm256_andnot_si256(mask, *this);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    }</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> get_msb() const noexcept {</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;      <span class="keyword">auto</span> result =</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;          _mm256_and_si256(*<span class="keyword">this</span>, _mm256_set_epi64x(0x8000000000000000ll,</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                                                    0x00ll, 0x00ll, 0x00ll));</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;      <span class="keywordflow">return</span> !_mm256_testz_si256(result, result);</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    }</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160; </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    simdjson_inline <span class="keywordtype">bool</span> test() noexcept {</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;      <span class="keywordflow">return</span> !_mm256_testz_si256(*<span class="keyword">this</span>, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    simdjson_inline <span class="keywordtype">int</span> to_bitmask()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;      <span class="keywordflow">return</span> _mm256_movemask_epi8(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    }</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    simdjson_inline <span class="keyword">static</span> simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    convert_to_mask(<span class="keyword">const</span> simd8&lt;uint8_t&gt; (&amp;values)[8]) {</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;      simd8&lt;uint8_t&gt; return_values{};</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;      return_values =</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 0);</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;      return_values =</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 1);</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      return_values =</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 2);</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;      return_values =</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 3);</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      return_values =</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 4);</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;      return_values =</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 5);</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      return_values =</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 6);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;      return_values =</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;          _mm256_insert_epi32(return_values, values[0].to_bitmask(), 7);</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;      <span class="keywordflow">return</span> return_values;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    }</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  };</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160; </div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;  <span class="keyword">struct </span>simd8x64 {</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> NUM_CHUNKS = 64 / <span class="keyword">sizeof</span>(simd8&lt;T&gt;);</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    static_assert(NUM_CHUNKS == 2, <span class="stringliteral">&quot;Haswell kernel should use two registers per 64-byte block.&quot;</span>);</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="keyword">const</span> simd8&lt;T&gt; chunks[NUM_CHUNKS];</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    simd8x64(<span class="keyword">const</span> simd8x64&lt;T&gt;&amp; o) = <span class="keyword">delete</span>; <span class="comment">// no copy allowed</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    simd8x64&lt;T&gt;&amp; operator=(<span class="keyword">const</span> simd8&lt;T&gt;&amp; other) = <span class="keyword">delete</span>; <span class="comment">// no assignment allowed</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    simd8x64() = <span class="keyword">delete</span>; <span class="comment">// no default constructor allowed</span></div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    simdjson_inline simd8x64(<span class="keyword">const</span> simd8&lt;T&gt; chunk0, <span class="keyword">const</span> simd8&lt;T&gt; chunk1) : chunks{chunk0, chunk1} {}</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    simdjson_inline simd8x64(<span class="keyword">const</span> T ptr[64]) : chunks{simd8&lt;T&gt;::load(ptr), simd8&lt;T&gt;::load(ptr+32)} {}</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160; </div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    simdjson_inline uint64_t compress(uint64_t mask, T * output)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;      uint32_t mask1 = uint32_t(mask);</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      uint32_t mask2 = uint32_t(mask &gt;&gt; 32);</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;      this-&gt;chunks[0].compress(mask1, output);</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;      this-&gt;chunks[1].compress(mask2, output + 32 - count_ones(mask1));</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;      <span class="keywordflow">return</span> 64 - count_ones(mask);</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    }</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160; </div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    simdjson_inline <span class="keywordtype">void</span> store(T ptr[64])<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;      this-&gt;chunks[0].store(ptr+<span class="keyword">sizeof</span>(simd8&lt;T&gt;)*0);</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;      this-&gt;chunks[1].store(ptr+<span class="keyword">sizeof</span>(simd8&lt;T&gt;)*1);</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    }</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    simdjson_inline uint64_t to_bitmask()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;      uint64_t r_lo = uint32_t(this-&gt;chunks[0].to_bitmask());</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;      uint64_t r_hi =                       this-&gt;chunks[1].to_bitmask();</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;      <span class="keywordflow">return</span> r_lo | (r_hi &lt;&lt; 32);</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    }</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    simdjson_inline simd8&lt;T&gt; reduce_or()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;      <span class="keywordflow">return</span> this-&gt;chunks[0] | this-&gt;chunks[1];</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    }</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160; </div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    simdjson_inline simd8x64&lt;T&gt; bit_or(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;      <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;      <span class="keywordflow">return</span> simd8x64&lt;T&gt;(</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        this-&gt;chunks[0] | mask,</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        this-&gt;chunks[1] | mask</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;      );</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    }</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    simdjson_inline uint64_t eq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;      <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;      <span class="keywordflow">return</span>  simd8x64&lt;bool&gt;(</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        this-&gt;chunks[0] == mask,</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        this-&gt;chunks[1] == mask</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;      ).to_bitmask();</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    }</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    simdjson_inline uint64_t eq(<span class="keyword">const</span> simd8x64&lt;uint8_t&gt; &amp;other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;      <span class="keywordflow">return</span>  simd8x64&lt;bool&gt;(</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        this-&gt;chunks[0] == other.chunks[0],</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        this-&gt;chunks[1] == other.chunks[1]</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;      ).to_bitmask();</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    }</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    simdjson_inline uint64_t lteq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;      <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;      <span class="keywordflow">return</span>  simd8x64&lt;bool&gt;(</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        this-&gt;chunks[0] &lt;= mask,</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        this-&gt;chunks[1] &lt;= mask</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;      ).to_bitmask();</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    }</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;  }; <span class="comment">// struct simd8x64&lt;T&gt;</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160; </div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;} <span class="comment">// namespace simd</span></div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;} <span class="comment">// unnamed namespace</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;} <span class="comment">// namespace haswell</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;} <span class="comment">// namespace simdjson</span></div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_HASWELL_SIMD_H</span></div>
 <div class="ttc" id="anamespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_html_aab771b17058b0c93bdd0a8679c2c4d84"><div class="ttname"><a href="namespacesimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#aab771b17058b0c93bdd0a8679c2c4d84">simdjson::SIMDJSON_IMPLEMENTATION::ondemand::operator==</a></div><div class="ttdeci">simdjson_unused simdjson_inline bool operator==(const raw_json_string &amp;a, std::string_view c) noexcept</div><div class="ttdoc">Comparisons between raw_json_string and std::string_view instances are potentially unsafe: the user i...</div><div class="ttdef"><b>Definition:</b> <a href="raw__json__string-inl_8h_source.html#l00139">raw_json_string-inl.h:139</a></div></div>
 <div class="ttc" id="anamespacesimdjson_html"><div class="ttname"><a href="namespacesimdjson.html">simdjson</a></div><div class="ttdoc">The top level simdjson namespace, containing everything the library provides.</div><div class="ttdef"><b>Definition:</b> <a href="arm64_2base_8h_source.html#l00008">base.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
