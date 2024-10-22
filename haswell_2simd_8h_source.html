@@ -479,7 +479,7 @@ $(document).ready(function(){initNavTree('haswell_2simd_8h_source.html',''); ini
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;  }</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160; </div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;  simdjson2_really_inline uint64_t eq(<span class="keyword">const</span> uint8_t m)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keywordflow">return</span> (*<span class="keyword">this</span> == simd8&lt;uint8_t&gt;::splat(m)).to_bitmask();</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keywordflow">return</span> (*<span class="keyword">this</span> == simd8&lt;uint8_t&gt;{simd8&lt;uint8_t&gt;::splat(m)}).to_bitmask();</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  }</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  simdjson2_really_inline <span class="keywordtype">void</span> set_lsb(<span class="keywordtype">bool</span> valueNew) noexcept {</div>
