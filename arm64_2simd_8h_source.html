@@ -738,7 +738,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
 <div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opClMul(simd_int_t01 &amp;&amp;value,</div>
 <div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                                               int64_t &amp;prevInString) noexcept {</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;  <span class="keyword">alignas</span>(16) uint64_t values[sixtyFourBitsPerStep];</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;  <span class="keyword">alignas</span>(16) uint64_t values[2];</div>
 <div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;  value.store(values);</div>
 <div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;  values[0] = prefix_xor(values[0]) ^ prevInString;</div>
 <div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;  prevInString = <span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(values[0]) &gt;&gt; 63;</div>
@@ -750,73 +750,73 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01, <span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t02&gt;</div>
 <div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opSub(simd_int_t01 &amp;&amp;value,</div>
 <div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                                             simd_int_t02 &amp;&amp;other) noexcept {</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;  <span class="keyword">alignas</span>(16) uint64_t values[sixtyFourBitsPerStep * 2];</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;  <span class="keyword">alignas</span>(16) uint64_t values[2 * 2];</div>
 <div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;  store(value, values);</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;  store(other, values + sixtyFourBitsPerStep);</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;  store(other, values + 2);</div>
 <div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;  <span class="keywordtype">bool</span> carryInNew{};</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;  values[sixtyFourBitsPerStep] = values[0] - values[sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;  values[2] = values[0] - values[2] -</div>
 <div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                                 <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;  carryInNew = values[sixtyFourBitsPerStep] &gt; values[0];</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;  values[1 + sixtyFourBitsPerStep] = values[1] -</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                                     values[1 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;  carryInNew = values[2] &gt; values[0];</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;  values[1 + 2] = values[1] -</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                                     values[1 + 2] -</div>
 <div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                                     <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;  carryInNew = values[1 + sixtyFourBitsPerStep] &gt; values[1];</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;  <span class="keywordflow">if</span> constexpr (sixtyFourBitsPerStep &gt; 2) {</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;    values[2 + sixtyFourBitsPerStep] = values[2] -</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                                       values[2 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;  carryInNew = values[1 + 2] &gt; values[1];</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;  <span class="keywordflow">if</span> constexpr (2 &gt; 2) {</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;    values[2 + 2] = values[2] -</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                                       values[2 + 2] -</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    carryInNew = values[2 + sixtyFourBitsPerStep] &gt; values[2];</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    values[3 + sixtyFourBitsPerStep] = values[3] -</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;                                       values[3 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    carryInNew = values[2 + 2] &gt; values[2];</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    values[3 + 2] = values[3] -</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;                                       values[3 + 2] -</div>
 <div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    carryInNew = values[3 + sixtyFourBitsPerStep] &gt; values[3];</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    carryInNew = values[3 + 2] &gt; values[3];</div>
 <div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;  }</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;  <span class="keywordflow">if</span> constexpr (sixtyFourBitsPerStep &gt; 4) {</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;    values[4 + sixtyFourBitsPerStep] = values[4] -</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;                                       values[4 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;  <span class="keywordflow">if</span> constexpr (2 &gt; 4) {</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;    values[4 + 2] = values[4] -</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;                                       values[4 + 2] -</div>
 <div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    carryInNew = values[4 + sixtyFourBitsPerStep] &gt; values[4];</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    values[5 + sixtyFourBitsPerStep] = values[5] -</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;                                       values[5 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    carryInNew = values[4 + 2] &gt; values[4];</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    values[5 + 2] = values[5] -</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;                                       values[5 + 2] -</div>
 <div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    carryInNew = values[5 + sixtyFourBitsPerStep] &gt; values[5];</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    values[6 + sixtyFourBitsPerStep] = values[6] -</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;                                       values[6 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    carryInNew = values[5 + 2] &gt; values[5];</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    values[6 + 2] = values[6] -</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;                                       values[6 + 2] -</div>
 <div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    carryInNew = values[6 + sixtyFourBitsPerStep] &gt; values[6];</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    values[7 + sixtyFourBitsPerStep] = values[7] -</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                                       values[7 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    carryInNew = values[6 + 2] &gt; values[6];</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    values[7 + 2] = values[7] -</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                                       values[7 + 2] -</div>
 <div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    carryInNew = values[7 + sixtyFourBitsPerStep] &gt; values[7];</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    carryInNew = values[7 + 2] &gt; values[7];</div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;  }</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;  <span class="keywordflow">return</span> gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + sixtyFourBitsPerStep);</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;  <span class="keywordflow">return</span> gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + 2);</div>
 <div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;}</div>
 <div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160; </div>
 <div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;<span class="preprocessor">#define opShl(amount, value, result)                                           \</span></div>
 <div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;<span class="preprocessor">  {                                                                            \</span></div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;<span class="preprocessor">    alignas(16) uint64_t values[sixtyFourBitsPerStep * 2];                     \</span></div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;<span class="preprocessor">    alignas(16) uint64_t values[2 * 2];                     \</span></div>
 <div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;<span class="preprocessor">    store(value, values);                                                      \</span></div>
 <div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;<span class="preprocessor">    static constexpr uint64_t shiftAmount{64 - amount};                        \</span></div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;<span class="preprocessor">    values[sixtyFourBitsPerStep] = values[0] &lt;&lt; amount;                        \</span></div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;<span class="preprocessor">    values[1 + sixtyFourBitsPerStep] =                                         \</span></div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;<span class="preprocessor">    values[2] = values[0] &lt;&lt; amount;                        \</span></div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;<span class="preprocessor">    values[1 + 2] =                                         \</span></div>
 <div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;<span class="preprocessor">        values[1] &lt;&lt; amount | values[1 - 1] &gt;&gt; (shiftAmount);                  \</span></div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;<span class="preprocessor">    if constexpr (sixtyFourBitsPerStep &gt; 2) {                                  \</span></div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;<span class="preprocessor">      values[2 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;<span class="preprocessor">    if constexpr (2 &gt; 2) {                                  \</span></div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;<span class="preprocessor">      values[2 + 2] =                                       \</span></div>
 <div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;<span class="preprocessor">          values[2] &lt;&lt; amount | values[2 - 1] &gt;&gt; (shiftAmount);                \</span></div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="preprocessor">      values[3 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="preprocessor">      values[3 + 2] =                                       \</span></div>
 <div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="preprocessor">          values[3] &lt;&lt; amount | values[3 - 1] &gt;&gt; (shiftAmount);                \</span></div>
 <div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;<span class="preprocessor">    }                                                                          \</span></div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="preprocessor">    if constexpr (sixtyFourBitsPerStep &gt; 4) {                                  \</span></div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="preprocessor">      values[4 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="preprocessor">    if constexpr (2 &gt; 4) {                                  \</span></div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="preprocessor">      values[4 + 2] =                                       \</span></div>
 <div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="preprocessor">          values[4] &lt;&lt; amount | values[4 - 1] &gt;&gt; (shiftAmount);                \</span></div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="preprocessor">      values[5 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="preprocessor">      values[5 + 2] =                                       \</span></div>
 <div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;<span class="preprocessor">          values[5] &lt;&lt; amount | values[5 - 1] &gt;&gt; (shiftAmount);                \</span></div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;<span class="preprocessor">      values[6 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;<span class="preprocessor">      values[6 + 2] =                                       \</span></div>
 <div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;<span class="preprocessor">          values[6] &lt;&lt; amount | values[6 - 1] &gt;&gt; (shiftAmount);                \</span></div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;<span class="preprocessor">      values[7 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;<span class="preprocessor">      values[7 + 2] =                                       \</span></div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;<span class="preprocessor">          values[7] &lt;&lt; amount | values[7 - 1] &gt;&gt; (shiftAmount);                \</span></div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">    }                                                                          \</span></div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="preprocessor">    result = gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + sixtyFourBitsPerStep);      \</span></div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="preprocessor">    result = gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + 2);      \</span></div>
 <div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;<span class="preprocessor">  }</span></div>
 <div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
 <div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
@@ -961,7 +961,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;<span class="keyword">template</span> &lt;auto c&gt;</div>
 <div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
 <div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;collectValues(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;  <span class="keyword">alignas</span>(16) uint16_t valuesNew[stridesPerStep];</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;  <span class="keyword">alignas</span>(16) uint16_t valuesNew[8];</div>
 <div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;  simd8&lt;uint8_t&gt; simdValue{gatherValue&lt;simd8&lt;uint8_t&gt;&gt;(c)};</div>
 <div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;  valuesNew[0] = opCmpEq(simdValue, values[0]);</div>
 <div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;  valuesNew[1] = opCmpEq(simdValue, values[1]);</div>
