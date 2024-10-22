@@ -22,120 +22,12 @@ namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 namespace stage1 {
 
-class bit_indexer {
-public:
-  uint32_t *tail;
-
-  simdjson2_really_inline bit_indexer(uint32_t *index_buf) : tail(index_buf) {}
-
-#if SIMDJSON2_PREFER_REVERSE_BITS
-  /**
-   * ARM lacks a fast trailing zero instruction, but it has a fast
-   * bit reversal instruction and a fast leading zero instruction.
-   * Thus it may be profitable to reverse the bits (once) and then
-   * to rely on a sequence of instructions that call the leading
-   * zero instruction.
-   *
-   * Performance notes:
-   * The chosen routine is not optimal in terms of data dependency
-   * since zero_leading_bit might require two instructions. However,
-   * it tends to minimize the total number of instructions which is
-   * beneficial.
-   */
-  simdjson2_really_inline void write_index(uint32_t idx, uint64_t &rev_bits,
-                                           int i) {
-    int lz = leading_zeroes(rev_bits);
-    this->tail[i] = static_cast<uint32_t>(idx) + lz;
-    rev_bits = zero_leading_bit(rev_bits, lz);
-  }
-#else
-  /**
-   * Under recent x64 systems, we often have both a fast trailing zero
-   * instruction and a fast 'clear-lower-bit' instruction so the following
-   * algorithm can be competitive.
-   */
-
-  simdjson2_really_inline void write_index(uint32_t idx, uint64_t &bits,
-                                           int i) {
-    this->tail[i] = idx + trailing_zeroes(bits);
-    bits = clear_lowest_bit(bits);
-  }
-#endif // SIMDJSON2_PREFER_REVERSE_BITS
-
-  template <int START, int N>
-  simdjson2_really_inline int write_indexes(uint32_t idx, uint64_t &bits) {
-    write_index(idx, bits, START);
-    SIMDJSON2_IF_CONSTEXPR(N > 1) {
-      write_indexes<(N - 1 > 0 ? START + 1 : START), (N - 1 >= 0 ? N - 1 : 1)>(
-          idx, bits);
-    }
-    return START + N;
-  }
-
-  template <int START, int END, int STEP>
-  simdjson2_really_inline int write_indexes_stepped(uint32_t idx,
-                                                    uint64_t &bits, int cnt) {
-    write_indexes<START, STEP>(idx, bits);
-    SIMDJSON2_IF_CONSTEXPR((START + STEP) < END) {
-      if (simdjson2_unlikely((START + STEP) < cnt)) {
-        write_indexes_stepped<(START + STEP < END ? START + STEP : END), END,
-                              STEP>(idx, bits, cnt);
-      }
-    }
-    return ((END - START) % STEP) == 0
-               ? END
-               : (END - START) - ((END - START) % STEP) + STEP;
-  }
-
-  // flatten out values in 'bits' assuming that they are are to have values of
-  // idx plus their position in the bitvector, and store these indexes at
-  // base_ptr[base] incrementing base as we go
-  // will potentially store extra values beyond end of valid bits, so base_ptr
-  // needs to be large enough to handle this
-  //
-  // If the kernel sets
-  // SIMDJSON2_GENERIC_JSON_STRUCTURAL_INDEXER_CUSTOM_BIT_INDEXER, then it will
-  // provide its own version of the code.
-#ifdef SIMDJSON2_GENERIC_JSON_STRUCTURAL_INDEXER_CUSTOM_BIT_INDEXER
-  simdjson2_really_inline void write(uint32_t idx, uint64_t bits);
-#else
-  simdjson2_really_inline void write(uint32_t idx, uint64_t bits) {
-    // In some instances, the next branch is expensive because it is
-    // mispredicted. Unfortunately, in other cases, it helps tremendously.
-    if (bits == 0)
-      return;
-
-    int cnt = static_cast<int>(count_ones(bits));
-
-#if SIMDJSON2_PREFER_REVERSE_BITS
-    bits = reverse_bits(bits);
-#endif
-#ifdef SIMDJSON2_STRUCTURAL_INDEXER_STEP
-    static constexpr const int STEP = SIMDJSON2_STRUCTURAL_INDEXER_STEP;
-#else
-    static constexpr const int STEP = 4;
-#endif
-    static constexpr const int STEP_UNTIL = 24;
-
-    write_indexes_stepped<0, STEP_UNTIL, STEP>(idx, bits, cnt);
-    SIMDJSON2_IF_CONSTEXPR(STEP_UNTIL < 64) {
-      if (simdjson2_unlikely(STEP_UNTIL < cnt)) {
-        for (int i = STEP_UNTIL; i < cnt; i++) {
-          write_index(idx, bits, i);
-        }
-      }
-    }
-
-    this->tail += cnt;
-  }
-#endif // SIMDJSON2_GENERIC_JSON_STRUCTURAL_INDEXER_CUSTOM_BIT_INDEXER
-};
-
+template<size_t step_size>
 class string_block_reader {
 public:
   simdjson2_really_inline void reset(const uint8_t *stringViewNew,
                                      uint64_t lengthNew) noexcept {
-    lengthMinusStep = lengthNew < 256 ? 0 : lengthNew - 256;
+    lengthMinusStep = lengthNew < step_size ? 0 : lengthNew - step_size;
     inString = stringViewNew;
     length = lengthNew;
     index = 0;
@@ -145,14 +37,14 @@ public:
     if ((length == index)) {
       return 0;
     }
-    std::fill_n(dest, 256, static_cast<char>(0x20));
+    std::fill_n(dest, step_size, static_cast<char>(0x20));
     std::copy_n(inString + index, length - index, dest);
     return length - index;
   }
 
   simdjson2_really_inline const uint8_t *fullBlock() noexcept {
     const uint8_t *newPtr = inString + index;
-    index += 256;
+    index += step_size;
     return newPtr;
   }
 
@@ -203,8 +95,8 @@ public:
                                            dom_parser_implementation &parserNew,
                                            stage1_mode partial) noexcept {
     parser = &parserNew;
-    currentParseBuffer =
-        std::basic_string_view{static_cast<const uint8_t *>(buf), len};
+    currentParseBuffer = static_cast<const uint8_t *>(buf);
+    currentBufferLength = len;
     resetImpl();
     return error_code::SUCCESS;
   }
@@ -212,19 +104,21 @@ public:
   simdjson2_really_inline ~json_structural_indexer() noexcept {}
 
 protected:
+  const uint8_t* currentParseBuffer{};
+  size_t currentBufferLength{};
+  string_block_reader<sizeof(simd8<uint8_t>) == 32 ? 256 : 128>
+      stringBlockReader{};
   dom_parser_implementation *parser{};
-  alignas(32) size_type newBits[4]{};
-  std::basic_string_view<uint8_t> currentParseBuffer{};
-  alignas(32) uint8_t block[256]{};
-  string_block_reader stringBlockReader{};
+  alignas(sizeof(simd8<uint8_t>))
+      size_type newBits[sizeof(simd8<uint8_t>) == 32 ? 4 : 2]{};
+  alignas(sizeof(simd8<uint8_t>)) uint8_t block[256]{};
   size_type stringIndex{};
   int64_t prevInString{};
   bool overflow{};
 
   template <bool minified = false>
   simdjson2_really_inline void resetImpl() noexcept {
-    stringBlockReader.reset(currentParseBuffer.data(),
-                            currentParseBuffer.size());
+    stringBlockReader.reset(currentParseBuffer, currentBufferLength);
     overflow = false;
     prevInString = 0;
     stringIndex = 0;
@@ -295,31 +189,7 @@ protected:
     return newBits;
   }
 
-  template <bool collectAligned>
-  simdjson2_really_inline void
-  collectStringValues(const uint8_t *values,
-                      simd8<uint8_t> (&newPtr)[8]) noexcept {
-    if constexpr (collectAligned) {
-      newPtr[0] = simd8<uint8_t>::load(values + (32 * 0));
-      newPtr[1] = simd8<uint8_t>::load(values + (32 * 1));
-      newPtr[2] = simd8<uint8_t>::load(values + (32 * 2));
-      newPtr[3] = simd8<uint8_t>::load(values + (32 * 3));
-      newPtr[4] = simd8<uint8_t>::load(values + (32 * 4));
-      newPtr[5] = simd8<uint8_t>::load(values + (32 * 5));
-      newPtr[6] = simd8<uint8_t>::load(values + (32 * 6));
-      newPtr[7] = simd8<uint8_t>::load(values + (32 * 7));
-    } else {
-      newPtr[0] = simd8<uint8_t>::load(values + (32 * 0));
-      newPtr[1] = simd8<uint8_t>::load(values + (32 * 1));
-      newPtr[2] = simd8<uint8_t>::load(values + (32 * 2));
-      newPtr[3] = simd8<uint8_t>::load(values + (32 * 3));
-      newPtr[4] = simd8<uint8_t>::load(values + (32 * 4));
-      newPtr[5] = simd8<uint8_t>::load(values + (32 * 5));
-      newPtr[6] = simd8<uint8_t>::load(values + (32 * 6));
-      newPtr[7] = simd8<uint8_t>::load(values + (32 * 7));
-    }
-    // prefetchStringValues(values + 256);
-  }
+ 
 
   template <bool collectAligned, bool minified>
   simdjson2_really_inline simd_int_t_holder
@@ -338,12 +208,16 @@ protected:
     collectStructurals<minified>(escaped, nextIsEscaped, rawStructurals);
     rawStructurals.op.store(newBits);
     addTapeValues();
-    stringIndex += 256;
+    if constexpr (sizeof(simd8<uint8_t>) == 16) {
+      stringIndex += 128;
+    } else {
+      stringIndex += 256;
+    }
   }
 
   template <size_type index = 0>
   simdjson2_really_inline void addTapeValues() noexcept {
-    if constexpr (index < 4) {
+    if constexpr (index < (sizeof(simd8<uint8_t>) == 32 ? 4 : 2)) {
       if ((!newBits[index])) {
         return addTapeValues<index + 1>();
       }
@@ -366,13 +240,13 @@ protected:
         rawStructurals.backslashes.bit_andnot(nextIsEscaped);
     simd8<uint8_t> maybeEscaped;
     opShl(1, potentialEscape, maybeEscaped);
-    simd8<uint8_t> maybeEscapedAndOddBits = (maybeEscaped | oddBitsVal);
+    simd8<uint8_t> maybeEscapedAndOddBits = opOr(maybeEscaped, oddBitsVal);
     simd8<uint8_t> evenSeriesCodesAndOddBits =
         opSub(maybeEscapedAndOddBits, potentialEscape);
     simd8<uint8_t> escapeAndTerminalCode =
         (evenSeriesCodesAndOddBits ^ oddBitsVal);
-    escaped =
-        escapeAndTerminalCode ^ (rawStructurals.backslashes | nextIsEscaped);
+    escaped = opXor(escapeAndTerminalCode,
+                    opOr(rawStructurals.backslashes, nextIsEscaped));
     nextIsEscaped.set_lsb(
         (escapeAndTerminalCode & rawStructurals.backslashes).get_msb());
   }
@@ -416,16 +290,17 @@ protected:
     collectEscapedCharacters(escaped, nextIsEscaped, rawStructurals);
     rawStructurals.quotes = rawStructurals.quotes.bit_andnot(escaped);
     simd8<uint8_t> inString = opClMul(rawStructurals.quotes, prevInString);
-    simd8<uint8_t> stringTail = inString ^ rawStructurals.quotes;
-    simd8<uint8_t> scalar = ~(rawStructurals.op | rawStructurals.whitespace);
+    simd8<uint8_t> stringTail = opXor(inString, rawStructurals.quotes);
+    simd8<uint8_t> scalar =
+        opNot(opOr(rawStructurals.op, rawStructurals.whitespace));
     simd8<uint8_t> nonQuoteScalar = scalar.bit_andnot(rawStructurals.quotes);
     simd8<uint8_t> followsNonQuoteScalar = opFollows(nonQuoteScalar, overflow);
     simd8<uint8_t> potentialScalarStart =
         scalar.bit_andnot(followsNonQuoteScalar);
     simd8<uint8_t> porentialStructuralStart =
-        rawStructurals.op | potentialScalarStart;
+        opOr(rawStructurals.op, potentialScalarStart);
     rawStructurals.op = porentialStructuralStart.bit_andnot(stringTail);
-  }
+    }
 };
 
 } // namespace stage1

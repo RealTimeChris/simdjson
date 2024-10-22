@@ -37,28 +37,35 @@ namespace {
 
 using namespace simd;
 
-simdjson2_inline json_character_block json_character_block::classify(const simd::simd8x64<uint8_t>& in) {
+simdjson2_really_inline json_character_block
+json_character_block::classify(const simd::simd8<uint8_t> (&in)[8]) {
+  /*
   // Functional programming causes trouble with Visual Studio.
   // Keeping this version in comments since it is much nicer:
   // auto v = in.map<uint8_t>([&](simd8<uint8_t> chunk) {
   //  auto nib_lo = chunk & 0xf;
   //  auto nib_hi = chunk.shr<4>();
-  //  auto shuf_lo = nib_lo.lookup_16<uint8_t>(16, 0, 0, 0, 0, 0, 0, 0, 0, 8, 12, 1, 2, 9, 0, 0);
-  //  auto shuf_hi = nib_hi.lookup_16<uint8_t>(8, 0, 18, 4, 0, 1, 0, 1, 0, 0, 0, 3, 2, 1, 0, 0);
+  //  auto shuf_lo = nib_lo.lookup_16<uint8_t>(16, 0, 0, 0, 0, 0, 0, 0, 0, 8,
+  12, 1, 2, 9, 0, 0);
+  //  auto shuf_hi = nib_hi.lookup_16<uint8_t>(8, 0, 18, 4, 0, 1, 0, 1, 0, 0, 0,
+  3, 2, 1, 0, 0);
   //  return shuf_lo & shuf_hi;
   // });
   const simd8<uint8_t> table1(16, 0, 0, 0, 0, 0, 0, 0, 0, 8, 12, 1, 2, 9, 0, 0);
   const simd8<uint8_t> table2(8, 0, 18, 4, 0, 1, 0, 1, 0, 0, 0, 3, 2, 1, 0, 0);
 
   simd8x64<uint8_t> v(
-     (in.chunks[0] & 0xf).lookup_16(table1) & (in.chunks[0].shr<4>()).lookup_16(table2),
-     (in.chunks[1] & 0xf).lookup_16(table1) & (in.chunks[1].shr<4>()).lookup_16(table2),
-     (in.chunks[2] & 0xf).lookup_16(table1) & (in.chunks[2].shr<4>()).lookup_16(table2),
-     (in.chunks[3] & 0xf).lookup_16(table1) & (in.chunks[3].shr<4>()).lookup_16(table2)
+     (in.chunks[0] & 0xf).lookup_16(table1) &
+  (in.chunks[0].shr<4>()).lookup_16(table2), (in.chunks[1] &
+  0xf).lookup_16(table1) & (in.chunks[1].shr<4>()).lookup_16(table2),
+     (in.chunks[2] & 0xf).lookup_16(table1) &
+  (in.chunks[2].shr<4>()).lookup_16(table2), (in.chunks[3] &
+  0xf).lookup_16(table1) & (in.chunks[3].shr<4>()).lookup_16(table2)
   );
 
 
-  // We compute whitespace and op separately. If the code later only use one or the
+  // We compute whitespace and op separately. If the code later only use one or
+  the
   // other, given the fact that all functions are aggressively inlined, we can
   // hope that useless computations will be omitted. This is namely case when
   // minifying (we only need whitespace). *However* if we only need spaces,
@@ -87,16 +94,16 @@ simdjson2_inline json_character_block json_character_block::classify(const simd:
         v.chunks[2].any_bits_set(0x18),
         v.chunks[3].any_bits_set(0x18)
   ).to_bitmask();
-
-  return { whitespace, op };
+  */
+  return {};
 }
 
-simdjson2_inline bool is_ascii(const simd8x64<uint8_t>& input) {
+simdjson2_really_inline bool is_ascii(const simd8x64<uint8_t>& input) {
     simd8<uint8_t> bits = input.reduce_or();
     return bits.max_val() < 0x80u;
 }
 
-simdjson2_unused simdjson2_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
+simdjson2_unused simdjson2_really_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
     simd8<bool> is_second_byte = prev1 >= uint8_t(0xc0u);
     simd8<bool> is_third_byte  = prev2 >= uint8_t(0xe0u);
     simd8<bool> is_fourth_byte = prev3 >= uint8_t(0xf0u);
@@ -108,7 +115,7 @@ simdjson2_unused simdjson2_inline simd8<bool> must_be_continuation(const simd8<u
     return is_second_byte ^ is_third_byte ^ is_fourth_byte;
 }
 
-simdjson2_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
+simdjson2_really_inline simd8<uint8_t> must_be_2_3_continuation(const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
     simd8<uint8_t> is_third_byte  = prev2.saturating_sub(0xe0u-0x80); // Only 111_____ will be >= 0x80
     simd8<uint8_t> is_fourth_byte = prev3.saturating_sub(0xf0u-0x80); // Only 1111____ will be >= 0x80
     return is_third_byte | is_fourth_byte;
@@ -132,10 +139,13 @@ simdjson2_warn_unused error_code implementation::minify(const uint8_t *buf, size
   return arm64::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
+thread_local arm64::stage1::json_structural_indexer indexer{};
+
 simdjson2_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  return arm64::stage1::json_structural_indexer::index<256>(buf, len, *this, streaming);
+  
+  return indexer.index<128>(buf, len, *this, streaming);
 }
 
 simdjson2_warn_unused bool implementation::validate_utf8(const char *buf, size_t len) const noexcept {

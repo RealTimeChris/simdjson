@@ -32,12 +32,12 @@ namespace stage1 {
 struct json_block {
 public:
   // We spell out the constructors in the hope of resolving inlining issues with Visual Studio 2017
-  simdjson2_inline
+  simdjson2_really_inline
   json_block(json_string_block &&string, json_character_block characters,
              simd::simd8<uint8_t>& follows_potential_nonquote_scalar)
       :
   _string(std::move(string)), _characters(characters), _follows_potential_nonquote_scalar(follows_potential_nonquote_scalar) {}
-  simdjson2_inline
+  simdjson2_really_inline
   json_block(json_string_block string, json_character_block characters,
              simd::simd8<uint8_t>& follows_potential_nonquote_scalar)
       :
@@ -153,7 +153,7 @@ simdjson2_really_inline simd::simd8<uint8_t> follows(const simd::simd8<uint8_t>&
   values[1 + 4] = values[1] << 1 | values[1 - 1] >> (shiftAmount);
   values[2 + 4] = values[2] << 1 | values[2 - 1] >> (shiftAmount);
   values[3 + 4] = values[3] << 1 | values[3 - 1] >> (shiftAmount);
-  result = simd::simd8<uint8_t>::load(values + 4);
+  result = simd::simd8<uint8_t>::load_a(values + 4);
   result.set_lsb(oldOverflow);
   return result;
 }

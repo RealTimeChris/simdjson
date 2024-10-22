@@ -86,13 +86,13 @@ public:
    *  auto error = parser.iterate_many(json).get(docs);
    *  ```
    */
-  simdjson2_inline document_stream() noexcept;
+  simdjson2_really_inline document_stream() noexcept;
   /** Move one document_stream to another. */
-  simdjson2_inline document_stream(document_stream &&other) noexcept = default;
+  simdjson2_really_inline document_stream(document_stream &&other) noexcept = default;
   /** Move one document_stream to another. */
-  simdjson2_inline document_stream &operator=(document_stream &&other) noexcept = default;
+  simdjson2_really_inline document_stream &operator=(document_stream &&other) noexcept = default;
 
-  simdjson2_inline ~document_stream() noexcept;
+  simdjson2_really_inline ~document_stream() noexcept;
 
   /**
    * Returns the input size in bytes.
@@ -130,11 +130,11 @@ public:
     /**
      * Default constructor.
      */
-    simdjson2_inline iterator() noexcept;
+    simdjson2_really_inline iterator() noexcept;
     /**
      * Get the current document (or error).
      */
-    simdjson2_inline reference operator*() noexcept;
+    simdjson2_really_inline reference operator*() noexcept;
     /**
      * Advance to the next document (prefix).
      */
@@ -143,7 +143,7 @@ public:
      * Check if we're at the end yet.
      * @param other the end iterator to compare to.
      */
-    simdjson2_inline bool operator!=(const iterator &other) const noexcept;
+    simdjson2_really_inline bool operator!=(const iterator &other) const noexcept;
     /**
      * @private
      *
@@ -159,7 +159,7 @@ public:
      * may change in future versions of simdjson2: we find the API somewhat
      * awkward and we would like to offer something friendlier.
      */
-     simdjson2_inline size_t current_index() const noexcept;
+     simdjson2_really_inline size_t current_index() const noexcept;
 
      /**
      * @private
@@ -180,7 +180,7 @@ public:
      * awkward and we would like to offer something friendlier.
      *
      */
-     simdjson2_inline std::string_view source() const noexcept;
+     simdjson2_really_inline std::string_view source() const noexcept;
 
     /**
      * Returns error of the stream (if any).
@@ -188,7 +188,7 @@ public:
      inline error_code error() const noexcept;
 
   private:
-    simdjson2_inline iterator(document_stream *s, bool finished) noexcept;
+    simdjson2_really_inline iterator(document_stream *s, bool finished) noexcept;
     /** The document_stream we're iterating through. */
     document_stream* stream;
     /** Whether we're finished or not. */
@@ -202,11 +202,11 @@ public:
   /**
    * Start iterating the documents in the stream.
    */
-  simdjson2_inline iterator begin() noexcept;
+  simdjson2_really_inline iterator begin() noexcept;
   /**
    * The end of the stream, for iterator comparison purposes.
    */
-  simdjson2_inline iterator end() noexcept;
+  simdjson2_really_inline iterator end() noexcept;
 
 private:
 
@@ -222,7 +222,7 @@ private:
    * @param len is the length of the raw byte buffer in bytes
    * @param batch_size is the size of the windows (must be strictly greater or equal to the largest JSON document)
    */
-  simdjson2_inline document_stream(
+  simdjson2_really_inline document_stream(
     ondemand::parser &parser,
     const uint8_t *buf,
     size_t len,
@@ -327,9 +327,9 @@ namespace simdjson2 {
 template<>
 struct simdjson2_result<SIMDJSON2_IMPLEMENTATION::ondemand::document_stream> : public SIMDJSON2_IMPLEMENTATION::implementation_simdjson2_result_base<SIMDJSON2_IMPLEMENTATION::ondemand::document_stream> {
 public:
-  simdjson2_inline simdjson2_result(SIMDJSON2_IMPLEMENTATION::ondemand::document_stream &&value) noexcept; ///< @private
-  simdjson2_inline simdjson2_result(error_code error) noexcept; ///< @private
-  simdjson2_inline simdjson2_result() noexcept = default;
+  simdjson2_really_inline simdjson2_result(SIMDJSON2_IMPLEMENTATION::ondemand::document_stream &&value) noexcept; ///< @private
+  simdjson2_really_inline simdjson2_result(error_code error) noexcept; ///< @private
+  simdjson2_really_inline simdjson2_result() noexcept = default;
 };
 
 } // namespace simdjson2

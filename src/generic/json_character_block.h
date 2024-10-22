@@ -10,14 +10,14 @@ namespace SIMDJSON2_IMPLEMENTATION {
 namespace {
 
 struct json_character_block {
-  static simdjson2_inline json_character_block
+  static simdjson2_really_inline json_character_block
   classify(const simd::simd8<uint8_t> (&in)[8]);
 
-  simdjson2_inline simd::simd8<uint8_t> whitespace() const noexcept {
+  simdjson2_really_inline simd::simd8<uint8_t> whitespace() const noexcept {
     return _whitespace;
   }
-  simdjson2_inline simd::simd8<uint8_t> op() const noexcept { return _op; }
-  simdjson2_inline simd::simd8<uint8_t> scalar() const noexcept {
+  simdjson2_really_inline simd::simd8<uint8_t> op() const noexcept { return _op; }
+  simdjson2_really_inline simd::simd8<uint8_t> scalar() const noexcept {
     return ~(op() | whitespace());
   }
 

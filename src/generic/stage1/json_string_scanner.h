@@ -55,16 +55,6 @@ private:
   uint64_t prev_in_string{};
 };
 
-simdjson2_really_inline static uint64_t prefixXor(uint64_t prevInString) noexcept {
-  prevInString ^= prevInString << 1;
-  prevInString ^= prevInString << 2;
-  prevInString ^= prevInString << 4;
-  prevInString ^= prevInString << 8;
-  prevInString ^= prevInString << 16;
-  prevInString ^= prevInString << 32;
-  return prevInString;
-}
-
 //
 // Return a mask of all string characters plus end quotes.
 //
@@ -73,6 +63,8 @@ simdjson2_really_inline static uint64_t prefixXor(uint64_t prevInString) noexcep
 //
 // Backslash sequences outside of quotes will be detected in stage 2.
 //
+
+alignas(32) uint64_t valuesIn[4];
 simdjson2_really_inline json_string_block
 json_string_scanner::next(const simd::simd8<uint8_t> (&in)[8]) {
   alignas(32) uint32_t backslash_pre[8];
@@ -89,15 +81,14 @@ json_string_scanner::next(const simd::simd8<uint8_t> (&in)[8]) {
   simd::simd8<uint8_t> quote{simd::simd8<uint8_t>::load(quote_pre)};
   quote = quote.bit_andnot(escaped);
   
-  alignas(32) uint64_t valuesIn[4];
   quote.store(valuesIn);
-  valuesIn[0] = prefixXor(valuesIn[0]) ^ prev_in_string;
+  valuesIn[0] = prefix_xor(valuesIn[0]) ^ prev_in_string;
   prev_in_string = static_cast<int64_t>(valuesIn[0]) >> 63;
-  valuesIn[1] = prefixXor(valuesIn[1]) ^ prev_in_string;
+  valuesIn[1] = prefix_xor(valuesIn[1]) ^ prev_in_string;
   prev_in_string = static_cast<int64_t>(valuesIn[1]) >> 63;
-  valuesIn[2] = prefixXor(valuesIn[2]) ^ prev_in_string;
+  valuesIn[2] = prefix_xor(valuesIn[2]) ^ prev_in_string;
   prev_in_string = static_cast<int64_t>(valuesIn[2]) >> 63;
-  valuesIn[3] = prefixXor(valuesIn[3]) ^ prev_in_string;
+  valuesIn[3] = prefix_xor(valuesIn[3]) ^ prev_in_string;
   prev_in_string = static_cast<int64_t>(valuesIn[3]) >> 63;
 
   //
@@ -106,7 +97,7 @@ json_string_scanner::next(const simd::simd8<uint8_t> (&in)[8]) {
   // Then we xor with prev_in_string: if we were in a string already, its effect is flipped
   // (characters inside strings are outside, and characters outside strings are inside).
   //
-  const simd::simd8<uint8_t> in_string{simd::simd8<uint8_t>::load(valuesIn)};
+  const simd::simd8<uint8_t> in_string{simd::simd8<uint8_t>::load_a(valuesIn)};
 
   // Use ^ to turn the beginning quote off, and the end quote on.
 

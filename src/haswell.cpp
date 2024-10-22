@@ -95,7 +95,7 @@ json_character_block::classify(const simd::simd8<uint8_t> (&in)[8]) {
 }
 
 simdjson2_really_inline bool is_ascii(const simd8x64<uint8_t>& input) {
-  return input.reduce_or().is_ascii();
+  return simd8<uint8_t>{input.reduce_or()}.is_ascii();
 }
 
 simdjson2_unused simdjson2_really_inline simd8<bool> must_be_continuation(const simd8<uint8_t> prev1, const simd8<uint8_t> prev2, const simd8<uint8_t> prev3) {
@@ -130,10 +130,11 @@ simdjson2_warn_unused error_code implementation::minify(const uint8_t *buf, size
   return haswell::stage1::json_minifier::minify<256>(buf, len, dst, dst_len);
 }
 
+thread_local haswell::stage1::json_structural_indexer indexer{};
+
 simdjson2_warn_unused error_code dom_parser_implementation::stage1(const uint8_t *_buf, size_t _len, stage1_mode streaming) noexcept {
   this->buf = _buf;
   this->len = _len;
-  haswell::stage1::json_structural_indexer indexer{};
   return indexer.index<256>(_buf, _len, *this, streaming);
 }
 

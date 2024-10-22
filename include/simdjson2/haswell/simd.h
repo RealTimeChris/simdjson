@@ -59,6 +59,38 @@ template <typename Child> struct base {
   }
 };
 
+simdjson2_really_inline static uint64_t
+prefixXor(uint64_t prevInString) noexcept {
+  prevInString ^= prevInString << 1;
+  prevInString ^= prevInString << 2;
+  prevInString ^= prevInString << 4;
+  prevInString ^= prevInString << 8;
+  prevInString ^= prevInString << 16;
+  prevInString ^= prevInString << 32;
+  return prevInString;
+}
+
+// Override to distinguish from bool version
+simdjson2_really_inline __m256i opNot(const __m256i&value) {
+  return _mm256_xor_si256(value, _mm256_set1_epi64x(0xFFFFFFFFFFFFFFFFll));
+  ;
+}
+
+simdjson2_really_inline __m256i opOr(const __m256i &value,
+                                     const __m256i &other) {
+  return _mm256_or_si256(value, other);
+}
+
+simdjson2_really_inline __m256i opAnd(const __m256i &value,
+                                      const __m256i &other) {
+  return _mm256_and_si256(value, other);
+}
+
+simdjson2_really_inline __m256i opXor(const __m256i &value,
+                                      const __m256i &other) {
+  return _mm256_xor_si256(value, other);
+}
+
 // Forward-declared so they can be used by splat and friends.
 template <typename T> struct simd8;
 
@@ -71,15 +103,15 @@ struct base8 : base<simd8<T>> {
   simdjson2_really_inline base8(const __m256i _value)
       : base<simd8<T>>(_value) {}
 
-  friend simdjson2_really_inline Mask operator==(const simd8<T> lhs,
-                                                 const simd8<T> rhs) {
+  friend simdjson2_really_inline Mask operator==(const simd8<T>& lhs,
+                                                 const simd8<T>& rhs) {
     return _mm256_cmpeq_epi8(lhs, rhs);
   }
 
   static const int SIZE = sizeof(base<T>::value);
 
   template <int N = 1>
-  simdjson2_really_inline simd8<T> prev(const simd8<T> prev_chunk) const {
+  simdjson2_really_inline __m256i prev(const simd8<T>& prev_chunk) const {
     return _mm256_alignr_epi8(
         *this, _mm256_permute2x128_si256(prev_chunk, *this, 0x21), 16 - N);
   }
@@ -106,17 +138,17 @@ template <> struct simd8<bool> : base8<bool> {
 };
 
 template <typename T> struct base8_numeric : base8<T> {
-  static simdjson2_really_inline simd8<T> splat(T _value) {
+  static simdjson2_really_inline __m256i splat(T _value) {
     return _mm256_set1_epi8(_value);
   }
-  static simdjson2_really_inline simd8<T> zero() {
+  static simdjson2_really_inline __m256i zero() {
     return _mm256_setzero_si256();
   }
-  static simdjson2_really_inline simd8<T> load(const T values[32]) {
+  static simdjson2_really_inline __m256i load(const T values[32]) {
     return _mm256_loadu_si256(reinterpret_cast<const __m256i *>(values));
   }
   // Repeat 16 values as many times as necessary (usually for lookup tables)
-  static simdjson2_really_inline simd8<T>
+  static simdjson2_really_inline __m256i
   repeat_16(T v0, T v1, T v2, T v3, T v4, T v5, T v6, T v7, T v8, T v9, T v10,
             T v11, T v12, T v13, T v14, T v15) {
     return simd8<T>(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13,
@@ -124,11 +156,11 @@ template <typename T> struct base8_numeric : base8<T> {
                     v12, v13, v14, v15);
   }
 
-  static simdjson2_really_inline simd8<T> load(const uint64_t *values) {
-    return _mm256_loadu_si256(reinterpret_cast<const __m256i *>(values));
+  static simdjson2_really_inline __m256i load_a(const uint64_t *values) {
+    return _mm256_load_si256(reinterpret_cast<const __m256i *>(values));
   }
 
-  static simdjson2_really_inline simd8<T> load(const uint32_t *values) {
+  static simdjson2_really_inline __m256i load(const uint32_t *values) {
     return _mm256_loadu_si256(reinterpret_cast<const __m256i *>(values));
   }
 
@@ -146,23 +178,23 @@ template <typename T> struct base8_numeric : base8<T> {
   }
 
   // Addition/subtraction are the same for signed and unsigned
-  simdjson2_really_inline simd8<T> operator+(const simd8<T> other) const {
+  simdjson2_really_inline __m256i operator+(const simd8<T>& other) const {
     return _mm256_add_epi8(*this, other);
   }
-  simdjson2_really_inline simd8<T> operator-(const simd8<T> other) const {
+  simdjson2_really_inline __m256i operator-(const simd8<T>& other) const {
     return _mm256_sub_epi8(*this, other);
   }
-  simdjson2_really_inline simd8<T> &operator+=(const simd8<T> other) {
+  simdjson2_really_inline __m256i &operator+=(const simd8<T>& other) {
     *this = *this + other;
     return *static_cast<simd8<T> *>(this);
   }
-  simdjson2_really_inline simd8<T> &operator-=(const simd8<T> other) {
+  simdjson2_really_inline __m256i &operator-=(const simd8<T>& other) {
     *this = *this - other;
     return *static_cast<simd8<T> *>(this);
   }
 
   // Override to distinguish from bool version
-  simdjson2_really_inline simd8<T> operator~() const {
+  simdjson2_really_inline __m256i operator~() const {
     return _mm256_xor_si256(*this, _mm256_set1_epi64x(0xFFFFFFFFFFFFFFFFll));
     ;
   }
@@ -257,7 +289,7 @@ template <> struct simd8<int8_t> : base8_numeric<int8_t> {
   simdjson2_really_inline simd8(const int8_t values[32])
       : simd8(load(values)) {}
   // Member-by-member initialization
-  simdjson2_inline
+  simdjson2_really_inline
   simd8(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4, int8_t v5,
         int8_t v6, int8_t v7, int8_t v8, int8_t v9, int8_t v10, int8_t v11,
         int8_t v12, int8_t v13, int8_t v14, int8_t v15, int8_t v16, int8_t v17,
@@ -342,7 +374,7 @@ template <> struct simd8<uint8_t> : base8_numeric<uint8_t> {
   }
 
   simdjson2_really_inline uint64_t lteq(const uint8_t m) const {
-    return (*this <= simd8<uint8_t>::splat(m)).to_bitmask();
+    return (*this <= simd8<uint8_t>{simd8<uint8_t>::splat(m)}).to_bitmask();
   }
 
   simdjson2_really_inline bool test() const {
@@ -354,7 +386,7 @@ template <> struct simd8<uint8_t> : base8_numeric<uint8_t> {
   }
 
   simdjson2_really_inline uint64_t eq(const uint8_t m) const {
-    return (*this == simd8<uint8_t>::splat(m)).to_bitmask();
+    return (*this == simd8<uint8_t>{simd8<uint8_t>::splat(m)}).to_bitmask();
   }
 
   simdjson2_really_inline void set_lsb(bool valueNew) noexcept {
@@ -459,10 +491,10 @@ template <typename T> struct simd8x64 {
 
   simd8x64(const simd8x64<T> &o) = delete; // no copy allowed
   simd8x64<T> &
-  operator=(const simd8<T> &other) = delete; // no assignment allowed
+  operator=(const simd8<T>& other) = delete; // no assignment allowed
   simd8x64() = delete;                       // no default constructor allowed
 
-  simdjson2_really_inline simd8x64(const simd8<T> chunk0, const simd8<T> chunk1)
+  simdjson2_really_inline simd8x64(const simd8<T>& chunk0, const simd8<T>& chunk1)
       : chunks{chunk0, chunk1} {}
   simdjson2_really_inline simd8x64(const T ptr[64])
       : chunks{simd8<T>::load(ptr), simd8<T>::load(ptr + 32)} {}
@@ -486,17 +518,18 @@ template <typename T> struct simd8x64 {
     return r_lo | (r_hi << 32);
   }
 
-  simdjson2_really_inline simd8<T> reduce_or() const {
-    return this->chunks[0] | this->chunks[1];
+  simdjson2_really_inline __m256i reduce_or() const {
+    return opOr(this->chunks[0], this->chunks[1]);
   }
 
   simdjson2_really_inline simd8x64<T> bit_or(const T m) const {
-    const simd8<T> mask = simd8<T>::splat(m);
-    return simd8x64<T>(this->chunks[0] | mask, this->chunks[1] | mask);
+    const simd8<T>& mask = simd8<T>::splat(m);
+    return simd8x64<T>(opOr(this->chunks[0], mask),
+                       opOr(this->chunks[1], mask));
   }
 
   simdjson2_really_inline uint64_t eq(const T m) const {
-    const simd8<T> mask = simd8<T>::splat(m);
+    const simd8<T>& mask = simd8<T>::splat(m);
     return simd8x64<bool>(this->chunks[0] == mask, this->chunks[1] == mask)
         .to_bitmask();
   }
@@ -508,7 +541,7 @@ template <typename T> struct simd8x64 {
   }
 
   simdjson2_really_inline uint64_t lteq(const T m) const {
-    const simd8<T> mask = simd8<T>::splat(m);
+    const simd8<T>& mask = simd8<T>::splat(m);
     return simd8x64<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask)
         .to_bitmask();
   }
@@ -519,15 +552,15 @@ simdjson2_really_inline simd8<uint8_t> opClMul(simd_int_t01 &&value,
                                                int64_t &prevInString) noexcept {
   alignas(32) uint64_t values[4];
   value.store(values);
-  values[0] = prefix_xor(values[0]) ^ prevInString;
+  values[0] = prefixXor(values[0]) ^ prevInString;
   prevInString = static_cast<int64_t>(values[0]) >> 63;
-  values[1] = prefix_xor(values[1]) ^ prevInString;
+  values[1] = prefixXor(values[1]) ^ prevInString;
   prevInString = static_cast<int64_t>(values[1]) >> 63;
-  values[2] = prefix_xor(values[2]) ^ prevInString;
+  values[2] = prefixXor(values[2]) ^ prevInString;
   prevInString = static_cast<int64_t>(values[2]) >> 63;
-  values[3] = prefix_xor(values[3]) ^ prevInString;
+  values[3] = prefixXor(values[3]) ^ prevInString;
   prevInString = static_cast<int64_t>(values[3]) >> 63;
-  return simd8<uint8_t>::load(values);
+  return simd8<uint8_t>::load_a(values);
 }
 
 template <typename simd_int_t01, typename simd_int_t02>
@@ -549,21 +582,7 @@ simdjson2_really_inline simd8<uint8_t> opSub(simd_int_t01 &&value,
         values[3] - values[3 + 4] - static_cast<uint64_t>(carryInNew);
     carryInNew = values[3 + 4] > values[3];
   }
-  if constexpr (4 > 4) {
-    values[4 + 4] =
-        values[4] - values[4 + 4] - static_cast<uint64_t>(carryInNew);
-    carryInNew = values[4 + 4] > values[4];
-    values[5 + 4] =
-        values[5] - values[5 + 4] - static_cast<uint64_t>(carryInNew);
-    carryInNew = values[5 + 4] > values[5];
-    values[6 + 4] =
-        values[6] - values[6 + 4] - static_cast<uint64_t>(carryInNew);
-    carryInNew = values[6 + 4] > values[6];
-    values[7 + 4] =
-        values[7] - values[7 + 4] - static_cast<uint64_t>(carryInNew);
-    carryInNew = values[7 + 4] > values[7];
-  }
-  return simd8<uint8_t>::load(values + 4);
+  return simd8<uint8_t>::load_a(values + 4);
 }
 
 #define opShl(amount, value, result)                                           \
@@ -573,11 +592,9 @@ simdjson2_really_inline simd8<uint8_t> opSub(simd_int_t01 &&value,
     static constexpr uint64_t shiftAmount{64 - amount};                        \
     values[4] = values[0] << amount;                                           \
     values[1 + 4] = values[1] << amount | values[1 - 1] >> (shiftAmount);      \
-    if constexpr (4 > 2) {                                                     \
-      values[2 + 4] = values[2] << amount | values[2 - 1] >> (shiftAmount);    \
-      values[3 + 4] = values[3] << amount | values[3 - 1] >> (shiftAmount);    \
-    }                                                                          \
-    result = simd8<uint8_t>::load(values + 4);                                 \
+    values[2 + 4] = values[2] << amount | values[2 - 1] >> (shiftAmount);      \
+    values[3 + 4] = values[3] << amount | values[3 - 1] >> (shiftAmount);      \
+    result = simd8<uint8_t>::load_a(values + 4);                               \
   }
 
 template <typename simd_int_t01>
@@ -725,6 +742,32 @@ collectIndices(const simd8<uint8_t> *values) noexcept {
   returnValues.whitespace = collectWhitespaceIndices(values);
   returnValues.backslashes = collectValues<'\\'>(values);
   return returnValues;
+}
+
+ template <bool collectAligned>
+simdjson2_really_inline void
+collectStringValues(const uint8_t *values,
+                    simd8<uint8_t> (&newPtr)[8]) noexcept {
+  if constexpr (collectAligned) {
+    newPtr[0] = simd8<uint8_t>::load(values + (32 * 0));
+    newPtr[1] = simd8<uint8_t>::load(values + (32 * 1));
+    newPtr[2] = simd8<uint8_t>::load(values + (32 * 2));
+    newPtr[3] = simd8<uint8_t>::load(values + (32 * 3));
+    newPtr[4] = simd8<uint8_t>::load(values + (32 * 4));
+    newPtr[5] = simd8<uint8_t>::load(values + (32 * 5));
+    newPtr[6] = simd8<uint8_t>::load(values + (32 * 6));
+    newPtr[7] = simd8<uint8_t>::load(values + (32 * 7));
+  } else {
+    newPtr[0] = simd8<uint8_t>::load(values + (32 * 0));
+    newPtr[1] = simd8<uint8_t>::load(values + (32 * 1));
+    newPtr[2] = simd8<uint8_t>::load(values + (32 * 2));
+    newPtr[3] = simd8<uint8_t>::load(values + (32 * 3));
+    newPtr[4] = simd8<uint8_t>::load(values + (32 * 4));
+    newPtr[5] = simd8<uint8_t>::load(values + (32 * 5));
+    newPtr[6] = simd8<uint8_t>::load(values + (32 * 6));
+    newPtr[7] = simd8<uint8_t>::load(values + (32 * 7));
+  }
+  // prefetchStringValues(values + 256);
 }
 
 } // namespace simd
