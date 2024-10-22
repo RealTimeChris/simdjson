@@ -265,7 +265,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">return</span> vld1q_u8(values);</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  }</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  <span class="keyword">static</span> simdjson2_inline uint8x16_t load(<span class="keyword">const</span> uint64_t *values) {</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">return</span> vld1q_u64(values);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_u16(vld1q_u64(values));</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  }</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  simdjson2_really_inline <span class="keywordtype">bool</span> test() noexcept {</div>
@@ -279,7 +279,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="keyword">static</span> simdjson2_inline uint8x16_t load(<span class="keyword">const</span> uint16_t *values) {</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    uint32x4_t temp = vld1q_u16(values);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_u32(temp);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_u16(temp);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="keyword">static</span> simdjson2_inline uint8x16_t load_a(<span class="keyword">const</span> uint64_t *values) {</div>
