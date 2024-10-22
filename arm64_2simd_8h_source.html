@@ -273,469 +273,726 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_u32(temp);</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  }</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="keyword">static</span> simdjson2_inline uint8x16_t load_a(<span class="keyword">const</span> uint64_t *values) {</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordflow">return</span> vld1q_u64(values);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  }</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> uint8x16_t _value) : base_u8&lt;uint8_t&gt;(_value) {}</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="comment">// Zero constructor</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  simdjson2_inline simd8() : simd8(zero()) {}</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="comment">// Array constructor</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> uint8_t values[16]) : simd8(load(values)) {}</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="comment">// Splat constructor</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  simdjson2_inline simd8(uint8_t _value) : simd8(splat(_value)) {}</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <span class="comment">// Member-by-member initialization</span></div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  simdjson2_inline simd8(uint8_t v0, uint8_t v1, uint8_t v2, uint8_t v3,</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                         uint8_t v4, uint8_t v5, uint8_t v6, uint8_t v7,</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                         uint8_t v8, uint8_t v9, uint8_t v10, uint8_t v11,</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                         uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15)</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      : simd8(simdjson2_make_uint8x16_t(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9,</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                                        v10, v11, v12, v13, v14, v15)) {}</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  simdjson2_inline simd8(uint8_t v0, uint8_t v1, uint8_t v2, uint8_t v3,</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                         uint8_t v4, uint8_t v5, uint8_t v6, uint8_t v7,</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                         uint8_t v8, uint8_t v9, uint8_t v10, uint8_t v11,</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                         uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15)</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;      : simd8(uint8x16_t{v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                         v13, v14, v15}) {}</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  <span class="comment">// Repeat 16 values as many times as necessary (usually for lookup tables)</span></div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  simdjson2_inline <span class="keyword">static</span> simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  repeat_16(uint8_t v0, uint8_t v1, uint8_t v2, uint8_t v3, uint8_t v4,</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            uint8_t v5, uint8_t v6, uint8_t v7, uint8_t v8, uint8_t v9,</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            uint8_t v10, uint8_t v11, uint8_t v12, uint8_t v13, uint8_t v14,</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            uint8_t v15) {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                          v13, v14, v15);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  <span class="keyword">static</span> constexpr uint8x16_t bitMask{0x01, 0x02, 0x4,  0x8,  0x10, 0x20,</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                                      0x40, 0x80, 0x01, 0x02, 0x4,  0x8,</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                                      0x10, 0x20, 0x40, 0x80};</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  simdjson2_really_inline uint64_t</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  opBitMask(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;value) <span class="keyword">const</span>  noexcept {</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    uint8x16_t input = value;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    uint16x8_t high_bits = vreinterpretq_u16_u8(vshrq_n_u8(input, 7));</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    uint32x4_t paired16 =</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        vreinterpretq_u32_u16(vsraq_n_u16(high_bits, high_bits, 7));</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    uint64x2_t paired32 =</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        vreinterpretq_u64_u32(vsraq_n_u32(paired16, paired16, 14));</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    uint8x16_t paired64 =</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        vreinterpretq_u8_u64(vsraq_n_u64(paired32, paired32, 28));</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordflow">return</span> vgetq_lane_u8(paired64, 0) |</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;           ((int32_t)vgetq_lane_u8(paired64, 8) &lt;&lt; 8);</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  }</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  simdjson2_really_inline uint16_t eq(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;other) <span class="keyword">const</span>  noexcept {</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordflow">return</span> opBitMask(vceqq_u8(*<span class="keyword">this</span>, other));</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  <span class="comment">// Store to array</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(uint8_t *dst)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <span class="keywordflow">return</span> vst1q_u8(dst, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="keyword">static</span> simdjson2_inline uint8x16_t load(<span class="keyword">const</span> uint16_t *values) {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    uint32x4_t temp = vld1q_u16(values);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_u32(temp);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  }</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="keyword">static</span> simdjson2_inline uint8x16_t load_a(<span class="keyword">const</span> uint64_t *values) {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordflow">return</span> vld1q_u64(values);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  }</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> uint8x16_t _value) : base_u8&lt;uint8_t&gt;(_value) {}</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  <span class="comment">// Zero constructor</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  simdjson2_inline simd8() : simd8(zero()) {}</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="comment">// Array constructor</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> uint8_t values[16]) : simd8(load(values)) {}</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  <span class="comment">// Splat constructor</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  simdjson2_inline simd8(uint8_t _value) : simd8(splat(_value)) {}</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  <span class="comment">// Member-by-member initialization</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  simdjson2_inline simd8(uint8_t v0, uint8_t v1, uint8_t v2, uint8_t v3,</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                         uint8_t v4, uint8_t v5, uint8_t v6, uint8_t v7,</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                         uint8_t v8, uint8_t v9, uint8_t v10, uint8_t v11,</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                         uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15)</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      : simd8(simdjson2_make_uint8x16_t(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9,</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                                        v10, v11, v12, v13, v14, v15)) {}</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  simdjson2_inline simd8(uint8_t v0, uint8_t v1, uint8_t v2, uint8_t v3,</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                         uint8_t v4, uint8_t v5, uint8_t v6, uint8_t v7,</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                         uint8_t v8, uint8_t v9, uint8_t v10, uint8_t v11,</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                         uint8_t v12, uint8_t v13, uint8_t v14, uint8_t v15)</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;      : simd8(uint8x16_t{v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                         v13, v14, v15}) {}</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="comment">// Repeat 16 values as many times as necessary (usually for lookup tables)</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  simdjson2_inline <span class="keyword">static</span> simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  repeat_16(uint8_t v0, uint8_t v1, uint8_t v2, uint8_t v3, uint8_t v4,</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            uint8_t v5, uint8_t v6, uint8_t v7, uint8_t v8, uint8_t v9,</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            uint8_t v10, uint8_t v11, uint8_t v12, uint8_t v13, uint8_t v14,</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            uint8_t v15) {</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                          v13, v14, v15);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  <span class="keyword">static</span> constexpr uint8x16_t bitMask{0x01, 0x02, 0x4,  0x8,  0x10, 0x20,</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                                      0x40, 0x80, 0x01, 0x02, 0x4,  0x8,</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                                      0x10, 0x20, 0x40, 0x80};</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  simdjson2_really_inline uint64_t</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  opBitMask(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;value) noexcept {</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    uint8x16_t input = value;</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    uint16x8_t high_bits = vreinterpretq_u16_u8(vshrq_n_u8(input, 7));</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    uint32x4_t paired16 =</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        vreinterpretq_u32_u16(vsraq_n_u16(high_bits, high_bits, 7));</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    uint64x2_t paired32 =</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        vreinterpretq_u64_u32(vsraq_n_u32(paired16, paired16, 14));</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    uint8x16_t paired64 =</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        vreinterpretq_u8_u64(vsraq_n_u64(paired32, paired32, 28));</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordflow">return</span> vgetq_lane_u8(paired64, 0) |</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;           ((int32_t)vgetq_lane_u8(paired64, 8) &lt;&lt; 8);</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;  simdjson2_really_inline uint16_t eq(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;other) noexcept {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <span class="keywordflow">return</span> opBitMask(vceqq_u8(*<span class="keyword">this</span>, other));</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;  }</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(uint64_t *dst)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordflow">return</span> vst1q_u64(dst, *<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  }</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  <span class="comment">// Saturated math</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  saturating_add(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordflow">return</span> vqaddq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  }</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  saturating_sub(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordflow">return</span> vqsubq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  }</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  <span class="comment">// Addition/subtraction are the same for signed and unsigned</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; operator+(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">return</span> vaddq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  <span class="comment">// Store to array</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(uint8_t *dst)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="keywordflow">return</span> vst1q_u8(dst, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(uint64_t *dst)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordflow">return</span> vst1q_u64(dst, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  <span class="comment">// Saturated math</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  saturating_add(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keywordflow">return</span> vqaddq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  }</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  saturating_sub(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">return</span> vqsubq_u8(*<span class="keyword">this</span>, other);</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  }</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; operator-(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordflow">return</span> vsubq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  }</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; &amp;operator+=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other) {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> + other;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; &amp;operator-=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other) {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> - other;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  }</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="comment">// Order-specific operations</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  simdjson2_inline uint8_t max_val()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> vmaxvq_u8(*<span class="keyword">this</span>); }</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  simdjson2_inline uint8_t min_val()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> vminvq_u8(*<span class="keyword">this</span>); }</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; max_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordflow">return</span> vmaxq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  }</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; min_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keywordflow">return</span> vminq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&lt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keywordflow">return</span> vcleq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  }</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&gt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keywordflow">return</span> vcgeq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&lt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">return</span> vcltq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  }</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&gt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordflow">return</span> vcgtq_u8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  <span class="comment">// Same as &gt;, but instead of guaranteeing all 1&#39;s == true, false = 0 and true</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  <span class="comment">// = nonzero. For ARM, returns all 1&#39;s.</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; gt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(*<span class="keyword">this</span> &gt; other);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  <span class="comment">// Addition/subtraction are the same for signed and unsigned</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; operator+(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordflow">return</span> vaddq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;  }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; operator-(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordflow">return</span> vsubq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  }</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; &amp;operator+=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other) {</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> + other;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  }</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; &amp;operator-=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other) {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> - other;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="comment">// Order-specific operations</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  simdjson2_inline uint8_t max_val()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> vmaxvq_u8(*<span class="keyword">this</span>); }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  simdjson2_inline uint8_t min_val()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> vminvq_u8(*<span class="keyword">this</span>); }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; max_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">return</span> vmaxq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;  }</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; min_val(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordflow">return</span> vminq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&lt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordflow">return</span> vcleq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  }</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&gt;=(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="keywordflow">return</span> vcgeq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  }</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&lt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordflow">return</span> vcltq_u8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&gt;(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">return</span> vcgtq_u8(*<span class="keyword">this</span>, other);</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  }</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  <span class="comment">// Same as &lt;, but instead of guaranteeing all 1&#39;s == true, false = 0 and true</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  <span class="comment">// Same as &gt;, but instead of guaranteeing all 1&#39;s == true, false = 0 and true</span></div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  <span class="comment">// = nonzero. For ARM, returns all 1&#39;s.</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; lt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(*<span class="keyword">this</span> &lt; other);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; gt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(*<span class="keyword">this</span> &gt; other);</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  }</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  <span class="comment">// Bit-specific operations</span></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  simdjson2_inline simd8&lt;bool&gt; any_bits_set(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">return</span> vtstq_u8(*<span class="keyword">this</span>, bits);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  <span class="comment">// Same as &lt;, but instead of guaranteeing all 1&#39;s == true, false = 0 and true</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  <span class="comment">// = nonzero. For ARM, returns all 1&#39;s.</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; lt_bits(<span class="keyword">const</span> simd8&lt;uint8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;(*<span class="keyword">this</span> &lt; other);</div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;  }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  simdjson2_inline <span class="keywordtype">bool</span> any_bits_set_anywhere()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordflow">return</span> this-&gt;max_val() != 0;</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  }</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;  simdjson2_inline <span class="keywordtype">bool</span> any_bits_set_anywhere(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keywordflow">return</span> (*<span class="keyword">this</span> &amp; bits).any_bits_set_anywhere();</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;  }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> N&gt; simdjson2_inline simd8&lt;uint8_t&gt; shr()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordflow">return</span> vshrq_n_u8(*<span class="keyword">this</span>, N);</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> N&gt; simdjson2_inline simd8&lt;uint8_t&gt; shl()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">return</span> vshlq_n_u8(*<span class="keyword">this</span>, N);</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  }</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  <span class="comment">// Perform a lookup assuming the value is between 0 and 16 (undefined behavior</span></div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="comment">// for out of range values)</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  simdjson2_inline simd8&lt;L&gt; lookup_16(simd8&lt;L&gt; lookup_table)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">return</span> lookup_table.apply_lookup_16_to(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  }</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  simdjson2_really_inline <span class="keywordtype">void</span> set_lsb(<span class="keywordtype">bool</span> valueNew) noexcept {</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    constexpr uint8x16_t mask{0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    *<span class="keyword">this</span> = valueNew ? vorrq_u8(value, mask) : vbicq_u8(value, mask);</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  }</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;  simdjson2_really_inline <span class="keywordtype">bool</span> get_msb()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">return</span> (vgetq_lane_u8(*<span class="keyword">this</span>, 15) &amp; 0x80) != 0;</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  }</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  <span class="comment">// Copies to &#39;output&quot; all bytes corresponding to a 0 in the mask (interpreted</span></div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  <span class="comment">// as a bitset). Passing a 0 value for mask would be equivalent to writing out</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  <span class="comment">// every byte to output. Only the first 16 - count_ones(mask) bytes of the</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;  <span class="comment">// result are significant but 16 bytes get written. Design consideration: it</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;  <span class="comment">// seems like a function with the signature simd8&lt;L&gt; compress(uint16_t mask)</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  <span class="comment">// would be sensible, but the AVX ISA makes this kind of approach difficult.</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> compress(uint16_t mask, L *output)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keyword">using</span> internal::BitsSetTable256mul2;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keyword">using</span> internal::pshufb_combine_table;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keyword">using</span> internal::thintable_epi8;</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="comment">// this particular implementation was inspired by work done by @animetosho</span></div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="comment">// we do it in two steps, first 8 bytes and then second 8 bytes</span></div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    uint8_t mask1 = uint8_t(mask);      <span class="comment">// least significant 8 bits</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    uint8_t mask2 = uint8_t(mask &gt;&gt; 8); <span class="comment">// most significant 8 bits</span></div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="comment">// next line just loads the 64-bit values thintable_epi8[mask1] and</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="comment">// thintable_epi8[mask2] into a 128-bit register, using only</span></div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="comment">// two instructions on most compilers.</span></div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    uint64x2_t shufmask64 = {thintable_epi8[mask1], thintable_epi8[mask2]};</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    uint8x16_t shufmask = vreinterpretq_u8_u64(shufmask64);</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="comment">// we increment by 0x08 the second half of the mask</span></div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    uint8x16_t inc = simdjson2_make_uint8x16_t(</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        0, 0, 0, 0, 0, 0, 0, 0, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08);</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    uint8x16_t inc = {0,    0,    0,    0,    0,    0,    0,    0,</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                      0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08};</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    shufmask = vaddq_u8(shufmask, inc);</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    <span class="comment">// this is the version &quot;nearly pruned&quot;</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    uint8x16_t pruned = vqtbl1q_u8(*<span class="keyword">this</span>, shufmask);</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    <span class="comment">// we still need to put the two halves together.</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    <span class="comment">// we compute the popcount of the first half:</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    <span class="keywordtype">int</span> pop1 = BitsSetTable256mul2[mask1];</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    <span class="comment">// then load the corresponding mask, what it does is to write</span></div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="comment">// only the first pop1 bytes from the first 8 bytes, and then</span></div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="comment">// it fills in with the bytes from the second 8 bytes + some filling</span></div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="comment">// at the end.</span></div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    uint8x16_t compactmask = vld1q_u8(</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;        <span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span>uint8_t *<span class="keyword">&gt;</span>(pshufb_combine_table + pop1 * 8));</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    uint8x16_t answer = vqtbl1q_u8(pruned, compactmask);</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    vst1q_u8(<span class="keyword">reinterpret_cast&lt;</span>uint8_t *<span class="keyword">&gt;</span>(output), answer);</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;  }</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160; </div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;  <span class="comment">// Copies all bytes corresponding to a 0 in the low half of the mask</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;  <span class="comment">// (interpreted as a bitset) to output1, then those corresponding to a 0 in</span></div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;  <span class="comment">// the high half to output2.</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> compress_halves(uint16_t mask, L *output1,</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;                                        L *output2)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="keyword">using</span> internal::thintable_epi8;</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    uint8_t mask1 = uint8_t(mask);      <span class="comment">// least significant 8 bits</span></div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    uint8_t mask2 = uint8_t(mask &gt;&gt; 8); <span class="comment">// most significant 8 bits</span></div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    uint8x8_t compactmask1 = vcreate_u8(thintable_epi8[mask1]);</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    uint8x8_t compactmask2 = vcreate_u8(thintable_epi8[mask2]);</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">// we increment by 0x08 the second half of the mask</span></div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    uint8x8_t inc = simdjson2_make_uint8x8_t(0x08, 0x08, 0x08, 0x08, 0x08, 0x08,</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                                             0x08, 0x08);</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    uint8x8_t inc = {0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08};</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    compactmask2 = vadd_u8(compactmask2, inc);</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="comment">// store each result (with the second store possibly overlapping the first)</span></div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    vst1_u8((uint8_t *)output1, vqtbl1_u8(*<span class="keyword">this</span>, compactmask1));</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    vst1_u8((uint8_t *)output2, vqtbl1_u8(*<span class="keyword">this</span>, compactmask2));</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  }</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  simdjson2_inline simd8&lt;L&gt;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;  lookup_16(L replace0, L replace1, L replace2, L replace3, L replace4,</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;            L replace5, L replace6, L replace7, L replace8, L replace9,</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;            L replace10, L replace11, L replace12, L replace13, L replace14,</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;            L replace15)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <span class="keywordflow">return</span> lookup_16(simd8&lt;L&gt;::repeat_16(</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        replace0, replace1, replace2, replace3, replace4, replace5, replace6,</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        replace7, replace8, replace9, replace10, replace11, replace12,</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        replace13, replace14, replace15));</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;  }</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; apply_lookup_16_to(<span class="keyword">const</span> simd8&lt;T&gt; original) {</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    <span class="keywordflow">return</span> vqtbl1q_u8(*<span class="keyword">this</span>, simd8&lt;uint8_t&gt;(original));</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  <span class="comment">// Bit-specific operations</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  simdjson2_inline simd8&lt;bool&gt; any_bits_set(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordflow">return</span> vtstq_u8(*<span class="keyword">this</span>, bits);</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;  }</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;  simdjson2_inline <span class="keywordtype">bool</span> any_bits_set_anywhere()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keywordflow">return</span> this-&gt;max_val() != 0;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  }</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  simdjson2_inline <span class="keywordtype">bool</span> any_bits_set_anywhere(simd8&lt;uint8_t&gt; bits)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordflow">return</span> (*<span class="keyword">this</span> &amp; bits).any_bits_set_anywhere();</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;  }</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> N&gt; simdjson2_inline simd8&lt;uint8_t&gt; shr()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keywordflow">return</span> vshrq_n_u8(*<span class="keyword">this</span>, N);</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  }</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> N&gt; simdjson2_inline simd8&lt;uint8_t&gt; shl()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keywordflow">return</span> vshlq_n_u8(*<span class="keyword">this</span>, N);</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  }</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="comment">// Perform a lookup assuming the value is between 0 and 16 (undefined behavior</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;  <span class="comment">// for out of range values)</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  simdjson2_inline simd8&lt;L&gt; lookup_16(simd8&lt;L&gt; lookup_table)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keywordflow">return</span> lookup_table.apply_lookup_16_to(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  }</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;  simdjson2_really_inline <span class="keywordtype">void</span> set_lsb(<span class="keywordtype">bool</span> valueNew) noexcept {</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    constexpr uint8x16_t mask{0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    *<span class="keyword">this</span> = valueNew ? vorrq_u8(value, mask) : vbicq_u8(value, mask);</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;  }</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  simdjson2_really_inline <span class="keywordtype">bool</span> get_msb()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordflow">return</span> (vgetq_lane_u8(*<span class="keyword">this</span>, 15) &amp; 0x80) != 0;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;  }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  <span class="comment">// Copies to &#39;output&quot; all bytes corresponding to a 0 in the mask (interpreted</span></div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;  <span class="comment">// as a bitset). Passing a 0 value for mask would be equivalent to writing out</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  <span class="comment">// every byte to output. Only the first 16 - count_ones(mask) bytes of the</span></div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  <span class="comment">// result are significant but 16 bytes get written. Design consideration: it</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  <span class="comment">// seems like a function with the signature simd8&lt;L&gt; compress(uint16_t mask)</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  <span class="comment">// would be sensible, but the AVX ISA makes this kind of approach difficult.</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> compress(uint16_t mask, L *output)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keyword">using</span> internal::BitsSetTable256mul2;</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="keyword">using</span> internal::pshufb_combine_table;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keyword">using</span> internal::thintable_epi8;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="comment">// this particular implementation was inspired by work done by @animetosho</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="comment">// we do it in two steps, first 8 bytes and then second 8 bytes</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    uint8_t mask1 = uint8_t(mask);      <span class="comment">// least significant 8 bits</span></div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    uint8_t mask2 = uint8_t(mask &gt;&gt; 8); <span class="comment">// most significant 8 bits</span></div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="comment">// next line just loads the 64-bit values thintable_epi8[mask1] and</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    <span class="comment">// thintable_epi8[mask2] into a 128-bit register, using only</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="comment">// two instructions on most compilers.</span></div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    uint64x2_t shufmask64 = {thintable_epi8[mask1], thintable_epi8[mask2]};</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    uint8x16_t shufmask = vreinterpretq_u8_u64(shufmask64);</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    <span class="comment">// we increment by 0x08 the second half of the mask</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    uint8x16_t inc = simdjson2_make_uint8x16_t(</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        0, 0, 0, 0, 0, 0, 0, 0, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08);</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    uint8x16_t inc = {0,    0,    0,    0,    0,    0,    0,    0,</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;                      0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08};</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    shufmask = vaddq_u8(shufmask, inc);</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    <span class="comment">// this is the version &quot;nearly pruned&quot;</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    uint8x16_t pruned = vqtbl1q_u8(*<span class="keyword">this</span>, shufmask);</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="comment">// we still need to put the two halves together.</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="comment">// we compute the popcount of the first half:</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="keywordtype">int</span> pop1 = BitsSetTable256mul2[mask1];</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="comment">// then load the corresponding mask, what it does is to write</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="comment">// only the first pop1 bytes from the first 8 bytes, and then</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="comment">// it fills in with the bytes from the second 8 bytes + some filling</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="comment">// at the end.</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    uint8x16_t compactmask = vld1q_u8(</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        <span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span>uint8_t *<span class="keyword">&gt;</span>(pshufb_combine_table + pop1 * 8));</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    uint8x16_t answer = vqtbl1q_u8(pruned, compactmask);</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    vst1q_u8(<span class="keyword">reinterpret_cast&lt;</span>uint8_t *<span class="keyword">&gt;</span>(output), answer);</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  }</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  <span class="comment">// Copies all bytes corresponding to a 0 in the low half of the mask</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;  <span class="comment">// (interpreted as a bitset) to output1, then those corresponding to a 0 in</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;  <span class="comment">// the high half to output2.</span></div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> compress_halves(uint16_t mask, L *output1,</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                                        L *output2)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keyword">using</span> internal::thintable_epi8;</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    uint8_t mask1 = uint8_t(mask);      <span class="comment">// least significant 8 bits</span></div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    uint8_t mask2 = uint8_t(mask &gt;&gt; 8); <span class="comment">// most significant 8 bits</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    uint8x8_t compactmask1 = vcreate_u8(thintable_epi8[mask1]);</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    uint8x8_t compactmask2 = vcreate_u8(thintable_epi8[mask2]);</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    <span class="comment">// we increment by 0x08 the second half of the mask</span></div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    uint8x8_t inc = simdjson2_make_uint8x8_t(0x08, 0x08, 0x08, 0x08, 0x08, 0x08,</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;                                             0x08, 0x08);</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    uint8x8_t inc = {0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08};</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    compactmask2 = vadd_u8(compactmask2, inc);</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    <span class="comment">// store each result (with the second store possibly overlapping the first)</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    vst1_u8((uint8_t *)output1, vqtbl1_u8(*<span class="keyword">this</span>, compactmask1));</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    vst1_u8((uint8_t *)output2, vqtbl1_u8(*<span class="keyword">this</span>, compactmask2));</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;  }</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160; </div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;  simdjson2_inline simd8&lt;L&gt;</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  lookup_16(L replace0, L replace1, L replace2, L replace3, L replace4,</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;            L replace5, L replace6, L replace7, L replace8, L replace9,</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;            L replace10, L replace11, L replace12, L replace13, L replace14,</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            L replace15)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    <span class="keywordflow">return</span> lookup_16(simd8&lt;L&gt;::repeat_16(</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        replace0, replace1, replace2, replace3, replace4, replace5, replace6,</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        replace7, replace8, replace9, replace10, replace11, replace12,</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;        replace13, replace14, replace15));</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;  }</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;};</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment">// Signed bytes</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>simd8&lt;int8_t&gt; {</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;  int8x16_t value;</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160; </div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;  <span class="keyword">static</span> simdjson2_inline simd8&lt;int8_t&gt; splat(int8_t _value) {</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    <span class="keywordflow">return</span> vmovq_n_s8(_value);</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  }</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;  <span class="keyword">static</span> simdjson2_inline simd8&lt;int8_t&gt; zero() { <span class="keywordflow">return</span> vdupq_n_s8(0); }</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;  <span class="keyword">static</span> simdjson2_inline simd8&lt;int8_t&gt; load(<span class="keyword">const</span> int8_t values[16]) {</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    <span class="keywordflow">return</span> vld1q_s8(values);</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;  }</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160; </div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;  <span class="comment">// Conversion from/to SIMD register</span></div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> int8x16_t _value) : value{_value} {}</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;  simdjson2_inline <span class="keyword">operator</span> <span class="keyword">const</span> int8x16_t &amp;() <span class="keyword">const</span> { <span class="keywordflow">return</span> this-&gt;value; }</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;  simdjson2_inline <span class="keyword">operator</span> int8x16_t &amp;() { <span class="keywordflow">return</span> this-&gt;value; }</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160; </div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;  simdjson2_inline simd8&lt;uint8_t&gt; apply_lookup_16_to(<span class="keyword">const</span> simd8&lt;T&gt; original) {</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    <span class="keywordflow">return</span> vqtbl1q_u8(*<span class="keyword">this</span>, simd8&lt;uint8_t&gt;(original));</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;  }</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;};</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160; </div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment">// Signed bytes</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>simd8&lt;int8_t&gt; {</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;  int8x16_t value;</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160; </div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;  <span class="keyword">static</span> simdjson2_inline simd8&lt;int8_t&gt; splat(int8_t _value) {</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    <span class="keywordflow">return</span> vmovq_n_s8(_value);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;  }</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;  <span class="keyword">static</span> simdjson2_inline simd8&lt;int8_t&gt; zero() { <span class="keywordflow">return</span> vdupq_n_s8(0); }</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;  <span class="keyword">static</span> simdjson2_inline simd8&lt;int8_t&gt; load(<span class="keyword">const</span> int8_t values[16]) {</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    <span class="keywordflow">return</span> vld1q_s8(values);</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;  }</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160; </div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;  <span class="comment">// Zero constructor</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;  simdjson2_inline simd8() : simd8(zero()) {}</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  <span class="comment">// Splat constructor</span></div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;  simdjson2_inline simd8(int8_t _value) : simd8(splat(_value)) {}</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;  <span class="comment">// Array constructor</span></div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> int8_t *values) : simd8(load(values)) {}</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;  <span class="comment">// Member-by-member initialization</span></div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;  simdjson2_inline simd8(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4,</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;                         int8_t v5, int8_t v6, int8_t v7, int8_t v8, int8_t v9,</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;                         int8_t v10, int8_t v11, int8_t v12, int8_t v13,</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;                         int8_t v14, int8_t v15)</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;      : simd8(simdjson2_make_int8x16_t(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9,</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;                                       v10, v11, v12, v13, v14, v15)) {}</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;  simdjson2_inline simd8(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4,</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;                         int8_t v5, int8_t v6, int8_t v7, int8_t v8, int8_t v9,</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                         int8_t v10, int8_t v11, int8_t v12, int8_t v13,</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;                         int8_t v14, int8_t v15)</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;      : simd8(int8x16_t{v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                        v13, v14, v15}) {}</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;  <span class="comment">// Repeat 16 values as many times as necessary (usually for lookup tables)</span></div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;  simdjson2_inline <span class="keyword">static</span> simd8&lt;int8_t&gt;</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;  repeat_16(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4, int8_t v5,</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;            int8_t v6, int8_t v7, int8_t v8, int8_t v9, int8_t v10, int8_t v11,</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;            int8_t v12, int8_t v13, int8_t v14, int8_t v15) {</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    <span class="keywordflow">return</span> simd8&lt;int8_t&gt;(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;                         v13, v14, v15);</div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;  }</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160; </div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;  <span class="comment">// Store to array</span></div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(int8_t dst[16])<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    <span class="keywordflow">return</span> vst1q_s8(dst, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;  <span class="comment">// Conversion from/to SIMD register</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> int8x16_t _value) : value{_value} {}</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  simdjson2_inline <span class="keyword">operator</span> <span class="keyword">const</span> int8x16_t &amp;() <span class="keyword">const</span> { <span class="keywordflow">return</span> this-&gt;value; }</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;  simdjson2_inline <span class="keyword">operator</span> int8x16_t &amp;() { <span class="keywordflow">return</span> this-&gt;value; }</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160; </div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;  <span class="comment">// Zero constructor</span></div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;  simdjson2_inline simd8() : simd8(zero()) {}</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;  <span class="comment">// Splat constructor</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;  simdjson2_inline simd8(int8_t _value) : simd8(splat(_value)) {}</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;  <span class="comment">// Array constructor</span></div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;  simdjson2_inline simd8(<span class="keyword">const</span> int8_t *values) : simd8(load(values)) {}</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;  <span class="comment">// Member-by-member initialization</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;  simdjson2_inline simd8(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4,</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;                         int8_t v5, int8_t v6, int8_t v7, int8_t v8, int8_t v9,</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;                         int8_t v10, int8_t v11, int8_t v12, int8_t v13,</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;                         int8_t v14, int8_t v15)</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;      : simd8(simdjson2_make_int8x16_t(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9,</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;                                       v10, v11, v12, v13, v14, v15)) {}</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;  simdjson2_inline simd8(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4,</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;                         int8_t v5, int8_t v6, int8_t v7, int8_t v8, int8_t v9,</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;                         int8_t v10, int8_t v11, int8_t v12, int8_t v13,</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;                         int8_t v14, int8_t v15)</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;      : simd8(int8x16_t{v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;                        v13, v14, v15}) {}</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;  <span class="comment">// Repeat 16 values as many times as necessary (usually for lookup tables)</span></div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;  simdjson2_inline <span class="keyword">static</span> simd8&lt;int8_t&gt;</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;  repeat_16(int8_t v0, int8_t v1, int8_t v2, int8_t v3, int8_t v4, int8_t v5,</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;            int8_t v6, int8_t v7, int8_t v8, int8_t v9, int8_t v10, int8_t v11,</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;            int8_t v12, int8_t v13, int8_t v14, int8_t v15) {</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    <span class="keywordflow">return</span> simd8&lt;int8_t&gt;(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;                         v13, v14, v15);</div>
 <div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;  }</div>
 <div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160; </div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;  <span class="comment">// Explicit conversion to/from unsigned</span></div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;  <span class="comment">//</span></div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;  <span class="comment">// Under Visual Studio/ARM64 uint8x16_t and int8x16_t are apparently the same</span></div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;  <span class="comment">// type. In theory, we could check this occurrence with std::same_as and</span></div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;  <span class="comment">// std::enabled_if but it is C++14 and relatively ugly and hard to read.</span></div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;<span class="preprocessor">#ifndef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;  simdjson2_inline <span class="keyword">explicit</span> simd8(<span class="keyword">const</span> uint8x16_t other)</div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;      : simd8(vreinterpretq_s8_u8(other)) {}</div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;  simdjson2_inline <span class="keyword">explicit</span> <span class="keyword">operator</span> simd8&lt;uint8_t&gt;()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_s8(this-&gt;value);</div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;  }</div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160; </div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;  <span class="comment">// Math</span></div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; operator+(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    <span class="keywordflow">return</span> vaddq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;  <span class="comment">// Store to array</span></div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(int8_t dst[16])<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;    <span class="keywordflow">return</span> vst1q_s8(dst, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;  }</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160; </div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;  <span class="comment">// Explicit conversion to/from unsigned</span></div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;  <span class="comment">//</span></div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;  <span class="comment">// Under Visual Studio/ARM64 uint8x16_t and int8x16_t are apparently the same</span></div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;  <span class="comment">// type. In theory, we could check this occurrence with std::same_as and</span></div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;  <span class="comment">// std::enabled_if but it is C++14 and relatively ugly and hard to read.</span></div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="preprocessor">#ifndef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;  simdjson2_inline <span class="keyword">explicit</span> simd8(<span class="keyword">const</span> uint8x16_t other)</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;      : simd8(vreinterpretq_s8_u8(other)) {}</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;  simdjson2_inline <span class="keyword">explicit</span> <span class="keyword">operator</span> simd8&lt;uint8_t&gt;()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    <span class="keywordflow">return</span> vreinterpretq_u8_s8(this-&gt;value);</div>
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;  }</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; operator-(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;    <span class="keywordflow">return</span> vsubq_s8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;  }</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; &amp;operator+=(<span class="keyword">const</span> simd8&lt;int8_t&gt; other) {</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> + other;</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;  }</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; &amp;operator-=(<span class="keyword">const</span> simd8&lt;int8_t&gt; other) {</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> - other;</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;  }</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160; </div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;  <span class="comment">// Order-sensitive comparisons</span></div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; max_val(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keywordflow">return</span> vmaxq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160; </div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;  <span class="comment">// Math</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; operator+(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;    <span class="keywordflow">return</span> vaddq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;  }</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; operator-(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    <span class="keywordflow">return</span> vsubq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;  }</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; &amp;operator+=(<span class="keyword">const</span> simd8&lt;int8_t&gt; other) {</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> + other;</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;  }</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; &amp;operator-=(<span class="keyword">const</span> simd8&lt;int8_t&gt; other) {</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    *<span class="keyword">this</span> = *<span class="keyword">this</span> - other;</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;  }</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; min_val(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    <span class="keywordflow">return</span> vminq_s8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;  }</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&gt;(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;    <span class="keywordflow">return</span> vcgtq_s8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;  }</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&lt;(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    <span class="keywordflow">return</span> vcltq_s8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;  }</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;  simdjson2_inline simd8&lt;bool&gt; <a class="code" href="namespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#a846a8ddfd3cda5dfad9bb13405e17ca0">operator==</a>(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    <span class="keywordflow">return</span> vceqq_s8(*<span class="keyword">this</span>, other);</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;  }</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160; </div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> N = 1&gt;</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; prev(<span class="keyword">const</span> simd8&lt;int8_t&gt; prev_chunk)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;    <span class="keywordflow">return</span> vextq_s8(prev_chunk, *<span class="keyword">this</span>, 16 - N);</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160; </div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;  <span class="comment">// Order-sensitive comparisons</span></div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; max_val(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;    <span class="keywordflow">return</span> vmaxq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;  }</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; min_val(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    <span class="keywordflow">return</span> vminq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;  }</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&gt;(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;    <span class="keywordflow">return</span> vcgtq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  }</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;  simdjson2_inline simd8&lt;bool&gt; operator&lt;(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    <span class="keywordflow">return</span> vcltq_s8(*<span class="keyword">this</span>, other);</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;  }</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;  simdjson2_inline simd8&lt;bool&gt; <a class="code" href="namespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#a846a8ddfd3cda5dfad9bb13405e17ca0">operator==</a>(<span class="keyword">const</span> simd8&lt;int8_t&gt; other)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;    <span class="keywordflow">return</span> vceqq_s8(*<span class="keyword">this</span>, other);</div>
 <div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;  }</div>
 <div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160; </div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;  <span class="comment">// Perform a lookup assuming no value is larger than 16</span></div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;  simdjson2_inline simd8&lt;L&gt; lookup_16(simd8&lt;L&gt; lookup_table)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    <span class="keywordflow">return</span> lookup_table.apply_lookup_16_to(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;  }</div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;  simdjson2_inline simd8&lt;L&gt;</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;  lookup_16(L replace0, L replace1, L replace2, L replace3, L replace4,</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;            L replace5, L replace6, L replace7, L replace8, L replace9,</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;            L replace10, L replace11, L replace12, L replace13, L replace14,</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            L replace15)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="keywordflow">return</span> lookup_16(simd8&lt;L&gt;::repeat_16(</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;        replace0, replace1, replace2, replace3, replace4, replace5, replace6,</div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;        replace7, replace8, replace9, replace10, replace11, replace12,</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;        replace13, replace14, replace15));</div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;  }</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160; </div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; apply_lookup_16_to(<span class="keyword">const</span> simd8&lt;T&gt; original) {</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;    <span class="keywordflow">return</span> vqtbl1q_s8(*<span class="keyword">this</span>, simd8&lt;uint8_t&gt;(original));</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> N = 1&gt;</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; prev(<span class="keyword">const</span> simd8&lt;int8_t&gt; prev_chunk)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    <span class="keywordflow">return</span> vextq_s8(prev_chunk, *<span class="keyword">this</span>, 16 - N);</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;  }</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160; </div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;  <span class="comment">// Perform a lookup assuming no value is larger than 16</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;  simdjson2_inline simd8&lt;L&gt; lookup_16(simd8&lt;L&gt; lookup_table)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    <span class="keywordflow">return</span> lookup_table.apply_lookup_16_to(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;  }</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> L&gt;</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;  simdjson2_inline simd8&lt;L&gt;</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;  lookup_16(L replace0, L replace1, L replace2, L replace3, L replace4,</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;            L replace5, L replace6, L replace7, L replace8, L replace9,</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;            L replace10, L replace11, L replace12, L replace13, L replace14,</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;            L replace15)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    <span class="keywordflow">return</span> lookup_16(simd8&lt;L&gt;::repeat_16(</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;        replace0, replace1, replace2, replace3, replace4, replace5, replace6,</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;        replace7, replace8, replace9, replace10, replace11, replace12,</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;        replace13, replace14, replace15));</div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;  }</div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;};</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160; </div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span>simd8x64 {</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> NUM_CHUNKS = 64 / <span class="keyword">sizeof</span>(simd8&lt;T&gt;);</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;  static_assert(NUM_CHUNKS == 4,</div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;                <span class="stringliteral">&quot;ARM kernel should use four registers per 64-byte block.&quot;</span>);</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;  <span class="keyword">const</span> simd8&lt;T&gt; chunks[NUM_CHUNKS];</div>
-<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160; </div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;  simd8x64(<span class="keyword">const</span> simd8x64&lt;T&gt; &amp;o) = <span class="keyword">delete</span>; <span class="comment">// no copy allowed</span></div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;  simd8x64&lt;T&gt; &amp;</div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;  operator=(<span class="keyword">const</span> simd8&lt;T&gt; &amp;other) = <span class="keyword">delete</span>; <span class="comment">// no assignment allowed</span></div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;  simd8x64() = <span class="keyword">delete</span>;                       <span class="comment">// no default constructor allowed</span></div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160; </div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;  simdjson2_inline simd8&lt;int8_t&gt; apply_lookup_16_to(<span class="keyword">const</span> simd8&lt;T&gt; original) {</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    <span class="keywordflow">return</span> vqtbl1q_s8(*<span class="keyword">this</span>, simd8&lt;uint8_t&gt;(original));</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;  }</div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;};</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160; </div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span>simd8x64 {</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> NUM_CHUNKS = 64 / <span class="keyword">sizeof</span>(simd8&lt;T&gt;);</div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;  static_assert(NUM_CHUNKS == 4,</div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;                <span class="stringliteral">&quot;ARM kernel should use four registers per 64-byte block.&quot;</span>);</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;  <span class="keyword">const</span> simd8&lt;T&gt; chunks[NUM_CHUNKS];</div>
 <div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160; </div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;  simdjson2_inline simd8x64(<span class="keyword">const</span> simd8&lt;T&gt; chunk0, <span class="keyword">const</span> simd8&lt;T&gt; chunk1,</div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;                            <span class="keyword">const</span> simd8&lt;T&gt; chunk2, <span class="keyword">const</span> simd8&lt;T&gt; chunk3)</div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;      : chunks{chunk0, chunk1, chunk2, chunk3} {}</div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;  simdjson2_inline simd8x64(<span class="keyword">const</span> T ptr[64])</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;      : chunks{simd8&lt;T&gt;::load(ptr), simd8&lt;T&gt;::load(ptr + 16),</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;               simd8&lt;T&gt;::load(ptr + 32), simd8&lt;T&gt;::load(ptr + 48)} {}</div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160; </div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(T ptr[64])<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;    this-&gt;chunks[0].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 0);</div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;    this-&gt;chunks[1].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 1);</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;    this-&gt;chunks[2].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 2);</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;    this-&gt;chunks[3].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 3);</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;  }</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160; </div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;  simdjson2_inline simd8&lt;T&gt; reduce_or()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    <span class="keywordflow">return</span> (this-&gt;chunks[0] | this-&gt;chunks[1]) |</div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;           (this-&gt;chunks[2] | this-&gt;chunks[3]);</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;  simd8x64(<span class="keyword">const</span> simd8x64&lt;T&gt; &amp;o) = <span class="keyword">delete</span>; <span class="comment">// no copy allowed</span></div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;  simd8x64&lt;T&gt; &amp;</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;  operator=(<span class="keyword">const</span> simd8&lt;T&gt; &amp;other) = <span class="keyword">delete</span>; <span class="comment">// no assignment allowed</span></div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;  simd8x64() = <span class="keyword">delete</span>;                       <span class="comment">// no default constructor allowed</span></div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160; </div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;  simdjson2_inline simd8x64(<span class="keyword">const</span> simd8&lt;T&gt; chunk0, <span class="keyword">const</span> simd8&lt;T&gt; chunk1,</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;                            <span class="keyword">const</span> simd8&lt;T&gt; chunk2, <span class="keyword">const</span> simd8&lt;T&gt; chunk3)</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;      : chunks{chunk0, chunk1, chunk2, chunk3} {}</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;  simdjson2_inline simd8x64(<span class="keyword">const</span> T ptr[64])</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;      : chunks{simd8&lt;T&gt;::load(ptr), simd8&lt;T&gt;::load(ptr + 16),</div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;               simd8&lt;T&gt;::load(ptr + 32), simd8&lt;T&gt;::load(ptr + 48)} {}</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160; </div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;  simdjson2_inline <span class="keywordtype">void</span> store(T ptr[64])<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;    this-&gt;chunks[0].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 0);</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;    this-&gt;chunks[1].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 1);</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    this-&gt;chunks[2].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 2);</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;    this-&gt;chunks[3].store(ptr + <span class="keyword">sizeof</span>(simd8&lt;T&gt;) * 3);</div>
 <div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;  }</div>
 <div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160; </div>
-<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;  simdjson2_inline uint64_t compress(uint64_t mask, T *output)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;    uint64_t popcounts =</div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;        vget_lane_u64(vreinterpret_u64_u8(vcnt_u8(vcreate_u8(~mask))), 0);</div>
-<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;    <span class="comment">// compute the prefix sum of the popcounts of each byte</span></div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;    uint64_t offsets = popcounts * 0x0101010101010101;</div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;    this-&gt;chunks[0].compress_halves(uint16_t(mask), output,</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;                                    &amp;output[popcounts &amp; 0xFF]);</div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;    this-&gt;chunks[1].compress_halves(uint16_t(mask &gt;&gt; 16),</div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;                                    &amp;output[(offsets &gt;&gt; 8) &amp; 0xFF],</div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;                                    &amp;output[(offsets &gt;&gt; 16) &amp; 0xFF]);</div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;    this-&gt;chunks[2].compress_halves(uint16_t(mask &gt;&gt; 32),</div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;                                    &amp;output[(offsets &gt;&gt; 24) &amp; 0xFF],</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;                                    &amp;output[(offsets &gt;&gt; 32) &amp; 0xFF]);</div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;    this-&gt;chunks[3].compress_halves(uint16_t(mask &gt;&gt; 48),</div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;                                    &amp;output[(offsets &gt;&gt; 40) &amp; 0xFF],</div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;                                    &amp;output[(offsets &gt;&gt; 48) &amp; 0xFF]);</div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;    <span class="keywordflow">return</span> offsets &gt;&gt; 56;</div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;  }</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160; </div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;  simdjson2_inline uint64_t to_bitmask()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;    <span class="keyword">const</span> uint8x16_t bit_mask =</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        simdjson2_make_uint8x16_t(0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80,</div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;                                  0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80);</div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    <span class="keyword">const</span> uint8x16_t bit_mask = {0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80,</div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;                                 0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;    <span class="comment">// Add each of the elements next to each other, successively, to stuff each</span></div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;    <span class="comment">// 8 byte mask into one.</span></div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;    uint8x16_t sum0 =</div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;        vpaddq_u8(this-&gt;chunks[0] &amp; bit_mask, this-&gt;chunks[1] &amp; bit_mask);</div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;    uint8x16_t sum1 =</div>
-<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;        vpaddq_u8(this-&gt;chunks[2] &amp; bit_mask, this-&gt;chunks[3] &amp; bit_mask);</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;    sum0 = vpaddq_u8(sum0, sum1);</div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    sum0 = vpaddq_u8(sum0, sum0);</div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    <span class="keywordflow">return</span> vgetq_lane_u64(vreinterpretq_u64_u8(sum0), 0);</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;  }</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160; </div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;  simdjson2_inline uint64_t eq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;    <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    <span class="keywordflow">return</span> simd8x64&lt;bool&gt;(this-&gt;chunks[0] == mask, this-&gt;chunks[1] == mask,</div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;                          this-&gt;chunks[2] == mask, this-&gt;chunks[3] == mask)</div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;        .to_bitmask();</div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;  }</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160; </div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;  simdjson2_inline uint64_t lteq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;    <span class="keywordflow">return</span> simd8x64&lt;bool&gt;(this-&gt;chunks[0] &lt;= mask, this-&gt;chunks[1] &lt;= mask,</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;                          this-&gt;chunks[2] &lt;= mask, this-&gt;chunks[3] &lt;= mask)</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;        .to_bitmask();</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;  }</div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;}; <span class="comment">// struct simd8x64&lt;T&gt;</span></div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160; </div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;} <span class="comment">// namespace simd</span></div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;} <span class="comment">// unnamed namespace</span></div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;} <span class="comment">// namespace arm64</span></div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;  simdjson2_inline simd8&lt;T&gt; reduce_or()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;    <span class="keywordflow">return</span> (this-&gt;chunks[0] | this-&gt;chunks[1]) |</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;           (this-&gt;chunks[2] | this-&gt;chunks[3]);</div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;  }</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160; </div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;  simdjson2_inline uint64_t compress(uint64_t mask, T *output)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    uint64_t popcounts =</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;        vget_lane_u64(vreinterpret_u64_u8(vcnt_u8(vcreate_u8(~mask))), 0);</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;    <span class="comment">// compute the prefix sum of the popcounts of each byte</span></div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;    uint64_t offsets = popcounts * 0x0101010101010101;</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;    this-&gt;chunks[0].compress_halves(uint16_t(mask), output,</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;                                    &amp;output[popcounts &amp; 0xFF]);</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;    this-&gt;chunks[1].compress_halves(uint16_t(mask &gt;&gt; 16),</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                                    &amp;output[(offsets &gt;&gt; 8) &amp; 0xFF],</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;                                    &amp;output[(offsets &gt;&gt; 16) &amp; 0xFF]);</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;    this-&gt;chunks[2].compress_halves(uint16_t(mask &gt;&gt; 32),</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;                                    &amp;output[(offsets &gt;&gt; 24) &amp; 0xFF],</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;                                    &amp;output[(offsets &gt;&gt; 32) &amp; 0xFF]);</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;    this-&gt;chunks[3].compress_halves(uint16_t(mask &gt;&gt; 48),</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;                                    &amp;output[(offsets &gt;&gt; 40) &amp; 0xFF],</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;                                    &amp;output[(offsets &gt;&gt; 48) &amp; 0xFF]);</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;    <span class="keywordflow">return</span> offsets &gt;&gt; 56;</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;  }</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160; </div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;  simdjson2_inline uint64_t to_bitmask()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;<span class="preprocessor">#ifdef SIMDJSON2_REGULAR_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="keyword">const</span> uint8x16_t bit_mask =</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;        simdjson2_make_uint8x16_t(0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80,</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;                                  0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80);</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;    <span class="keyword">const</span> uint8x16_t bit_mask = {0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80,</div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;                                 0x01, 0x02, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};</div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;    <span class="comment">// Add each of the elements next to each other, successively, to stuff each</span></div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;    <span class="comment">// 8 byte mask into one.</span></div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    uint8x16_t sum0 =</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;        vpaddq_u8(this-&gt;chunks[0] &amp; bit_mask, this-&gt;chunks[1] &amp; bit_mask);</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;    uint8x16_t sum1 =</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        vpaddq_u8(this-&gt;chunks[2] &amp; bit_mask, this-&gt;chunks[3] &amp; bit_mask);</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    sum0 = vpaddq_u8(sum0, sum1);</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;    sum0 = vpaddq_u8(sum0, sum0);</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    <span class="keywordflow">return</span> vgetq_lane_u64(vreinterpretq_u64_u8(sum0), 0);</div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;  }</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160; </div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;  simdjson2_inline uint64_t eq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;    <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;    <span class="keywordflow">return</span> simd8x64&lt;bool&gt;(this-&gt;chunks[0] == mask, this-&gt;chunks[1] == mask,</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;                          this-&gt;chunks[2] == mask, this-&gt;chunks[3] == mask)</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;        .to_bitmask();</div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;  }</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160; </div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;  simdjson2_inline uint64_t lteq(<span class="keyword">const</span> T m)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;    <span class="keyword">const</span> simd8&lt;T&gt; mask = simd8&lt;T&gt;::splat(m);</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;    <span class="keywordflow">return</span> simd8x64&lt;bool&gt;(this-&gt;chunks[0] &lt;= mask, this-&gt;chunks[1] &lt;= mask,</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                          this-&gt;chunks[2] &lt;= mask, this-&gt;chunks[3] &lt;= mask)</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        .to_bitmask();</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;  }</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;}; <span class="comment">// struct simd8x64&lt;T&gt;</span></div>
 <div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160; </div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_ARM64_SIMD_H</span></div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opClMul(simd_int_t01 &amp;&amp;value,</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                                               int64_t &amp;prevInString) noexcept {</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;  <span class="keyword">alignas</span>(16) uint64_t values[sixtyFourBitsPerStep];</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;  value.store(values);</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;  values[0] = prefix_xor(values[0]) ^ prevInString;</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;  prevInString = <span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(values[0]) &gt;&gt; 63;</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;  values[1] = prefix_xor(values[1]) ^ prevInString;</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;  prevInString = <span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(values[1]) &gt;&gt; 63;</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(values);</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;}</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160; </div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01, <span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t02&gt;</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opSub(simd_int_t01 &amp;&amp;value,</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                                             simd_int_t02 &amp;&amp;other) noexcept {</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;  <span class="keyword">alignas</span>(16) uint64_t values[sixtyFourBitsPerStep * 2];</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;  store(value, values);</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;  store(other, values + sixtyFourBitsPerStep);</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;  <span class="keywordtype">bool</span> carryInNew{};</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;  values[sixtyFourBitsPerStep] = values[0] - values[sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                                 <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;  carryInNew = values[sixtyFourBitsPerStep] &gt; values[0];</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;  values[1 + sixtyFourBitsPerStep] = values[1] -</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                                     values[1 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                                     <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;  carryInNew = values[1 + sixtyFourBitsPerStep] &gt; values[1];</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;  <span class="keywordflow">if</span> constexpr (sixtyFourBitsPerStep &gt; 2) {</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;    values[2 + sixtyFourBitsPerStep] = values[2] -</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                                       values[2 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    carryInNew = values[2 + sixtyFourBitsPerStep] &gt; values[2];</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    values[3 + sixtyFourBitsPerStep] = values[3] -</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;                                       values[3 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    carryInNew = values[3 + sixtyFourBitsPerStep] &gt; values[3];</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;  }</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;  <span class="keywordflow">if</span> constexpr (sixtyFourBitsPerStep &gt; 4) {</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;    values[4 + sixtyFourBitsPerStep] = values[4] -</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;                                       values[4 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    carryInNew = values[4 + sixtyFourBitsPerStep] &gt; values[4];</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    values[5 + sixtyFourBitsPerStep] = values[5] -</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;                                       values[5 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    carryInNew = values[5 + sixtyFourBitsPerStep] &gt; values[5];</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    values[6 + sixtyFourBitsPerStep] = values[6] -</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;                                       values[6 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    carryInNew = values[6 + sixtyFourBitsPerStep] &gt; values[6];</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    values[7 + sixtyFourBitsPerStep] = values[7] -</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                                       values[7 + sixtyFourBitsPerStep] -</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    carryInNew = values[7 + sixtyFourBitsPerStep] &gt; values[7];</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;  }</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;  <span class="keywordflow">return</span> gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + sixtyFourBitsPerStep);</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;}</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160; </div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;<span class="preprocessor">#define opShl(amount, value, result)                                           \</span></div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;<span class="preprocessor">  {                                                                            \</span></div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;<span class="preprocessor">    alignas(16) uint64_t values[sixtyFourBitsPerStep * 2];                     \</span></div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;<span class="preprocessor">    store(value, values);                                                      \</span></div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;<span class="preprocessor">    static constexpr uint64_t shiftAmount{64 - amount};                        \</span></div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;<span class="preprocessor">    values[sixtyFourBitsPerStep] = values[0] &lt;&lt; amount;                        \</span></div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;<span class="preprocessor">    values[1 + sixtyFourBitsPerStep] =                                         \</span></div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;<span class="preprocessor">        values[1] &lt;&lt; amount | values[1 - 1] &gt;&gt; (shiftAmount);                  \</span></div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;<span class="preprocessor">    if constexpr (sixtyFourBitsPerStep &gt; 2) {                                  \</span></div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;<span class="preprocessor">      values[2 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;<span class="preprocessor">          values[2] &lt;&lt; amount | values[2 - 1] &gt;&gt; (shiftAmount);                \</span></div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="preprocessor">      values[3 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="preprocessor">          values[3] &lt;&lt; amount | values[3 - 1] &gt;&gt; (shiftAmount);                \</span></div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;<span class="preprocessor">    }                                                                          \</span></div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="preprocessor">    if constexpr (sixtyFourBitsPerStep &gt; 4) {                                  \</span></div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="preprocessor">      values[4 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="preprocessor">          values[4] &lt;&lt; amount | values[4 - 1] &gt;&gt; (shiftAmount);                \</span></div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="preprocessor">      values[5 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;<span class="preprocessor">          values[5] &lt;&lt; amount | values[5 - 1] &gt;&gt; (shiftAmount);                \</span></div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;<span class="preprocessor">      values[6 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;<span class="preprocessor">          values[6] &lt;&lt; amount | values[6 - 1] &gt;&gt; (shiftAmount);                \</span></div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;<span class="preprocessor">      values[7 + sixtyFourBitsPerStep] =                                       \</span></div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;<span class="preprocessor">          values[7] &lt;&lt; amount | values[7 - 1] &gt;&gt; (shiftAmount);                \</span></div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">    }                                                                          \</span></div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="preprocessor">    result = gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + sixtyFourBitsPerStep);      \</span></div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;<span class="preprocessor">  }</span></div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opFollows(simd_int_t01 &amp;&amp;value,</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;                                                 <span class="keywordtype">bool</span> &amp;overflow) noexcept {</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;  <span class="keywordtype">bool</span> oldOverflow = overflow;</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;  overflow = opGetMSB(value);</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;  simd8&lt;uint8_t&gt; result;</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;  opShl(1, value, result);</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;  <span class="keywordflow">return</span> opSetLSB(result, oldOverflow);</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;}</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160; </div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;<span class="keyword">struct </span>simd_int_t_holder {</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;  simd8&lt;uint8_t&gt; backslashes;</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;  simd8&lt;uint8_t&gt; whitespace;</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;  simd8&lt;uint8_t&gt; quotes;</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;  simd8&lt;uint8_t&gt; op;</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;};</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160; </div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;<span class="keyword">alignas</span>(16) constexpr std::array&lt;char, size&gt; escapeableArray00{[] {</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;  constexpr <span class="keyword">const</span> <span class="keywordtype">char</span> values[]{0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;                                0x00u, 0x00u, 0x00u, <span class="charliteral">&#39;\t&#39;</span>,  <span class="charliteral">&#39;\n&#39;</span>,  0x00u,</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;                                <span class="charliteral">&#39;\\&#39;</span>,  0x00u, 0x00u, 0x00u};</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;  std::array&lt;char, size&gt; returnValues{};</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;  }</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;}()};</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160; </div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;<span class="keyword">alignas</span>(16) constexpr std::array&lt;char, size&gt; escapeableArray01{[] {</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;  constexpr <span class="keyword">const</span> <span class="keywordtype">char</span> values[]{0x00u, 0x00u, <span class="charliteral">&#39;&quot;&#39;</span>,   0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                                0x00u, 0x00u, <span class="charliteral">&#39;\b&#39;</span>,  0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                                0x0Cu, <span class="charliteral">&#39;\r&#39;</span>,  0x00u, 0x00u};</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;  std::array&lt;char, size&gt; returnValues{};</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;  }</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;}()};</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160; </div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;<span class="keyword">alignas</span>(16) constexpr std::array&lt;char, size&gt; whitespaceArray{[] {</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;  constexpr <span class="keyword">const</span> <span class="keywordtype">char</span> values[]{0x20u, 0x64u, 0x64u, 0x64u, 0x11u, 0x64u,</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;                                0x71u, 0x02u, 0x64u, <span class="charliteral">&#39;\t&#39;</span>,  <span class="charliteral">&#39;\n&#39;</span>,  0x70u,</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;                                0x64u, <span class="charliteral">&#39;\r&#39;</span>,  0x64u, 0x64u};</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;  std::array&lt;char, size&gt; returnValues{};</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;  }</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;}()};</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160; </div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;<span class="keyword">alignas</span>(16) constexpr std::array&lt;char, size&gt; opArray{[] {</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;  constexpr <span class="keyword">const</span> <span class="keywordtype">char</span> values[]{0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;                                0x00u, 0x00u, 0x00u, 0x00u, <span class="charliteral">&#39;:&#39;</span>,   <span class="charliteral">&#39;{&#39;</span>,</div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;                                <span class="charliteral">&#39;,&#39;</span>,   <span class="charliteral">&#39;}&#39;</span>,   0x00u, 0x00u};</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;  std::array&lt;char, size&gt; returnValues{};</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;  }</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;}()};</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160; </div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<span class="keyword">static</span> uint8x16_t mask{vdupq_n_u8(0x0f)};</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160; </div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;simdjson2_really_inline <span class="keyword">auto</span> opShuffle(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;value,</div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;                                       <span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;other) noexcept {</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;  <span class="keywordflow">return</span> vqtbl1q_u8(value, vandq_u8(other, mask));</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;}</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160; </div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;<span class="keyword">static</span> constexpr uint8x16_t bitMask{0x01, 0x02, 0x4,  0x8,  0x10, 0x20,</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;                                    0x40, 0x80, 0x01, 0x02, 0x4,  0x8,</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;                                    0x10, 0x20, 0x40, 0x80};</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160; </div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;simdjson2_really_inline uint64_t</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;opBitMask(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;value) noexcept {</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;  uint8x16_t input = value;</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;  uint16x8_t high_bits = vreinterpretq_u16_u8(vshrq_n_u8(input, 7));</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;  uint32x4_t paired16 =</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;      vreinterpretq_u32_u16(vsraq_n_u16(high_bits, high_bits, 7));</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;  uint64x2_t paired32 =</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;      vreinterpretq_u64_u32(vsraq_n_u32(paired16, paired16, 14));</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;  uint8x16_t paired64 =</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;      vreinterpretq_u8_u64(vsraq_n_u64(paired32, paired32, 28));</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;  <span class="keywordflow">return</span> vgetq_lane_u8(paired64, 0) |</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;         ((int32_t)vgetq_lane_u8(paired64, 8) &lt;&lt; 8);</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;}</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160; </div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;simdjson2_really_inline uint16_t opCmpEq(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;value,</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;                                         <span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;other) noexcept {</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;  <span class="keywordflow">return</span> opBitMask(vceqq_u8(value, other));</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;}</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160; </div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;opOr(<span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;value, <span class="keyword">const</span> simd8&lt;uint8_t&gt; &amp;other) noexcept {</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;  <span class="keywordflow">return</span> vorrq_u8(value, other);</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;}</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160; </div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;collectStructuralIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;  <span class="keyword">alignas</span>(16) uint16_t valuesNew[8];</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;  simd8&lt;uint8_t&gt; simdValues{simd8&lt;uint8_t&gt;::load(opArray&lt;16&gt;.data())};</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;  simd8&lt;uint8_t&gt; simdValue{simd8&lt;uint8_t&gt;::splat(<span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(0x20))};</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;  valuesNew[0] =</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;      opCmpEq(opShuffle(simdValues, values[0]), opOr(simdValue, values[0]));</div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;  valuesNew[1] =</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;      opCmpEq(opShuffle(simdValues, values[1]), opOr(simdValue, values[1]));</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;  valuesNew[2] =</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;      opCmpEq(opShuffle(simdValues, values[2]), opOr(simdValue, values[2]));</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;  valuesNew[3] =</div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;      opCmpEq(opShuffle(simdValues, values[3]), opOr(simdValue, values[3]));</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;  valuesNew[4] =</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;      opCmpEq(opShuffle(simdValues, values[4]), opOr(simdValue, values[4]));</div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;  valuesNew[5] =</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;      opCmpEq(opShuffle(simdValues, values[5]), opOr(simdValue, values[5]));</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;  valuesNew[6] =</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;      opCmpEq(opShuffle(simdValues, values[6]), opOr(simdValue, values[6]));</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;  valuesNew[7] =</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;      opCmpEq(opShuffle(simdValues, values[7]), opOr(simdValue, values[7]));</div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;}</div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160; </div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;collectWhitespaceIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;  <span class="keyword">alignas</span>(16) uint16_t valuesNew[8];</div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;  simd8&lt;uint8_t&gt; simdValues{simd8&lt;uint8_t&gt;::load(whitespaceArray&lt;16&gt;.data())};</div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;  valuesNew[0] = opCmpEq(opShuffle(simdValues, values[0]), values[0]);</div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;  valuesNew[1] = opCmpEq(opShuffle(simdValues, values[1]), values[1]);</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;  valuesNew[2] = opCmpEq(opShuffle(simdValues, values[2]), values[2]);</div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;  valuesNew[3] = opCmpEq(opShuffle(simdValues, values[3]), values[3]);</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;  valuesNew[4] = opCmpEq(opShuffle(simdValues, values[4]), values[4]);</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;  valuesNew[5] = opCmpEq(opShuffle(simdValues, values[5]), values[5]);</div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;  valuesNew[6] = opCmpEq(opShuffle(simdValues, values[6]), values[6]);</div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;  valuesNew[7] = opCmpEq(opShuffle(simdValues, values[7]), values[7]);</div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;}</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160; </div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;<span class="keyword">template</span> &lt;auto c&gt;</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;collectValues(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;  <span class="keyword">alignas</span>(16) uint16_t valuesNew[stridesPerStep];</div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;  simd8&lt;uint8_t&gt; simdValue{gatherValue&lt;simd8&lt;uint8_t&gt;&gt;(c)};</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;  valuesNew[0] = opCmpEq(simdValue, values[0]);</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;  valuesNew[1] = opCmpEq(simdValue, values[1]);</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;  valuesNew[2] = opCmpEq(simdValue, values[2]);</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;  valuesNew[3] = opCmpEq(simdValue, values[3]);</div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;  valuesNew[4] = opCmpEq(simdValue, values[4]);</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;  valuesNew[5] = opCmpEq(simdValue, values[5]);</div>
+<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;  valuesNew[6] = opCmpEq(simdValue, values[6]);</div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;  valuesNew[7] = opCmpEq(simdValue, values[7]);</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;  <span class="keywordflow">return</span> gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(valuesNew);</div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;}</div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160; </div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> minified&gt;</div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;simdjson2_really_inline simd_int_t_holder</div>
+<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;collectIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;  simd_int_t_holder returnValues;</div>
+<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;  returnValues.op = collectStructuralIndices(values);</div>
+<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;  returnValues.quotes = collectValues&lt;<span class="charliteral">&#39;&quot;&#39;</span>&gt;(values);</div>
+<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;  <span class="keywordflow">if</span> constexpr (!minified) {</div>
+<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;    returnValues.whitespace = collectWhitespaceIndices(values);</div>
+<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;  }</div>
+<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;  returnValues.backslashes = collectValues&lt;&#39;\\&#39;&gt;(values);</div>
+<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;}</div>
+<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160; </div>
+<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;} <span class="comment">// namespace simd</span></div>
+<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;} <span class="comment">// unnamed namespace</span></div>
+<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;} <span class="comment">// namespace arm64</span></div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
+<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160; </div>
+<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_ARM64_SIMD_H</span></div>
 <div class="ttc" id="anamespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_html_a846a8ddfd3cda5dfad9bb13405e17ca0"><div class="ttname"><a href="namespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#a846a8ddfd3cda5dfad9bb13405e17ca0">simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::operator==</a></div><div class="ttdeci">simdjson2_unused simdjson2_inline bool operator==(const raw_json_string &amp;a, std::string_view c) noexcept</div><div class="ttdoc">Comparisons between raw_json_string and std::string_view instances are potentially unsafe: the user i...</div><div class="ttdef"><b>Definition:</b> <a href="raw__json__string-inl_8h_source.html#l00139">raw_json_string-inl.h:139</a></div></div>
 <div class="ttc" id="anamespacesimdjson2_html"><div class="ttname"><a href="namespacesimdjson2.html">simdjson2</a></div><div class="ttdoc">The top level simdjson2 namespace, containing everything the library provides.</div><div class="ttdef"><b>Definition:</b> <a href="arm64_2base_8h_source.html#l00008">base.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
