@@ -789,7 +789,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                                       <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
 <div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    carryInNew = values[7 + 2] &gt; values[7];</div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;  }</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;  <span class="keywordflow">return</span> gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + 2);</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(values + 2);</div>
 <div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;}</div>
 <div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160; </div>
 <div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;<span class="preprocessor">#define opShl(amount, value, result)                                           \</span></div>
@@ -816,7 +816,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;<span class="preprocessor">      values[7 + 2] =                                       \</span></div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;<span class="preprocessor">          values[7] &lt;&lt; amount | values[7 - 1] &gt;&gt; (shiftAmount);                \</span></div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">    }                                                                          \</span></div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="preprocessor">    result = gatherValues&lt;simd8&lt;uint8_t&gt;&gt;(values + 2);      \</span></div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="preprocessor">    result = simd8&lt;uint8_t&gt;::load(values + 2);      \</span></div>
 <div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;<span class="preprocessor">  }</span></div>
 <div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
 <div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
@@ -962,7 +962,7 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
 <div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;collectValues(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
 <div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;  <span class="keyword">alignas</span>(16) uint16_t valuesNew[8];</div>
-<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;  simd8&lt;uint8_t&gt; simdValue{gatherValue&lt;simd8&lt;uint8_t&gt;&gt;(c)};</div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;  simd8&lt;uint8_t&gt; simdValue{simd8&lt;uint8_t&gt;::splat(c)};</div>
 <div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;  valuesNew[0] = opCmpEq(simdValue, values[0]);</div>
 <div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;  valuesNew[1] = opCmpEq(simdValue, values[1]);</div>
 <div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;  valuesNew[2] = opCmpEq(simdValue, values[2]);</div>
