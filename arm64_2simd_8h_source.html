@@ -950,15 +950,32 @@ $(document).ready(function(){initNavTree('arm64_2simd_8h_source.html',''); initR
 <div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;  returnValues.quotes = collectValues&lt;<span class="charliteral">&#39;&quot;&#39;</span>&gt;(values);</div>
 <div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;  returnValues.whitespace = collectWhitespaceIndices(values);</div>
 <div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;  returnValues.backslashes = collectValues&lt;&#39;\\&#39;&gt;(values);</div>
-<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;}</div>
-<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160; </div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;} <span class="comment">// namespace simd</span></div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;} <span class="comment">// unnamed namespace</span></div>
-<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;} <span class="comment">// namespace arm64</span></div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160; </div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_ARM64_SIMD_H</span></div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;  uint64_t values[2]{};</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;  returnValues.op.store(values);</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> x = 0; x &lt; 2; ++x) {</div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;OP BITS: &quot;</span> &lt;&lt; std::bitset&lt;64&gt;{reverseBits(values[x])}</div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;              &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;  }</div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;  returnValues.whitespace.store(values);</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> x = 0; x &lt; 2; ++x) {</div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;WHITESPACE BITS: &quot;</span> &lt;&lt; std::bitset&lt;64&gt;{reverseBits(values[x])}</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;              &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;  }</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160; </div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;  returnValues.quotes.store(values);</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> x = 0; x &lt; 2; ++x) {</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;QUOTE BITS: &quot;</span> &lt;&lt; std::bitset&lt;64&gt;{reverseBits(values[x])}</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;              &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;  }</div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;}</div>
+<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160; </div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;} <span class="comment">// namespace simd</span></div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;} <span class="comment">// unnamed namespace</span></div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;} <span class="comment">// namespace arm64</span></div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160; </div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_ARM64_SIMD_H</span></div>
 <div class="ttc" id="anamespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_html_a846a8ddfd3cda5dfad9bb13405e17ca0"><div class="ttname"><a href="namespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#a846a8ddfd3cda5dfad9bb13405e17ca0">simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::operator==</a></div><div class="ttdeci">simdjson2_unused simdjson2_inline bool operator==(const raw_json_string &amp;a, std::string_view c) noexcept</div><div class="ttdoc">Comparisons between raw_json_string and std::string_view instances are potentially unsafe: the user i...</div><div class="ttdef"><b>Definition:</b> <a href="raw__json__string-inl_8h_source.html#l00139">raw_json_string-inl.h:139</a></div></div>
 <div class="ttc" id="anamespacesimdjson2_html"><div class="ttname"><a href="namespacesimdjson2.html">simdjson2</a></div><div class="ttdoc">The top level simdjson2 namespace, containing everything the library provides.</div><div class="ttdef"><b>Definition:</b> <a href="arm64_2base_8h_source.html#l00008">base.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
