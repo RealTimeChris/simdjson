@@ -1,9 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"group__array.html#gad80687d4159e7d08934ab9851c583df5":[9,1,0],
-"group__array.html#gad842d7f91996fce3d6811aad1d088ebd":[9,1,4],
-"group__array.html#gaea60ec0bbca9ad9c434056e47c655d4e":[9,1,3],
-"group__array.html#gafe73b1bb3f0d76afb1ddc42faff15747":[9,1,2],
 "group__object.html":[9,0],
 "group__object.html#ga2d609c4326a8cc8f76a2dbdb27a393ba":[9,0,2],
 "group__object.html#ga33c934cb555a438c8b506bdb9ccf54f4":[9,0,4],
@@ -249,5 +245,9 @@ var NAVTREEINDEX3 =
 "namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aafe8c610d4ac2a61f1ee45a619b94df6b":[10,0,0,30,20],
 "namespacesimdjson2.html#a4371db78ac91e5d1e6d0eee1fc09d527":[10,0,0,53],
 "namespacesimdjson2.html#a4525bae3be6b1ff5bdb18ee208b618f9":[10,0,0,54],
-"namespacesimdjson2.html#a455e0db30566578ebc44378d6e100fda":[10,0,0,38]
+"namespacesimdjson2.html#a455e0db30566578ebc44378d6e100fda":[10,0,0,38],
+"namespacesimdjson2.html#a468bb7c5ec2de2097c653f9191679f57":[10,0,0,36],
+"namespacesimdjson2.html#a47fa86552c641fcc119d0984cd404ce4":[10,0,0,57],
+"namespacesimdjson2.html#a5062161d4a54c4163d7f1a2aeb393b09":[10,0,0,56],
+"namespacesimdjson2.html#a5585641837d4a124c667873df760e6c3":[10,0,0,68]
 };
