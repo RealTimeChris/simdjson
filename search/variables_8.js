@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['second_563',['second',['../structsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1implementation__simdjson__result__base.html#a25289df3eaabd14f029e9872a6db3dfb',1,'simdjson::SIMDJSON_IMPLEMENTATION::implementation_simdjson_result_base']]],
-  ['simdjson_5fmaxsize_5fbytes_564',['SIMDJSON_MAXSIZE_BYTES',['../namespacesimdjson.html#a32d36effa0943f5006e9d4151f5de0e4',1,'simdjson']]],
-  ['simdjson_5fpadding_565',['SIMDJSON_PADDING',['../namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf',1,'simdjson']]]
+  ['second_554',['second',['../structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1implementation__simdjson2__result__base.html#a4f455c9cc832911a5216a969f5d06ec0',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::implementation_simdjson2_result_base']]],
+  ['simdjson2_5fmaxsize_5fbytes_555',['SIMDJSON2_MAXSIZE_BYTES',['../namespacesimdjson2.html#acb189aa4b633e2d48ade9783d5f5aec6',1,'simdjson2']]],
+  ['simdjson2_5fpadding_556',['SIMDJSON2_PADDING',['../namespacesimdjson2.html#a5585641837d4a124c667873df760e6c3',1,'simdjson2']]]
 ];

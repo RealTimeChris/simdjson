@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['has_5fnext_5felement_86',['has_next_element',['../group__array.html#ga31b0a8ce8734db9413cce31c4d9c8c8d',1,'simdjson::SIMDJSON_IMPLEMENTATION::ondemand::value_iterator']]],
-  ['has_5fnext_5ffield_87',['has_next_field',['../group__object.html#ga7956fe38cd8ecfbc8f709aa6f65c92b4',1,'simdjson::SIMDJSON_IMPLEMENTATION::ondemand::value_iterator']]]
+  ['has_5fnext_5felement_86',['has_next_element',['../group__array.html#gafe73b1bb3f0d76afb1ddc42faff15747',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::value_iterator']]],
+  ['has_5fnext_5ffield_87',['has_next_field',['../group__object.html#gaa7c57ce60e8cb5e78ebfcaac8c02f347',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::value_iterator']]]
 ];

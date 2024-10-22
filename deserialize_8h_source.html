@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>simdjson: include/simdjson/generic/ondemand/deserialize.h Source File</title>
+<title>simdjson2: include/simdjson2/generic/ondemand/deserialize.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="logotiny.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">simdjson
+   <div id="projectname">simdjson2
    &#160;<span id="projectnumber">3.10.1</span>
    </div>
    <div id="projectbrief">Ridiculously Fast JSON</div>
@@ -91,17 +91,17 @@ $(document).ready(function(){initNavTree('deserialize_8h_source.html',''); initR
 <div class="title">deserialize.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#if SIMDJSON_SUPPORTS_DESERIALIZATION</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#if SIMDJSON2_SUPPORTS_DESERIALIZATION</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#ifndef SIMDJSON_ONDEMAND_DESERIALIZE_H</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef SIMDJSON_CONDITIONAL_INCLUDE</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define SIMDJSON_ONDEMAND_DESERIALIZE_H</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;simdjson/generic/ondemand/base.h&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;simdjson/generic/ondemand/array.h&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_CONDITIONAL_INCLUDE</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#ifndef SIMDJSON2_ONDEMAND_DESERIALIZE_H</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef SIMDJSON2_CONDITIONAL_INCLUDE</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define SIMDJSON2_ONDEMAND_DESERIALIZE_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;simdjson2/generic/ondemand/base.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;simdjson2/generic/ondemand/array.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_CONDITIONAL_INCLUDE</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;concepts&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesimdjson.html">simdjson</a> {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesimdjson2.html">simdjson2</a> {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>tag_invoke_fn_ns {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keywordtype">void</span> tag_invoke();</div>
@@ -156,32 +156,32 @@ $(document).ready(function(){initNavTree('deserialize_8h_source.html',''); initR
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;uint64_t&gt; : std::true_type {};</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;double&gt; : std::true_type {};</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;bool&gt; : std::true_type {};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON_IMPLEMENTATION::ondemand::array&gt; : std::true_type {};</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON_IMPLEMENTATION::ondemand::object&gt; : std::true_type {};</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON_IMPLEMENTATION::ondemand::value&gt; : std::true_type {};</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON_IMPLEMENTATION::ondemand::raw_json_string&gt; : std::true_type {};</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON2_IMPLEMENTATION::ondemand::array&gt; : std::true_type {};</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON2_IMPLEMENTATION::ondemand::object&gt; : std::true_type {};</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON2_IMPLEMENTATION::ondemand::value&gt; : std::true_type {};</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;SIMDJSON2_IMPLEMENTATION::ondemand::raw_json_string&gt; : std::true_type {};</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>is_builtin_deserializable&lt;std::string_view&gt; : std::true_type {};</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;concept is_builtin_deserializable_v = is_builtin_deserializable&lt;T&gt;::value;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON_IMPLEMENTATION::ondemand::value&gt;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON2_IMPLEMENTATION::ondemand::value&gt;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;concept custom_deserializable = tag_invocable&lt;deserialize_tag, ValT&amp;, T&amp;&gt;;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON_IMPLEMENTATION::ondemand::value&gt;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON2_IMPLEMENTATION::ondemand::value&gt;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;concept deserializable = custom_deserializable&lt;T, ValT&gt; || is_builtin_deserializable_v&lt;T&gt;;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON_IMPLEMENTATION::ondemand::value&gt;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON2_IMPLEMENTATION::ondemand::value&gt;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;concept nothrow_custom_deserializable = nothrow_tag_invocable&lt;deserialize_tag, ValT&amp;, T&amp;&gt;;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// built-in types are noexcept and if an error happens, the value simply gets ignored and the error is returned.</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON_IMPLEMENTATION::ondemand::value&gt;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ValT = SIMDJSON2_IMPLEMENTATION::ondemand::value&gt;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;concept nothrow_deserializable = nothrow_custom_deserializable&lt;T, ValT&gt; || is_builtin_deserializable_v&lt;T&gt;;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">inline</span> constexpr <span class="keyword">struct </span>deserialize_tag {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keyword">using</span> value_type = SIMDJSON_IMPLEMENTATION::ondemand::value;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">using</span> document_type = SIMDJSON_IMPLEMENTATION::ondemand::document;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">using</span> document_reference_type = SIMDJSON_IMPLEMENTATION::ondemand::document_reference;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keyword">using</span> value_type = SIMDJSON2_IMPLEMENTATION::ondemand::value;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">using</span> document_type = SIMDJSON2_IMPLEMENTATION::ondemand::document;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">using</span> document_reference_type = SIMDJSON2_IMPLEMENTATION::ondemand::document_reference;</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="comment">// Customization Point for value</span></div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
@@ -207,18 +207,18 @@ $(document).ready(function(){initNavTree('deserialize_8h_source.html',''); initR
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;} deserialize{};</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;} <span class="comment">// namespace simdjson</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_ONDEMAND_DESERIALIZE_H</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_SUPPORTS_DESERIALIZATION</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_ONDEMAND_DESERIALIZE_H</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_SUPPORTS_DESERIALIZATION</span></div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="ttc" id="anamespacesimdjson_html"><div class="ttname"><a href="namespacesimdjson.html">simdjson</a></div><div class="ttdoc">The top level simdjson namespace, containing everything the library provides.</div><div class="ttdef"><b>Definition:</b> <a href="arm64_2base_8h_source.html#l00008">base.h:8</a></div></div>
+<div class="ttc" id="anamespacesimdjson2_html"><div class="ttname"><a href="namespacesimdjson2.html">simdjson2</a></div><div class="ttdoc">The top level simdjson2 namespace, containing everything the library provides.</div><div class="ttdef"><b>Definition:</b> <a href="arm64_2base_8h_source.html#l00008">base.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_49a0b2767ded4a45005c5d6720a18cd1.html">simdjson</a></li><li class="navelem"><a class="el" href="dir_53368a02099cf3699f2996a5d88d70b6.html">generic</a></li><li class="navelem"><a class="el" href="dir_7796bb4b727f918c96faee1bdd50e49a.html">ondemand</a></li><li class="navelem"><b>deserialize.h</b></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_5a30c64701ca611b756cdbb976be5570.html">simdjson2</a></li><li class="navelem"><a class="el" href="dir_ed2f42a6b5af96dc785488f647a0106d.html">generic</a></li><li class="navelem"><a class="el" href="dir_a38d8edd55266cfea6639d7a9b5cd777.html">ondemand</a></li><li class="navelem"><b>deserialize.h</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

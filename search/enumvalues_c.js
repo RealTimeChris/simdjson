@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['t_5fatom_5ferror_614',['T_ATOM_ERROR',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ab6e8bfc242f7bea38657eaf61400077f',1,'simdjson']]],
-  ['tape_5ferror_615',['TAPE_ERROR',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a4005fbda56edc47e077e5cfd4e68cda9',1,'simdjson']]],
-  ['trailing_5fcontent_616',['TRAILING_CONTENT',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ab70f5a6f0ac798d482e95a0fcc528676',1,'simdjson']]]
+  ['t_5fatom_5ferror_605',['T_ATOM_ERROR',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa026c5110653a7238e4f6ad99a13cacbc',1,'simdjson2']]],
+  ['tape_5ferror_606',['TAPE_ERROR',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa55a2d92aeb4eefeb38b6cd64c38db858',1,'simdjson2']]],
+  ['trailing_5fcontent_607',['TRAILING_CONTENT',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa6a5d8cbeae6db30b34671acc653dbe54',1,'simdjson2']]]
 ];

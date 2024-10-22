@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['empty_583',['EMPTY',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a7aed571b420dcdfe59742e0df97b415a',1,'simdjson']]]
+  ['empty_574',['EMPTY',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa4f8c39a4a5ee176762f90128c1672aa4',1,'simdjson2']]]
 ];

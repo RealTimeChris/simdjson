@@ -24,12 +24,12 @@
 */
 var NAVTREE =
 [
-  [ "simdjson", "index.html", [
+  [ "simdjson2", "index.html", [
     [ "The Basics", "md_doc_basics.html", [
       [ "Requirements", "md_doc_basics.html#autotoc_md0", null ],
-      [ "Including simdjson", "md_doc_basics.html#autotoc_md1", null ],
-      [ "Using simdjson with package managers", "md_doc_basics.html#autotoc_md2", null ],
-      [ "Using simdjson as a CMake dependency", "md_doc_basics.html#autotoc_md3", null ],
+      [ "Including simdjson2", "md_doc_basics.html#autotoc_md1", null ],
+      [ "Using simdjson2 with package managers", "md_doc_basics.html#autotoc_md2", null ],
+      [ "Using simdjson2 as a CMake dependency", "md_doc_basics.html#autotoc_md3", null ],
       [ "Versions", "md_doc_basics.html#autotoc_md4", null ],
       [ "The basics: loading and parsing JSON documents", "md_doc_basics.html#autotoc_md5", null ],
       [ "Documents are iterators", "md_doc_basics.html#autotoc_md6", [
@@ -41,7 +41,7 @@ var NAVTREE =
         [ "Using the parsed JSON: additional examples", "md_doc_basics.html#autotoc_md11", null ]
       ] ],
       [ "Adding support for custom types", "md_doc_basics.html#autotoc_md12", [
-        [ "1. Specialize <tt>simdjson::ondemand::value::get</tt> to get custom types (pre-C++20)", "md_doc_basics.html#autotoc_md13", null ],
+        [ "1. Specialize <tt>simdjson2::ondemand::value::get</tt> to get custom types (pre-C++20)", "md_doc_basics.html#autotoc_md13", null ],
         [ "2. Use <tt>tag_invoke</tt> for custom types (C++20)", "md_doc_basics.html#autotoc_md14", null ]
       ] ],
       [ "Minifying JSON strings without parsing", "md_doc_basics.html#autotoc_md15", null ],
@@ -156,7 +156,7 @@ var NAVTREE =
       [ "Power Usage and Downclocking", "md_doc_performance.html#autotoc_md105", null ],
       [ "Free Padding", "md_doc_performance.html#autotoc_md106", null ]
     ] ],
-    [ "Tape structure in simdjson", "md_doc_tape.html", [
+    [ "Tape structure in simdjson2", "md_doc_tape.html", [
       [ "Example", "md_doc_tape.html#autotoc_md108", [
         [ "The Tape", "md_doc_tape.html#autotoc_md109", null ]
       ] ],
@@ -199,13 +199,12 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1document__stream_1_1iterator.html#a5fe3ce985cc1921d5917667d6b25841b",
-"classsimdjson_1_1dom_1_1element.html#a71d6bfa627dd66e202f8b402f91a44ac",
-"generic_2ondemand_2serialization_8h_source.html",
-"namespacesimdjson.html#a43514fe76c3095e45f30a050a9551d27",
-"structsimdjson_1_1simdjson__result_3_01_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1array__iterator_01_4.html#a80d1a491f89534a7474f7a6ff6ab236d",
-"structsimdjson_1_1simdjson__result_3_01dom_1_1element_01_4.html#a44ea6742d136192ac67eb1c73fe1edbf"
+"amalgamated_8h_source.html",
+"classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1document__stream_1_1iterator.html#aea57c1ba902c0b029b5209d0a20b1e08",
+"classsimdjson2_1_1dom_1_1element.html#a7862ede0b44bd52892bbeab933f7935e",
+"group__object.html",
+"namespacesimdjson2.html#a5b96c031c9d483987b2520e93d150962",
+"structsimdjson2_1_1simdjson2__result_3_01_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1array__iterator_01_4.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['name_474',['name',['../classsimdjson_1_1implementation.html#aa1d1e04f5471283ab9b2071ea36adf00',1,'simdjson::implementation']]],
-  ['number_5fof_5fslots_475',['number_of_slots',['../classsimdjson_1_1dom_1_1array.html#a26e66312190e016c22093292974490ff',1,'simdjson::dom::array']]]
+  ['name_465',['name',['../classsimdjson2_1_1implementation.html#a2c9d1a314981f68e3512067c0ba7f19f',1,'simdjson2::implementation']]],
+  ['number_5fof_5fslots_466',['number_of_slots',['../classsimdjson2_1_1dom_1_1array.html#ae511e91d953e00c5823d0ca50066075c',1,'simdjson2::dom::array']]]
 ];

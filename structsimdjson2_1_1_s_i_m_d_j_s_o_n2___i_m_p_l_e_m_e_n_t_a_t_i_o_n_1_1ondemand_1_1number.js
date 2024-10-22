@@ -1,0 +1,26 @@
+var structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number =
+[
+    [ "append_double", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a6ee94967a1e2d2c694871df736eb9fe0", null ],
+    [ "append_s64", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a5c3435c1ecde45c335d5d9658ab251ff", null ],
+    [ "append_u64", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a3c47078974453acb20804104fc84bddc", null ],
+    [ "as_double", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#aca5cf5fec873c33d37f6f97c3590db75", null ],
+    [ "get_double", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#af61db48718c6187b415f60d9c3cbd496", null ],
+    [ "get_int64", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#ac95e3cf9c1aa1c55fce842dda859f3aa", null ],
+    [ "get_number_type", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a7eaa9a82365f0f2e54122d4af0d3c6b5", null ],
+    [ "get_uint64", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a43975acbe6e64ddbc2fc9b7b43037962", null ],
+    [ "is_double", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#ab965610d6d72a199711d6d88e5e6d5c5", null ],
+    [ "is_int64", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#ada3ec7dc0ba477c9ce3e82ad02a5e118", null ],
+    [ "is_uint64", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a4917248516b69514d2a4f99363579fd4", null ],
+    [ "operator double", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a2a282ce183738f949b25f45704e3f4e1", null ],
+    [ "operator int64_t", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a275281ababc88be5edd7ff2906c44624", null ],
+    [ "operator uint64_t", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#aaa6b9f2ce212d3bf90c7ebddf6b4dab9", null ],
+    [ "skip_double", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a52ec662ccd822e2b66a4c5f5ba0bf436", null ],
+    [ "numberparsing::parse_number", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a31e829fc9dac6ebac9dca7af20898b53", null ],
+    [ "numberparsing::write_float", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a4963fde41cc9ccb03339a4594c005e04", null ],
+    [ "value_iterator", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a2b56b11b68e621bbd8ce2051ed10ab60", null ],
+    [ "floating_point_number", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a751521ca4d2e8c0e95c09189a872a0c1", null ],
+    [ "payload", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#adc97b4064783d900b1002b3e1a0f696e", null ],
+    [ "signed_integer", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a3958304f368ad0bdbe43b42b7cd0f8dc", null ],
+    [ "type", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a43ac245fddb44e1ee765f58a17ef3c92", null ],
+    [ "unsigned_integer", "structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a2df9d78d01c9a522eb9ef4a5f9757228", null ]
+];

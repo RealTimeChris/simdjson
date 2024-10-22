@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['default_5fmax_5fdepth_553',['DEFAULT_MAX_DEPTH',['../namespacesimdjson.html#a6df2598eb1d4e1ea669c41831cc7325d',1,'simdjson']]],
-  ['doc_554',['doc',['../classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1dom__parser__implementation.html#a4089d6265ec845fd85acd2db0973b858',1,'simdjson::SIMDJSON_IMPLEMENTATION::dom_parser_implementation']]],
-  ['document_5fdepth_555',['DOCUMENT_DEPTH',['../classsimdjson_1_1_s_i_m_d_j_s_o_n___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1document.html#a18847ef30e5800f1c628a344c23ec968',1,'simdjson::SIMDJSON_IMPLEMENTATION::ondemand::document']]]
+  ['default_5fmax_5fdepth_544',['DEFAULT_MAX_DEPTH',['../namespacesimdjson2.html#af445ba5e20f3241e6f968504a1863691',1,'simdjson2']]],
+  ['doc_545',['doc',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1dom__parser__implementation.html#a7032018371a31af408c6c2f8e80fc2a9',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::dom_parser_implementation']]],
+  ['document_5fdepth_546',['DOCUMENT_DEPTH',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1document.html#a79e99800dbc8a5c5f70873a189228540',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::document']]]
 ];

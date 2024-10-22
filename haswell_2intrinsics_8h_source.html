@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>simdjson: include/simdjson/haswell/intrinsics.h Source File</title>
+<title>simdjson2: include/simdjson2/haswell/intrinsics.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="logotiny.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">simdjson
+   <div id="projectname">simdjson2
    &#160;<span id="projectnumber">3.10.1</span>
    </div>
    <div id="projectbrief">Ridiculously Fast JSON</div>
@@ -91,21 +91,21 @@ $(document).ready(function(){initNavTree('haswell_2intrinsics_8h_source.html',''
 <div class="title">intrinsics.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef SIMDJSON_HASWELL_INTRINSICS_H</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define SIMDJSON_HASWELL_INTRINSICS_H</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef SIMDJSON2_HASWELL_INTRINSICS_H</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define SIMDJSON2_HASWELL_INTRINSICS_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef SIMDJSON_CONDITIONAL_INCLUDE</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;simdjson/haswell/base.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_CONDITIONAL_INCLUDE</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef SIMDJSON2_CONDITIONAL_INCLUDE</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;simdjson2/haswell/base.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_CONDITIONAL_INCLUDE</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#if SIMDJSON_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#if SIMDJSON2_VISUAL_STUDIO</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// under clang within visual studio, this will include &lt;x86intrin.h&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;intrin.h&gt;</span>  <span class="comment">// visual studio or clang</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;x86intrin.h&gt;</span> <span class="comment">// elsewhere</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_VISUAL_STUDIO</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#if SIMDJSON_CLANG_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#if SIMDJSON2_CLANG_VISUAL_STUDIO</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;bmiintrin.h&gt;</span>   <span class="comment">// for _blsr_u64</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;lzcntintrin.h&gt;</span> <span class="comment">// for  __lzcnt64</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;immintrin.h&gt;</span>   <span class="comment">// for most things (AVX2, AVX512, _popcnt64)</span></div>
@@ -120,18 +120,18 @@ $(document).ready(function(){initNavTree('haswell_2intrinsics_8h_source.html',''
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">// we roll our own</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#define _blsr_u64(n) ((n - 1) &amp; n)</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#endif </span><span class="comment">//  _blsr_u64</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_CLANG_VISUAL_STUDIO</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_CLANG_VISUAL_STUDIO</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;static_assert(<span class="keyword">sizeof</span>(__m256i) &lt;= <a class="code" href="namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf">simdjson::SIMDJSON_PADDING</a>, <span class="stringliteral">&quot;insufficient padding for haswell kernel.&quot;</span>);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;static_assert(<span class="keyword">sizeof</span>(__m256i) &lt;= <a class="code" href="namespacesimdjson2.html#a5585641837d4a124c667873df760e6c3">simdjson2::SIMDJSON2_PADDING</a>, <span class="stringliteral">&quot;insufficient padding for haswell kernel.&quot;</span>);</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON_HASWELL_INTRINSICS_H</span></div>
-<div class="ttc" id="anamespacesimdjson_html_aecdd750132f0eb123a6d61113b4197bf"><div class="ttname"><a href="namespacesimdjson.html#aecdd750132f0eb123a6d61113b4197bf">simdjson::SIMDJSON_PADDING</a></div><div class="ttdeci">constexpr size_t SIMDJSON_PADDING</div><div class="ttdoc">The amount of padding needed in a buffer to parse JSON.</div><div class="ttdef"><b>Definition:</b> <a href="base_8h_source.html#l00032">base.h:32</a></div></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_HASWELL_INTRINSICS_H</span></div>
+<div class="ttc" id="anamespacesimdjson2_html_a5585641837d4a124c667873df760e6c3"><div class="ttname"><a href="namespacesimdjson2.html#a5585641837d4a124c667873df760e6c3">simdjson2::SIMDJSON2_PADDING</a></div><div class="ttdeci">constexpr size_t SIMDJSON2_PADDING</div><div class="ttdoc">The amount of padding needed in a buffer to parse JSON.</div><div class="ttdef"><b>Definition:</b> <a href="base_8h_source.html#l00032">base.h:32</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_49a0b2767ded4a45005c5d6720a18cd1.html">simdjson</a></li><li class="navelem"><a class="el" href="dir_b35ffb90479583e132afc246e9b6e77a.html">haswell</a></li><li class="navelem"><b>intrinsics.h</b></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_5a30c64701ca611b756cdbb976be5570.html">simdjson2</a></li><li class="navelem"><a class="el" href="dir_26f3506a5ad865dafeae6210c4ff6cec.html">haswell</a></li><li class="navelem"><b>intrinsics.h</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

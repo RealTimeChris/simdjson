@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>simdjson: iterate_many</title>
+<title>simdjson2: iterate_many</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="logotiny.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">simdjson
+   <div id="projectname">simdjson2
    &#160;<span id="projectnumber">3.10.1</span>
    </div>
    <div id="projectbrief">Ridiculously Fast JSON</div>
@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('md_doc_iterate_many.html',''); initRes
 <div class="title">iterate_many </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>When serializing large databases, it is often better to write out many independent JSON documents, instead of one large monolithic document containing many records. The simdjson library provides high-speed access to files or streams containing multiple small JSON documents separated by ASCII white-space characters. Given an input such as </p><div class="fragment"><div class="line">{&quot;text&quot;:&quot;a&quot;}</div>
+<div class="textblock"><p>When serializing large databases, it is often better to write out many independent JSON documents, instead of one large monolithic document containing many records. The <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> library provides high-speed access to files or streams containing multiple small JSON documents separated by ASCII white-space characters. Given an input such as </p><div class="fragment"><div class="line">{&quot;text&quot;:&quot;a&quot;}</div>
 <div class="line">{&quot;text&quot;:&quot;b&quot;}</div>
 <div class="line">{&quot;text&quot;:&quot;c&quot;}</div>
 <div class="line">...</div>
@@ -122,8 +122,8 @@ Motivation</h1>
 How it works</h1>
 <h2><a class="anchor" id="autotoc_md63"></a>
 Context</h2>
-<p>Before parsing anything, simdjson first preprocesses the JSON text by identifying all structural indexes (i.e. the starting position of any JSON value, as well as any important operators like <code>,</code>, <code>:</code>, <code>]</code> or <code>}</code>) and validating UTF8. This stage is referred to stage 1. However, during this process, simdjson has no knowledge of whether parsed a valid document, multiple documents, or even if the document is complete. Then, to iterate through the JSON text during parsing, we use what we call a JSON iterator that will navigate through the text using these structural indexes. This JSON iterator is not visible though, but it is the key component to make parsing work.</p>
-<p>Prior to iterate_many, most people who had to parse a multiline JSON file would proceed by reading the file line by line, using a utility function like <code>std::getline</code> or equivalent, and would then use the <code>parse</code> on each of those lines. From a performance point of view, this process is highly inefficient, in that it requires a lot of unnecessary memory allocation and makes use of the <code>getline</code> function, which is fundamentally slow, slower than the act of parsing with simdjson <a href="https://lemire.me/blog/2019/06/18/how-fast-is-getline-in-c/">(more on this here)</a>.</p>
+<p>Before parsing anything, <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> first preprocesses the JSON text by identifying all structural indexes (i.e. the starting position of any JSON value, as well as any important operators like <code>,</code>, <code>:</code>, <code>]</code> or <code>}</code>) and validating UTF8. This stage is referred to stage 1. However, during this process, <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> has no knowledge of whether parsed a valid document, multiple documents, or even if the document is complete. Then, to iterate through the JSON text during parsing, we use what we call a JSON iterator that will navigate through the text using these structural indexes. This JSON iterator is not visible though, but it is the key component to make parsing work.</p>
+<p>Prior to iterate_many, most people who had to parse a multiline JSON file would proceed by reading the file line by line, using a utility function like <code>std::getline</code> or equivalent, and would then use the <code>parse</code> on each of those lines. From a performance point of view, this process is highly inefficient, in that it requires a lot of unnecessary memory allocation and makes use of the <code>getline</code> function, which is fundamentally slow, slower than the act of parsing with <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> <a href="https://lemire.me/blog/2019/06/18/how-fast-is-getline-in-c/">(more on this here)</a>.</p>
 <p>Unlike the popular parser RapidJson, our DOM does not require the buffer once the parsing job is completed, the DOM and the buffer are completely independent. The drawback of this architecture is that we need to allocate some additional memory to store our ParsedJson data, for every document inside a given file. Memory allocation can be slow and become a bottleneck, therefore, we want to minimize it as much as possible.</p>
 <h2><a class="anchor" id="autotoc_md64"></a>
 Design</h2>
@@ -138,8 +138,8 @@ Design</h2>
 <h2><a class="anchor" id="autotoc_md65"></a>
 Threads</h2>
 <p>But how can we make use of threads if they are available? We found a pretty cool algorithm that allows us to quickly identify the position of the last JSON document in a given batch. Knowing exactly where the end of the last document in the batch is, we can safely parse through the last document without any worries that it might be incomplete. Therefore, we can run stage 1 on the next batch concurrently while parsing the documents in the current batch. Running stage 1 in a different thread can, in best cases, remove almost entirely its cost and replaces it by the overhead of a thread, which is orders of magnitude cheaper. Ain't that awesome!</p>
-<p>Thread support is only active if thread supported is detected in which case the macro SIMDJSON_THREADS_ENABLED is set. You can also manually pass <code>SIMDJSON_THREADS_ENABLED=1</code> flag to the library. Otherwise the library runs in single-thread mode.</p>
-<p>You should be consistent. If you link against the simdjson library built for multithreading (i.e., with <code>SIMDJSON_THREADS_ENABLED</code>), then you should build your application with multithreading system (setting <code>SIMDJSON_THREADS_ENABLED=1</code> and linking against a thread library).</p>
+<p>Thread support is only active if thread supported is detected in which case the macro SIMDJSON2_THREADS_ENABLED is set. You can also manually pass <code>SIMDJSON2_THREADS_ENABLED=1</code> flag to the library. Otherwise the library runs in single-thread mode.</p>
+<p>You should be consistent. If you link against the <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> library built for multithreading (i.e., with <code>SIMDJSON2_THREADS_ENABLED</code>), then you should build your application with multithreading system (setting <code>SIMDJSON2_THREADS_ENABLED=1</code> and linking against a thread library).</p>
 <p>A <code>document_stream</code> instance uses at most two threads: there is a main thread and a worker thread.</p>
 <h1><a class="anchor" id="autotoc_md66"></a>
 Support</h1>
@@ -185,8 +185,8 @@ Tracking your position</h1>
 <p>Let us illustrate the idea with code:</p>
 <div class="fragment"><div class="line">{C++}</div>
 <div class="line">   auto json = R&quot;([1,2,3]  {&quot;1&quot;:1,&quot;2&quot;:3,&quot;4&quot;:4} [1,2,3]  )&quot;_padded;</div>
-<div class="line">   simdjson::ondemand::parser parser;</div>
-<div class="line">   simdjson::ondemand::document_stream stream;</div>
+<div class="line">   simdjson2::ondemand::parser parser;</div>
+<div class="line">   simdjson2::ondemand::document_stream stream;</div>
 <div class="line">   auto error = parser.iterate_many(json).get(stream);</div>
 <div class="line">   if (error) { /* do something */ }</div>
 <div class="line">   auto i = stream.begin();</div>
@@ -210,12 +210,12 @@ Tracking your position</h1>
 <div class="line">[1,2,3]</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md70"></a>
 Incomplete streams</h1>
-<p>Some users may need to work with truncated streams. The simdjson may truncate documents at the very end of the stream that cannot possibly be valid JSON (e.g., they contain unclosed strings, unmatched brackets, unmatched braces). After iterating through the stream, you may query the <code>truncated_bytes()</code> method which tells you how many bytes were truncated. If the stream is made of full (whole) documents, then you should expect <code>truncated_bytes()</code> to return zero.</p>
+<p>Some users may need to work with truncated streams. The <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> may truncate documents at the very end of the stream that cannot possibly be valid JSON (e.g., they contain unclosed strings, unmatched brackets, unmatched braces). After iterating through the stream, you may query the <code>truncated_bytes()</code> method which tells you how many bytes were truncated. If the stream is made of full (whole) documents, then you should expect <code>truncated_bytes()</code> to return zero.</p>
 <p>Consider the following example where a truncated document (<code>{"key":"intentionally unclosed string</code>) containing 39 bytes has been left within the stream. In such cases, the first two whole documents are parsed and returned, and the <code>truncated_bytes()</code> method returns 39.</p>
 <div class="fragment"><div class="line">{C++}</div>
 <div class="line">   auto json = R&quot;([1,2,3]  {&quot;1&quot;:1,&quot;2&quot;:3,&quot;4&quot;:4} {&quot;key&quot;:&quot;intentionally unclosed string  )&quot;_padded;</div>
-<div class="line">   simdjson::ondemand::parser parser;</div>
-<div class="line">   simdjson::ondemand::document_stream stream;</div>
+<div class="line">   simdjson2::ondemand::parser parser;</div>
+<div class="line">   simdjson2::ondemand::document_stream stream;</div>
 <div class="line">   auto error = parser.iterate_many(json,json.size()).get(stream);</div>
 <div class="line">   if (error) { std::cerr &lt;&lt; error &lt;&lt; std::endl; return; }</div>
 <div class="line">   for(auto i = stream.begin(); i != stream.end(); ++i) {</div>
@@ -255,8 +255,8 @@ Comma-separated documents</h1>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md72"></a>
 C++20 features</h1>
 <p>In C++20, the standard introduced the notion of <em>customization point</em>. A customization point is a function or function object that can be customized for different types. It allows library authors to provide default behavior while giving users the ability to override this behavior for specific types.</p>
-<p>A tag_invoke function serves as a mechanism for customization points. It is not directly part of the C++ standard library but is often used in libraries that implement customization points. The tag_invoke function is typically a generic function that takes a tag type and additional arguments. The first argument is usually a tag type (often an empty struct) that uniquely identifies the customization point (e.g., deserialization of custom types in simdjson). Users or library providers can specialize tag_invoke for their types by defining it in the appropriate namespace, often inline namespace.</p>
-<p>You can deserialize you own data structures conveniently if your system supports C++20. When it is the case, the macro <code>SIMDJSON_SUPPORTS_DESERIALIZATION</code> will be set to 1 by the simdjson library.</p>
+<p>A tag_invoke function serves as a mechanism for customization points. It is not directly part of the C++ standard library but is often used in libraries that implement customization points. The tag_invoke function is typically a generic function that takes a tag type and additional arguments. The first argument is usually a tag type (often an empty struct) that uniquely identifies the customization point (e.g., deserialization of custom types in <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a>). Users or library providers can specialize tag_invoke for their types by defining it in the appropriate namespace, often inline namespace.</p>
+<p>You can deserialize you own data structures conveniently if your system supports C++20. When it is the case, the macro <code>SIMDJSON2_SUPPORTS_DESERIALIZATION</code> will be set to 1 by the <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a> library.</p>
 <p>Consider a custom class <code>Car</code>:</p>
 <div class="fragment"><div class="line"> {C++}</div>
 <div class="line">struct Car {</div>
@@ -267,10 +267,10 @@ C++20 features</h1>
 <div class="line">};</div>
 </div><!-- fragment --><p>You may support deserializing directly from a JSON value or document to your own <code>Car</code> instance by defining a single <code>tag_invoke</code> function:</p>
 <div class="fragment"><div class="line"> {C++}</div>
-<div class="line">namespace simdjson {</div>
-<div class="line">// This tag_invoke MUST be inside simdjson namespace</div>
-<div class="line">template &lt;typename simdjson_value&gt;</div>
-<div class="line">auto tag_invoke(deserialize_tag, simdjson_value &amp;val, Car&amp; car) {</div>
+<div class="line">namespace simdjson2 {</div>
+<div class="line">// This tag_invoke MUST be inside simdjson2 namespace</div>
+<div class="line">template &lt;typename simdjson2_value&gt;</div>
+<div class="line">auto tag_invoke(deserialize_tag, simdjson2_value &amp;val, Car&amp; car) {</div>
 <div class="line">  ondemand::object obj;</div>
 <div class="line">  auto error = val.get_object().get(obj);</div>
 <div class="line">  if (error) {</div>
@@ -289,13 +289,13 @@ C++20 features</h1>
 <div class="line">           car.tire_pressure))) {</div>
 <div class="line">    return error;</div>
 <div class="line">  }</div>
-<div class="line">  return simdjson::SUCCESS;</div>
+<div class="line">  return simdjson2::SUCCESS;</div>
 <div class="line">}</div>
-<div class="line">} // namespace simdjson</div>
-</div><!-- fragment --><p>Importantly, the <code>tag_invoke</code> function must be inside the <code>simdjson</code> namespace. Let us explain each argument of <code>tag_invoke</code> function.</p>
+<div class="line">} // namespace simdjson2</div>
+</div><!-- fragment --><p>Importantly, the <code>tag_invoke</code> function must be inside the <code><a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a></code> namespace. Let us explain each argument of <code>tag_invoke</code> function.</p>
 <ul>
-<li><code>simdjson::deserialize_tag</code>: it is the tag for Customization Point Object (CPO). You may often ignore this parameter. It is used to indicate that you mean to provide a deserialization function for simdjson.</li>
-<li><code>var</code>: It receives automatically a <code>simdjson</code> value type (document, value, document_reference).</li>
+<li><code>simdjson2::deserialize_tag</code>: it is the tag for Customization Point Object (CPO). You may often ignore this parameter. It is used to indicate that you mean to provide a deserialization function for <a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a>.</li>
+<li><code>var</code>: It receives automatically a <code><a class="el" href="namespacesimdjson2.html" title="The top level simdjson2 namespace, containing everything the library provides.">simdjson2</a></code> value type (document, value, document_reference).</li>
 <li>The third parameter is an instance of the type that you want to support.</li>
 </ul>
 <p>Please see our main documentation (<code>basics.md</code>) under "Use `tag_invoke` for custom types (C++20)" for details about tag_invoke functions.</p>
@@ -322,7 +322,7 @@ C++20 features</h1>
 <div class="line"> for(auto doc : stream) {</div>
 <div class="line">   Car c;</div>
 <div class="line">   if ((error = doc.get&lt;Car&gt;().get(c))) {</div>
-<div class="line">     std::cerr &lt;&lt; simdjson::error_message(error); &lt;&lt; std::endl;</div>
+<div class="line">     std::cerr &lt;&lt; simdjson2::error_message(error); &lt;&lt; std::endl;</div>
 <div class="line">     return EXIT_FAILURE;</div>
 <div class="line">   }</div>
 <div class="line">   cars.push_back(c);</div>

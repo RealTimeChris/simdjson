@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['memalloc_593',['MEMALLOC',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9aa0e71422c8ae80ebaa11d8d74d64737f',1,'simdjson']]]
+  ['memalloc_584',['MEMALLOC',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aaa676510a68c9020f6c19cbfc06fd8088',1,'simdjson2']]]
 ];

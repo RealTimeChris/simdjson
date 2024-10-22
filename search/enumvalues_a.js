@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parser_5fin_5fuse_605',['PARSER_IN_USE',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9ae9067bb5cb6283141b1c66466005ac0d',1,'simdjson']]]
+  ['parser_5fin_5fuse_596',['PARSER_IN_USE',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa1deee2d4fdecd1fd32c55863d171e8a5',1,'simdjson2']]]
 ];

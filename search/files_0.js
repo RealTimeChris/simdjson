@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['simdjson_2eh_375',['simdjson.h',['../simdjson_8h.html',1,'']]]
+  ['simdjson2_2eh_366',['simdjson2.h',['../simdjson2_8h.html',1,'']]]
 ];

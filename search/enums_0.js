@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['element_5ftype_571',['element_type',['../namespacesimdjson_1_1dom.html#a6e1dee3a823ecfee91086d3478bbab3a',1,'simdjson::dom']]],
-  ['error_5fcode_572',['error_code',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9',1,'simdjson']]]
+  ['element_5ftype_562',['element_type',['../namespacesimdjson2_1_1dom.html#a502f42cb4a56b016c958031e8e277799',1,'simdjson2::dom']]],
+  ['error_5fcode_563',['error_code',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931a',1,'simdjson2']]]
 ];

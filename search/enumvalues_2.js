@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['capacity_580',['CAPACITY',['../namespacesimdjson.html#a7b735a3a50ba79e3f7f14df5f77d8da9a2d50048bbe409023df4e88f6ffe3bc71',1,'simdjson']]]
+  ['capacity_571',['CAPACITY',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aae52b65322cdac4066ccdc7d996097862',1,'simdjson2']]]
 ];
