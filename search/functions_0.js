@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['allocate_367',['allocate',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1parser.html#aec7822a205d7e96aac786f81ae9b27e1',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::parser::allocate()'],['../classsimdjson2_1_1dom_1_1parser.html#ae1bf4a23b5a7341c621ed2aaf9a20949',1,'simdjson2::dom::parser::allocate()']]],
+  ['allocate_367',['allocate',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1parser.html#ab600c8c149abed7ffd3452b65336a7a9',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::parser::allocate()'],['../classsimdjson2_1_1dom_1_1parser.html#ae1bf4a23b5a7341c621ed2aaf9a20949',1,'simdjson2::dom::parser::allocate()']]],
   ['append_5fdouble_368',['append_double',['../structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a6ee94967a1e2d2c694871df736eb9fe0',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::number']]],
   ['append_5fs64_369',['append_s64',['../structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a5c3435c1ecde45c335d5d9658ab251ff',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::number']]],
   ['append_5fu64_370',['append_u64',['../structsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1number.html#a3c47078974453acb20804104fc84bddc',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::number']]],

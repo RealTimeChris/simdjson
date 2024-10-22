@@ -2,8 +2,8 @@ var searchData=
 [
   ['uint64_287',['UINT64',['../namespacesimdjson2_1_1dom.html#a502f42cb4a56b016c958031e8e277799a6de7acf711860176ba606e9aa2b85d5f',1,'simdjson2::dom']]],
   ['unclosed_5fstring_288',['UNCLOSED_STRING',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aae6853d94966a0cefb723e4e4feddafc2',1,'simdjson2']]],
-  ['unescape_289',['unescape',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1parser.html#abb96805ddaf3792d14ea0a5fea9d7192',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::parser']]],
-  ['unescape_5fwobbly_290',['unescape_wobbly',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1parser.html#a5d64c913fb7c2ffaa8fc3c27b2756ec0',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::parser']]],
+  ['unescape_289',['unescape',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1parser.html#a6b620afc1784bf01df272dda2ae96f5f',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::parser']]],
+  ['unescape_5fwobbly_290',['unescape_wobbly',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1parser.html#a7e8fa4e94e2009c040a637d7f480618b',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::parser']]],
   ['unescaped_5fchars_291',['UNESCAPED_CHARS',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa6ecb619462744fa538137840bbc23837',1,'simdjson2']]],
   ['unescaped_5fkey_292',['unescaped_key',['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1field.html#ad9c4886f54c301713077ce62fd18a0da',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::field::unescaped_key(bool allow_replacement=false) noexcept'],['../classsimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_1_1field.html#a62fb3e23a14f7652f5331275541e4b2e',1,'simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::field::unescaped_key(string_type &amp;receiver, bool allow_replacement=false) noexcept']]],
   ['unexpected_5ferror_293',['UNEXPECTED_ERROR',['../namespacesimdjson2.html#a30b3cfa09f0a35f36ee6b50cbb22931aa71983e489d75909b03f2c012087e26e0',1,'simdjson2']]],
