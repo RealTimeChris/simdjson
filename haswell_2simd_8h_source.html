@@ -664,189 +664,201 @@ $(document).ready(function(){initNavTree('haswell_2simd_8h_source.html',''); ini
 <div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;        values[3] - values[3 + 4] - <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
 <div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;    carryInNew = values[3 + 4] &gt; values[3];</div>
 <div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;  }</div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;  <span class="keywordflow">if</span> constexpr (4 &gt; 4) {</div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;    values[4 + 4] =</div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;        values[4] - values[4 + 4] - <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;    carryInNew = values[4 + 4] &gt; values[4];</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;    values[5 + 4] =</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        values[5] - values[5 + 4] - <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;    carryInNew = values[5 + 4] &gt; values[5];</div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;    values[6 + 4] =</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        values[6] - values[6 + 4] - <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;    carryInNew = values[6 + 4] &gt; values[6];</div>
-<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;    values[7 + 4] =</div>
-<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;        values[7] - values[7 + 4] - <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(carryInNew);</div>
-<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;    carryInNew = values[7 + 4] &gt; values[7];</div>
-<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;  }</div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load_a(values + 4);</div>
-<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;}</div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160; </div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;<span class="preprocessor">#define opShl(amount, value, result)                                           \</span></div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;<span class="preprocessor">  {                                                                            \</span></div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;<span class="preprocessor">    alignas(32) uint64_t values[4 * 2];                                        \</span></div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;<span class="preprocessor">    value.store(values);                                                       \</span></div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;<span class="preprocessor">    static constexpr uint64_t shiftAmount{64 - amount};                        \</span></div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;<span class="preprocessor">    values[4] = values[0] &lt;&lt; amount;                                           \</span></div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;<span class="preprocessor">    values[1 + 4] = values[1] &lt;&lt; amount | values[1 - 1] &gt;&gt; (shiftAmount);      \</span></div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;<span class="preprocessor">    values[2 + 4] = values[2] &lt;&lt; amount | values[2 - 1] &gt;&gt; (shiftAmount);      \</span></div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;<span class="preprocessor">    values[3 + 4] = values[3] &lt;&lt; amount | values[3 - 1] &gt;&gt; (shiftAmount);      \</span></div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;<span class="preprocessor">    result = simd8&lt;uint8_t&gt;::load_a(values + 4);                               \</span></div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;<span class="preprocessor">  }</span></div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160; </div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opFollows(simd_int_t01 &amp;&amp;value,</div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;                                                 <span class="keywordtype">bool</span> &amp;overflow) noexcept {</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;  <span class="keywordtype">bool</span> oldOverflow = overflow;</div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;  overflow = value.get_msb();</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;  simd8&lt;uint8_t&gt; resultVal;</div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;  opShl(1, value, resultVal);</div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;  resultVal.set_lsb(oldOverflow);</div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;  <span class="keywordflow">return</span> resultVal;</div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;}</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160; </div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;<span class="keyword">struct </span>simd_int_t_holder {</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;  simd8&lt;uint8_t&gt; backslashes;</div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;  simd8&lt;uint8_t&gt; whitespace;</div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;  simd8&lt;uint8_t&gt; quotes;</div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;  simd8&lt;uint8_t&gt; op;</div>
-<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;};</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160; </div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; escapeableArray00{[] {</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;                                   0x00u, 0x00u, 0x00u, <span class="charliteral">&#39;\t&#39;</span>,  <span class="charliteral">&#39;\n&#39;</span>,  0x00u,</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;                                   <span class="charliteral">&#39;\\&#39;</span>,  0x00u, 0x00u, 0x00u};</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;    returnValues[x] = values[x % 16];</div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;  }</div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;}()};</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160; </div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; escapeableArray01{[] {</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x00u, 0x00u, <span class="charliteral">&#39;&quot;&#39;</span>,   0x00u, 0x00u, 0x00u,</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;                                   0x00u, 0x00u, <span class="charliteral">&#39;\b&#39;</span>,  0x00u, 0x00u, 0x00u,</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;                                   0x0Cu, <span class="charliteral">&#39;\r&#39;</span>,  0x00u, 0x00u};</div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;    returnValues[x] = values[x % 16];</div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;  }</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;}()};</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160; </div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; whitespaceArray{[] {</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x20u, 0x64u, 0x64u, 0x64u, 0x11u, 0x64u,</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;                                   0x71u, 0x02u, 0x64u, <span class="charliteral">&#39;\t&#39;</span>,  <span class="charliteral">&#39;\n&#39;</span>,  0x70u,</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;                                   0x64u, <span class="charliteral">&#39;\r&#39;</span>,  0x64u, 0x64u};</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;    returnValues[x] = values[x % 16];</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;  }</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;}()};</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160; </div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; opArray{[] {</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                                   0x00u, 0x00u, 0x00u, 0x00u, <span class="charliteral">&#39;:&#39;</span>,   <span class="charliteral">&#39;{&#39;</span>,</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                                   <span class="charliteral">&#39;,&#39;</span>,   <span class="charliteral">&#39;}&#39;</span>,   0x00u, 0x00u};</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    returnValues[x] = values[x % 16];</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;  }</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;}()};</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160; </div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;collectStructuralIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;  <span class="keyword">alignas</span>(32) uint32_t valuesNew[8];</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;  simd8&lt;uint8_t&gt; simdValues{simd8&lt;uint8_t&gt;::load(opArray&lt;32&gt;.data())};</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;  simd8&lt;uint8_t&gt; simdValue{simd8&lt;uint8_t&gt;::splat(<span class="keyword">static_cast&lt;</span>uint8_t<span class="keyword">&gt;</span>(0x20))};</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;  valuesNew[0] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[0])} ==</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;      (simdValue | values[0]));</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;  valuesNew[1] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[1])} ==</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;      (simdValue | values[1]));</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;  valuesNew[2] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[2])} ==</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;      (simdValue | values[2]));</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;  valuesNew[3] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[3])} ==</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;      (simdValue | values[3]));</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;  valuesNew[4] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[4])} ==</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;      (simdValue | values[4]));</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;  valuesNew[5] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[5])} ==</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;      (simdValue | values[5]));</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;  valuesNew[6] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[6])} ==</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;      (simdValue | values[6]));</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;  valuesNew[7] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[7])} ==</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;      (simdValue | values[7]));</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;}</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160; </div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;collectWhitespaceIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;  <span class="keyword">alignas</span>(32) uint32_t valuesNew[8];</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;  simd8&lt;uint8_t&gt; simdValues{simd8&lt;uint8_t&gt;::load(whitespaceArray&lt;32&gt;.data())};</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;  valuesNew[0] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[0]), values[0]));</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;  valuesNew[1] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[1]), values[1]));</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;  valuesNew[2] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[2]), values[2]));</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;  valuesNew[3] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[3]), values[3]));</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;  valuesNew[4] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[4]), values[4]));</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;  valuesNew[5] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[5]), values[5]));</div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;  valuesNew[6] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[6]), values[6]));</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;  valuesNew[7] = _mm256_movemask_epi8(</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[7]), values[7]));</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;}</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160; </div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;<span class="keyword">template</span> &lt;auto c&gt;</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;collectValues(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;  <span class="keyword">alignas</span>(32) uint32_t valuesNew[8];</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;  simd8&lt;uint8_t&gt; simdValue{simd8&lt;uint8_t&gt;::splat(c)};</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;  valuesNew[0] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[0]));</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;  valuesNew[1] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[1]));</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;  valuesNew[2] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[2]));</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;  valuesNew[3] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[3]));</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;  valuesNew[4] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[4]));</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;  valuesNew[5] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[5]));</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;  valuesNew[6] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[6]));</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;  valuesNew[7] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[7]));</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;}</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160; </div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;simdjson2_really_inline simd_int_t_holder</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;collectIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;  simd_int_t_holder returnValues;</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;  returnValues.op = collectStructuralIndices(values);</div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;  returnValues.quotes = collectValues&lt;<span class="charliteral">&#39;&quot;&#39;</span>&gt;(values);</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;  returnValues.whitespace = collectWhitespaceIndices(values);</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;  returnValues.backslashes = collectValues&lt;&#39;\\&#39;&gt;(values);</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;}</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160; </div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;} <span class="comment">// namespace simd</span></div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160; </div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;} <span class="comment">// unnamed namespace</span></div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;} <span class="comment">// namespace haswell</span></div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160; </div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_HASWELL_SIMD_H</span></div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load_a(values + 4);</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;}</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160; </div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;<span class="preprocessor">#define opShl(amount, value, result)                                           \</span></div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;<span class="preprocessor">  {                                                                            \</span></div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;<span class="preprocessor">    alignas(32) uint64_t values[4 * 2];                                        \</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;<span class="preprocessor">    value.store(values);                                                       \</span></div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;<span class="preprocessor">    static constexpr uint64_t shiftAmount{64 - amount};                        \</span></div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;<span class="preprocessor">    values[4] = values[0] &lt;&lt; amount;                                           \</span></div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;<span class="preprocessor">    values[1 + 4] = values[1] &lt;&lt; amount | values[1 - 1] &gt;&gt; (shiftAmount);      \</span></div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="preprocessor">    values[2 + 4] = values[2] &lt;&lt; amount | values[2 - 1] &gt;&gt; (shiftAmount);      \</span></div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;<span class="preprocessor">    values[3 + 4] = values[3] &lt;&lt; amount | values[3 - 1] &gt;&gt; (shiftAmount);      \</span></div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;<span class="preprocessor">    result = simd8&lt;uint8_t&gt;::load_a(values + 4);                               \</span></div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;<span class="preprocessor">  }</span></div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160; </div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> simd_<span class="keywordtype">int</span>_t01&gt;</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt; opFollows(simd_int_t01 &amp;&amp;value,</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;                                                 <span class="keywordtype">bool</span> &amp;overflow) noexcept {</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;  <span class="keywordtype">bool</span> oldOverflow = overflow;</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;  overflow = value.get_msb();</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;  simd8&lt;uint8_t&gt; resultVal;</div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;  opShl(1, value, resultVal);</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;  resultVal.set_lsb(oldOverflow);</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;  <span class="keywordflow">return</span> resultVal;</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;}</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160; </div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;<span class="keyword">struct </span>simd_int_t_holder {</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;  simd8&lt;uint8_t&gt; backslashes;</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;  simd8&lt;uint8_t&gt; whitespace;</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;  simd8&lt;uint8_t&gt; quotes;</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;  simd8&lt;uint8_t&gt; op;</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;};</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160; </div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; escapeableArray00{[] {</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;                                   0x00u, 0x00u, 0x00u, <span class="charliteral">&#39;\t&#39;</span>,  <span class="charliteral">&#39;\n&#39;</span>,  0x00u,</div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;                                   <span class="charliteral">&#39;\\&#39;</span>,  0x00u, 0x00u, 0x00u};</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;  }</div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;}()};</div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160; </div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; escapeableArray01{[] {</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x00u, 0x00u, <span class="charliteral">&#39;&quot;&#39;</span>,   0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;                                   0x00u, 0x00u, <span class="charliteral">&#39;\b&#39;</span>,  0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;                                   0x0Cu, <span class="charliteral">&#39;\r&#39;</span>,  0x00u, 0x00u};</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;  }</div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;}()};</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160; </div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; whitespaceArray{[] {</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x20u, 0x64u, 0x64u, 0x64u, 0x11u, 0x64u,</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;                                   0x71u, 0x02u, 0x64u, <span class="charliteral">&#39;\t&#39;</span>,  <span class="charliteral">&#39;\n&#39;</span>,  0x70u,</div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;                                   0x64u, <span class="charliteral">&#39;\r&#39;</span>,  0x64u, 0x64u};</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;  }</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;}()};</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160; </div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> size&gt;</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;<span class="keyword">alignas</span>(32) constexpr std::array&lt;uint8_t, size&gt; opArray{[] {</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;  constexpr <span class="keyword">const</span> uint8_t values[]{0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;                                   0x00u, 0x00u, 0x00u, 0x00u, <span class="charliteral">&#39;:&#39;</span>,   <span class="charliteral">&#39;{&#39;</span>,</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                                   <span class="charliteral">&#39;,&#39;</span>,   <span class="charliteral">&#39;}&#39;</span>,   0x00u, 0x00u};</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;  std::array&lt;uint8_t, size&gt; returnValues{};</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;  <span class="keywordflow">for</span> (uint64_t x = 0; x &lt; size; ++x) {</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;    returnValues[x] = values[x % 16];</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;  }</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;}()};</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160; </div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;collectStructuralIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;  <span class="keyword">alignas</span>(32) uint32_t valuesNew[8];</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;  simd8&lt;uint8_t&gt; simdValues{simd8&lt;uint8_t&gt;::load(opArray&lt;32&gt;.data())};</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;  simd8&lt;uint8_t&gt; simdValue{simd8&lt;uint8_t&gt;::splat(<span class="keyword">static_cast&lt;</span>uint8_t<span class="keyword">&gt;</span>(0x20))};</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;  valuesNew[0] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[0])} ==</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;      (simdValue | values[0]));</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;  valuesNew[1] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[1])} ==</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;      (simdValue | values[1]));</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;  valuesNew[2] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[2])} ==</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;      (simdValue | values[2]));</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;  valuesNew[3] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[3])} ==</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;      (simdValue | values[3]));</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;  valuesNew[4] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[4])} ==</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;      (simdValue | values[4]));</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;  valuesNew[5] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[5])} ==</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;      (simdValue | values[5]));</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;  valuesNew[6] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[6])} ==</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;      (simdValue | values[6]));</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;  valuesNew[7] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;      simd8&lt;uint8_t&gt;{_mm256_shuffle_epi8(simdValues, values[7])} ==</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;      (simdValue | values[7]));</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;}</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160; </div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;collectWhitespaceIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;  <span class="keyword">alignas</span>(32) uint32_t valuesNew[8];</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;  simd8&lt;uint8_t&gt; simdValues{simd8&lt;uint8_t&gt;::load(whitespaceArray&lt;32&gt;.data())};</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;  valuesNew[0] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[0]), values[0]));</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;  valuesNew[1] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[1]), values[1]));</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;  valuesNew[2] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[2]), values[2]));</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;  valuesNew[3] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[3]), values[3]));</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;  valuesNew[4] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[4]), values[4]));</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;  valuesNew[5] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[5]), values[5]));</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;  valuesNew[6] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[6]), values[6]));</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;  valuesNew[7] = _mm256_movemask_epi8(</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;      _mm256_cmpeq_epi8(_mm256_shuffle_epi8(simdValues, values[7]), values[7]));</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;}</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160; </div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;<span class="keyword">template</span> &lt;auto c&gt;</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;simdjson2_really_inline simd8&lt;uint8_t&gt;</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;collectValues(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;  <span class="keyword">alignas</span>(32) uint32_t valuesNew[8];</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;  simd8&lt;uint8_t&gt; simdValue{simd8&lt;uint8_t&gt;::splat(c)};</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;  valuesNew[0] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[0]));</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;  valuesNew[1] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[1]));</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;  valuesNew[2] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[2]));</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;  valuesNew[3] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[3]));</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;  valuesNew[4] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[4]));</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;  valuesNew[5] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[5]));</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;  valuesNew[6] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[6]));</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;  valuesNew[7] = _mm256_movemask_epi8(_mm256_cmpeq_epi8(simdValue, values[7]));</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;  <span class="keywordflow">return</span> simd8&lt;uint8_t&gt;::load(valuesNew);</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;}</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160; </div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;simdjson2_really_inline simd_int_t_holder</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;collectIndices(<span class="keyword">const</span> simd8&lt;uint8_t&gt; *values) noexcept {</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;  simd_int_t_holder returnValues;</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;  returnValues.op = collectStructuralIndices(values);</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;  returnValues.quotes = collectValues&lt;<span class="charliteral">&#39;&quot;&#39;</span>&gt;(values);</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;  returnValues.whitespace = collectWhitespaceIndices(values);</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;  returnValues.backslashes = collectValues&lt;&#39;\\&#39;&gt;(values);</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;  <span class="keywordflow">return</span> returnValues;</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;}</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160; </div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160; <span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> collectAligned&gt;</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;simdjson2_really_inline <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;collectStringValues(<span class="keyword">const</span> uint8_t *values,</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;                    simd8&lt;uint8_t&gt; (&amp;newPtr)[8]) noexcept {</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;  <span class="keywordflow">if</span> constexpr (collectAligned) {</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    newPtr[0] = simd8&lt;uint8_t&gt;::load(values + (32 * 0));</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;    newPtr[1] = simd8&lt;uint8_t&gt;::load(values + (32 * 1));</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;    newPtr[2] = simd8&lt;uint8_t&gt;::load(values + (32 * 2));</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;    newPtr[3] = simd8&lt;uint8_t&gt;::load(values + (32 * 3));</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;    newPtr[4] = simd8&lt;uint8_t&gt;::load(values + (32 * 4));</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;    newPtr[5] = simd8&lt;uint8_t&gt;::load(values + (32 * 5));</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;    newPtr[6] = simd8&lt;uint8_t&gt;::load(values + (32 * 6));</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;    newPtr[7] = simd8&lt;uint8_t&gt;::load(values + (32 * 7));</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    newPtr[0] = simd8&lt;uint8_t&gt;::load(values + (32 * 0));</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    newPtr[1] = simd8&lt;uint8_t&gt;::load(values + (32 * 1));</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    newPtr[2] = simd8&lt;uint8_t&gt;::load(values + (32 * 2));</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;    newPtr[3] = simd8&lt;uint8_t&gt;::load(values + (32 * 3));</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;    newPtr[4] = simd8&lt;uint8_t&gt;::load(values + (32 * 4));</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;    newPtr[5] = simd8&lt;uint8_t&gt;::load(values + (32 * 5));</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    newPtr[6] = simd8&lt;uint8_t&gt;::load(values + (32 * 6));</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;    newPtr[7] = simd8&lt;uint8_t&gt;::load(values + (32 * 7));</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;  }</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;  <span class="comment">// prefetchStringValues(values + 256);</span></div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;}</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160; </div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;} <span class="comment">// namespace simd</span></div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160; </div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;} <span class="comment">// unnamed namespace</span></div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;} <span class="comment">// namespace haswell</span></div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;} <span class="comment">// namespace simdjson2</span></div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160; </div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// SIMDJSON2_HASWELL_SIMD_H</span></div>
 <div class="ttc" id="anamespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand_html_a846a8ddfd3cda5dfad9bb13405e17ca0"><div class="ttname"><a href="namespacesimdjson2_1_1_s_i_m_d_j_s_o_n2___i_m_p_l_e_m_e_n_t_a_t_i_o_n_1_1ondemand.html#a846a8ddfd3cda5dfad9bb13405e17ca0">simdjson2::SIMDJSON2_IMPLEMENTATION::ondemand::operator==</a></div><div class="ttdeci">simdjson2_unused simdjson2_inline bool operator==(const raw_json_string &amp;a, std::string_view c) noexcept</div><div class="ttdoc">Comparisons between raw_json_string and std::string_view instances are potentially unsafe: the user i...</div><div class="ttdef"><b>Definition:</b> <a href="raw__json__string-inl_8h_source.html#l00139">raw_json_string-inl.h:139</a></div></div>
 <div class="ttc" id="anamespacesimdjson2_html"><div class="ttname"><a href="namespacesimdjson2.html">simdjson2</a></div><div class="ttdoc">The top level simdjson2 namespace, containing everything the library provides.</div><div class="ttdef"><b>Definition:</b> <a href="arm64_2base_8h_source.html#l00008">base.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
