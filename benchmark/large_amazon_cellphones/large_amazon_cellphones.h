@@ -87,6 +87,8 @@ static const simdjson::padded_string &get_built_json() {
 template<bool threaded>
 struct simdjson_dom;
 
+template <bool threaded> struct Jsonifier;
+
 template<typename I> simdjson_inline static void large_amazon_cellphones(benchmark::State &state) {
   run_json_benchmark<runner<I>, runner<simdjson_dom<UNTHREADED>>>(state);
 }

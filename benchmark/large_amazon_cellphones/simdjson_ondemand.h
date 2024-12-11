@@ -15,6 +15,12 @@ struct simdjson_ondemand {
   ondemand::parser parser{};
 
   bool run(simdjson::padded_string &json, std::map<StringType, brand> &result) {
+    std::ofstream file{"C:/users/chris/desktop/large_cellphones.json",
+                       std::ios::binary | std::ios::out};
+    file << json << std::endl;
+    file.write(json.data(), json.size());
+    file.close();
+    //std::cout << "JSON DATA: " << json << std::endl;
 #ifdef SIMDJSON_THREADS_ENABLED
     parser.threaded = threaded;
 #endif
@@ -32,7 +38,7 @@ struct simdjson_ondemand {
         {
         case 1:
           copy = StringType(std::string_view(value));
-          break;
+           break;
         case 5:
           rating = double(value);
           break;
@@ -50,7 +56,7 @@ struct simdjson_ondemand {
         result.emplace(copy, large_amazon_cellphones::brand{
           rating * reviews,
           reviews
-        });
+       });
       } else {  // Otherwise, update key data
         x->second.cumulative_rating += rating * reviews;
         x->second.reviews_count += reviews;

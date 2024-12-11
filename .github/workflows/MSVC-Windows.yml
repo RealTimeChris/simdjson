@@ -1,0 +1,48 @@
+name: Build-and-Test-MSVC-Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - add-jsonifier
+
+jobs:
+  Build:
+    runs-on: windows-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v4
+      
+    - name: Append the directory of 'vcvarsall.bat' to PATH environment variable
+      uses: myci-actions/export-env-var-powershell@1
+      with:
+         name: PATH
+         value: $env:PATH;C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build
+
+    - name: Install Seaborn
+      run: |
+            pip install seaborn
+
+    - name: Configure CMake
+      run: |
+            cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Release -DSIMDJSON_DEVELOPER_MODE=ON
+
+    - name: Build the Test
+      run: |
+            cmake --build ./Build --config=${{matrix.build_type}} -v
+
+    - name: Install the Test
+      run: |
+            cmake --install ./Build --config=${{matrix.build_type}}
+
+    - name: Run the Test
+      working-directory: ./Build/benchmark/Release
+      run: |
+            ./bench_ondemand.exe
+      continue-on-error: true
+  

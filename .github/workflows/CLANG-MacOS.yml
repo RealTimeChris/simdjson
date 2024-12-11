@@ -1,0 +1,51 @@
+name: Build-and-Test-CLANG-MacOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - add-jsonifier
+
+jobs:
+  Build:
+    runs-on: macos-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install the latest clang compiler.
+      run: |
+            brew install llvm
+
+    - name: Install Seaborn
+      run: |
+            pip install seaborn
+
+    - name: Install Nasm.
+      run: |
+            brew install nasm
+
+    - name: Configure CMake
+      run: |
+           cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ -DSIMDJSON_DEVELOPER_MODE=ON
+
+    - name: Build the Test
+      run: |
+           cmake --build ./Build --config=${{matrix.build_type}} -v
+
+    - name: Install the Test
+      working-directory: ./Build
+      run: |
+           sudo cmake --install ./Build --config=${{matrix.build_type}}
+
+    - name: Run the Test
+      working-directory: ./Build/benchmark
+      run: |
+           ./bench_ondemand
+      continue-on-error: true
+   
