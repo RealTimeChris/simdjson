@@ -497,14 +497,18 @@ simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::has_n
 }
 
 simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::parse_bool(const uint8_t *json) const noexcept {
-  auto not_true = atomparsing::str4ncmp(json, "true");
-  auto not_false = atomparsing::str4ncmp(json, "fals") | (json[4] ^ 'e');
+  static constexpr char true_val[]{"true"};
+  static constexpr char false_val[]{"false"};
+  auto not_true = atomparsing::strxncmp<4, true_val>(json);
+  auto not_false = atomparsing::strxncmp<5, false_val>(json);
   bool error = (not_true && not_false) || jsoncharutils::is_not_structural_or_whitespace(json[not_true ? 5 : 4]);
   if (error) { return incorrect_type_error("Not a boolean"); }
   return simdjson_result<bool>(!not_true);
 }
 simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::parse_null(const uint8_t *json) const noexcept {
-  bool is_null_string = !atomparsing::str4ncmp(json, "null") && jsoncharutils::is_structural_or_whitespace(json[4]);
+  static constexpr char null_val[]{"null"};
+  bool is_null_string = !atomparsing::strxncmp<4, null_val>(json) &&
+                        jsoncharutils::is_structural_or_whitespace(json[4]);
   // if we start with 'n', we must be a null
   if(!is_null_string && json[0]=='n') { return incorrect_type_error("Not a null but starts with n"); }
   return is_null_string;
@@ -792,9 +796,10 @@ simdjson_warn_unused simdjson_inline simdjson_result<bool> value_iterator::get_r
   return result;
 }
 simdjson_inline simdjson_result<bool> value_iterator::is_root_null(bool check_trailing) noexcept {
+  static constexpr char null_val[]{"null"};
   auto max_len = peek_root_length();
   auto json = peek_root_scalar("null");
-  bool result = (max_len >= 4 && !atomparsing::str4ncmp(json, "null") &&
+  bool result = (max_len >= 4 && !atomparsing::strxncmp<4, null_val>(json) &&
          (max_len == 4 || jsoncharutils::is_structural_or_whitespace(json[4])));
   if(result) { // we have something that looks like a null.
     if (check_trailing && !_json_iter->is_single_token()) { return TRAILING_CONTENT; }
