@@ -107,3 +107,6 @@ objs
 
 # clangd
 .cache
+.vs/
+Build/
+out/

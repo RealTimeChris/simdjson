@@ -1,0 +1,42 @@
+name: Build-and-Test-CLANG-MacOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - add-jsonifier
+
+jobs:
+  Build:
+    runs-on: macos-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Xcode
+      run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+          xcodebuild -version
+
+    - name: Configure CMake
+      run: cmake -B build -G Xcode -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DSIMDJSON_DEVELOPER_MODE=ON
+
+    - name: Build the Test
+      run: |
+           cmake --build ./Build --config=${{matrix.build_type}} -v
+
+    - name: Install the Test
+      run: |
+           sudo cmake --install ./Build --config=${{matrix.build_type}}
+
+    - name: Run the Test
+      working-directory: ./Build/benchmark
+      run: |
+           ./bench_ondemand
+      continue-on-error: true
+      

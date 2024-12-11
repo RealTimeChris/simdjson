@@ -2,6 +2,10 @@
 
 SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
 
+#ifdef SIMDJSON_COMPETITION_JSONIFIER
+#include <jsonifier/Index.hpp>
+#endif
+
 #ifdef SIMDJSON_COMPETITION_YYJSON
 #include "yyjson.h"
 #endif
@@ -29,7 +33,8 @@ SIMDJSON_PUSH_DISABLE_ALL_WARNINGS
 #include <benchmark/benchmark.h>
 
 SIMDJSON_POP_DISABLE_WARNINGS
-#include "json2msgpack/simdjson_ondemand.h"
+
+ #include "json2msgpack/simdjson_ondemand.h"
 #include "json2msgpack/simdjson_dom.h"
 #include "json2msgpack/yyjson.h"
 #include "json2msgpack/rapidjson.h"
@@ -38,37 +43,40 @@ SIMDJSON_POP_DISABLE_WARNINGS
 #endif // SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "json2msgpack/nlohmann_json.h"
 #include "json2msgpack/boostjson.h"
-
+//#include "json2msgpack/jsonifier.h"
 #include "partial_tweets/simdjson_ondemand.h"
 #include "partial_tweets/simdjson_dom.h"
 #include "partial_tweets/yyjson.h"
+#include "partial_tweets/jsonifier.h"
+//#include "twitter_full/simdjson_ondemand.h"
 #if SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "partial_tweets/sajson.h"
 #endif // SIMDJSON_COMPETITION_ONDEMAND_SAJSON
-#include "partial_tweets/rapidjson.h"
+       #include "partial_tweets/rapidjson.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "partial_tweets/rapidjson_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
-#include "partial_tweets/nlohmann_json.h"
+       #include "partial_tweets/nlohmann_json.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "partial_tweets/nlohmann_json_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
 #include "partial_tweets/boostjson.h"
 
 
-#include "distinct_user_id/simdjson_ondemand.h"
+ #include "distinct_user_id/simdjson_ondemand.h"
 #include "distinct_user_id/simdjson_ondemand_json_pointer.h"
 #include "distinct_user_id/simdjson_dom.h"
 #include "distinct_user_id/simdjson_dom_json_pointer.h"
 #include "distinct_user_id/yyjson.h"
+#include "distinct_user_id/jsonifier.h"
 #if SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "distinct_user_id/sajson.h"
 #endif // SIMDJSON_COMPETITION_ONDEMAND_SAJSON
-#include "distinct_user_id/rapidjson.h"
+       #include "distinct_user_id/rapidjson.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "distinct_user_id/rapidjson_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
-#include "distinct_user_id/nlohmann_json.h"
+       #include "distinct_user_id/nlohmann_json.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "distinct_user_id/nlohmann_json_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
@@ -77,6 +85,7 @@ SIMDJSON_POP_DISABLE_WARNINGS
 #include "find_tweet/simdjson_ondemand.h"
 #include "find_tweet/simdjson_dom.h"
 #include "find_tweet/yyjson.h"
+#include "find_tweet/jsonifier.h"
 #if SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "find_tweet/sajson.h"
 #endif // SIMDJSON_COMPETITION_ONDEMAND_SAJSON
@@ -90,21 +99,23 @@ SIMDJSON_POP_DISABLE_WARNINGS
 #endif // SIMDJSON_COMPETITION_SAX
 #include "find_tweet/boostjson.h"
 
-#include "top_tweet/simdjson_ondemand.h"
+ #include "top_tweet/simdjson_ondemand.h"
 #include "top_tweet/simdjson_dom.h"
 #include "top_tweet/yyjson.h"
-#if SIMDJSON_COMPETITION_ONDEMAND_SAJSON
+ #if SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "top_tweet/sajson.h"
 #endif // SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "top_tweet/rapidjson.h"
+//nclude "twitter_full/jsonifier.h"//
+#include "top_tweet/jsonifier.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "top_tweet/rapidjson_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
-#include "top_tweet/nlohmann_json.h"
+       #include "top_tweet/nlohmann_json.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "top_tweet/nlohmann_json_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
-#include "top_tweet/boostjson.h"
+       #include "top_tweet/boostjson.h"
 
 
 #include "kostya/simdjson_ondemand.h"
@@ -123,29 +134,31 @@ SIMDJSON_POP_DISABLE_WARNINGS
 #endif // SIMDJSON_COMPETITION_SAX
 #include "kostya/boostjson.h"
 
-#include "large_random/simdjson_ondemand.h"
+ #include "large_random/simdjson_ondemand.h"
 #if SIMDJSON_COMPETITION_ONDEMAND_UNORDERED
 #include "large_random/simdjson_ondemand_unordered.h"
 #endif // SIMDJSON_COMPETITION_ONDEMAND_UNORDERED
+#include "large_random/jsonifier.h"
 #include "large_random/simdjson_dom.h"
 #include "large_random/yyjson.h"
 #if SIMDJSON_COMPETITION_ONDEMAND_SAJSON
 #include "large_random/sajson.h"
 #endif // SIMDJSON_COMPETITION_ONDEMAND_SAJSON
-#include "large_random/rapidjson.h"
+       #include "large_random/rapidjson.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "large_random/rapidjson_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
-#include "large_random/nlohmann_json.h"
+       #include "large_random/nlohmann_json.h"
 #if SIMDJSON_COMPETITION_SAX
 #include "large_random/nlohmann_json_sax.h"
 #endif // SIMDJSON_COMPETITION_SAX
 #include "large_random/boostjson.h"
 
-#include "amazon_cellphones/simdjson_dom.h"
+ #include "amazon_cellphones/simdjson_dom.h"
 #include "amazon_cellphones/simdjson_ondemand.h"
-
-#include "large_amazon_cellphones/simdjson_dom.h"
-#include "large_amazon_cellphones/simdjson_ondemand.h"
+//#include "amazon_cellphones/jsonifier.h"
+ #include "large_amazon_cellphones/simdjson_dom.h"
+#include "large_amazon_cellphones/jsonifier.h"
+ #include "large_amazon_cellphones/simdjson_ondemand.h"
 
 BENCHMARK_MAIN();

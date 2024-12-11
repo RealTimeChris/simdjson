@@ -107,6 +107,16 @@ int main() {}
   target_include_directories(json11 SYSTEM PUBLIC "${json11_SOURCE_DIR}")
   target_compile_definitions(json11 INTERFACE SIMDJSON_COMPETITION_JSON11)
 
+  CPMAddPackage(
+    NAME jsonifier
+    GITHUB_REPOSITORY realtimechris/jsonifier
+    GIT_TAG dev-new
+  )
+  add_library(jsonifier INTERFACE)
+  target_include_directories(jsonifier SYSTEM INTERFACE "${jsonifier_SOURCE_DIR}/Include")
+  target_compile_options(jsonifier INTERFACE "$<$<CXX_COMPILER_ID:CLANG>:-std=c++2b>" "$<$<CXX_COMPILER_ID:GNU>:-std=c++2b>" "$<$<CXX_COMPILER_ID:MSVC>:/std:c++latest>")
+  target_compile_definitions(jsonifier INTERFACE SIMDJSON_COMPETITION_JSONIFIER)
+
   set(jsoncpp_SOURCE_DIR "${simdjson_SOURCE_DIR}/dependencies/jsoncppdist")
   add_library(jsoncpp STATIC "${jsoncpp_SOURCE_DIR}/jsoncpp.cpp")
   target_include_directories(jsoncpp SYSTEM PUBLIC "${jsoncpp_SOURCE_DIR}")
