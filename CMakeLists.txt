@@ -293,7 +293,7 @@ add_subdirectory(tools)  ## This needs to be before tests because of cxxopts
 
 # Data: jsonexamples is left with only the bare essential.
 # most of the data has been moved to https://github.com/simdjson/simdjson-data
-add_subdirectory(jsonexamples)
+#add_subdirectory(jsonexamples)
 
 if(SIMDJSON_SINGLEHEADER)
 add_subdirectory(singleheader)
@@ -304,12 +304,12 @@ endif()
 #
 # Compile tools / tests / benchmarks
 #
-add_subdirectory(tests)
-add_subdirectory(examples)
+#add_subdirectory(tests)
+#add_subdirectory(examples)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) # we only include the benchmarks on 64-bit systems.
   add_subdirectory(benchmark)
 endif()
-add_subdirectory(fuzz)
+#add_subdirectory(fuzz)
 
 #
 # Source files should be just ASCII
