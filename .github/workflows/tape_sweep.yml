@@ -1,0 +1,221 @@
+name: Jsonifier Tape Sweep
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - tape-sweep
+
+jobs:
+  sweep:
+    name: ${{ matrix.config.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - os: macos-latest
+            compiler: clang
+            name: "macOS Clang"
+            key: macos-clang
+          - os: macos-latest
+            compiler: gcc
+            name: "macOS GCC"
+            key: macos-gcc
+
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+      - name: Checkout simdjson fork
+        uses: actions/checkout@v6
+
+      - name: Setup Clang (Linux)
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.compiler == 'clang'
+        run: |
+            wget https://apt.llvm.org/llvm.sh
+            chmod u+x llvm.sh
+            DEV_VERSION=$(awk -F'[][]' '/LLVM_VERSION_PATTERNS/ {print $2}' llvm.sh | sort -n | tail -n 1)
+            sudo ./llvm.sh $DEV_VERSION
+            echo "CXX_BIN=/usr/bin/clang++-$DEV_VERSION" >> $GITHUB_ENV
+            echo "C_BIN=/usr/bin/clang-$DEV_VERSION" >> $GITHUB_ENV
+
+      - name: Setup GCC (Linux)
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.compiler == 'gcc'
+        run: |
+            sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+            sudo apt-get update
+            DEV_VERSION=$(apt-cache search '^g\+\+-[0-9]+$' | awk '{print $1}' | sort -V | tail -n 1 | sed 's/g++-//')
+            sudo apt-get install -y gcc-$DEV_VERSION g++-$DEV_VERSION
+            echo "CXX_BIN=/usr/bin/g++-$DEV_VERSION" >> $GITHUB_ENV
+            echo "C_BIN=/usr/bin/gcc-$DEV_VERSION" >> $GITHUB_ENV
+
+      - name: Verify compilers
+        run: |
+          which $C_BIN
+          which $CXX_BIN
+          $C_BIN --version
+          $CXX_BIN --version
+
+      - name: Sweep
+        run: |
+          set +e
+          mkdir -p sweep_results
+
+          CONFIGS=(
+            "16 2" "16 4" "16 8"
+            "20 2" "20 4"
+            "24 2" "24 4" "24 6" "24 8"
+            "28 2" "28 4"
+            "32 2" "32 4" "32 8"
+          )
+
+          FILTER='twitter_full|kostya|partial_tweets|large_random|distinct_user_id|find_tweet|top_tweet'
+          BENCH_TARGET='benchmark/bench_ondemand'
+
+          for cfg in "${CONFIGS[@]}"; do
+            read -r tape_max tape_step <<< "${cfg}"
+            tag="${{ matrix.config.key }}-max${tape_max}-step${tape_step}"
+            build_dir="build-sweep/${tag}"
+            csv_out="sweep_results/${tag}.csv"
+
+            echo "::group::${tag}"
+            rm -rf "${build_dir}"
+            mkdir -p "${build_dir}"
+
+            if ! cmake \
+                -S . \
+                -B "${build_dir}" \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_C_COMPILER="${C_BIN}" \
+                -DCMAKE_CXX_COMPILER="${CXX_BIN}" \
+                -DSIMDJSON_DEVELOPER_MODE=ON \
+                -DJSONIFIER_TAPE_MAX="${tape_max}" \
+                -DJSONIFIER_TAPE_STEP="${tape_step}"; then
+              echo "::error::CMAKE failed for ${tag}"
+              echo "::endgroup::"
+              continue
+            fi
+
+            if ! cmake --build "${build_dir}" -j "$(sysctl -n hw.ncpu)" --target bench_ondemand; then
+              echo "::error::BUILD failed for ${tag}"
+              echo "::endgroup::"
+              continue
+            fi
+
+            bench_bin="${build_dir}/${BENCH_TARGET}"
+            if [[ ! -x "${bench_bin}" ]]; then
+              echo "::error::BINARY MISSING ${bench_bin}"
+              echo "::endgroup::"
+              continue
+            fi
+
+            if ! "${bench_bin}" \
+                --benchmark_filter="${FILTER}" \
+                --benchmark_format=csv \
+                --benchmark_out="${csv_out}" \
+                --benchmark_out_format=csv; then
+              echo "::error::BENCHMARK failed for ${tag}"
+              echo "::endgroup::"
+              continue
+            fi
+
+            echo "OK -> ${csv_out}"
+            echo "::endgroup::"
+          done
+
+      - name: Write analyzer
+        run: |
+          cat > analyze_sweep.py << 'PYEOF'
+          #!/usr/bin/env python3
+          import csv, os, re, sys
+          from collections import defaultdict
+          from pathlib import Path
+
+          CONFIG_RE = re.compile(r"(?P<compiler>[a-zA-Z0-9_-]+)-max(?P<max>\d+)-step(?P<step>\d+)\.csv$")
+
+          def parse_bench_csv(path):
+              rows = []
+              with open(path) as f:
+                  lines = f.readlines()
+              header_idx = None
+              for i, line in enumerate(lines):
+                  if line.startswith("name,iterations,real_time"):
+                      header_idx = i
+                      break
+              if header_idx is None:
+                  return rows
+              reader = csv.DictReader(lines[header_idx:])
+              for row in reader:
+                  rows.append(row)
+              return rows
+
+          def extract_bytes_per_sec(row):
+              for k in ("bytes_per_second", "best_bytes_per_sec"):
+                  if k in row and row[k]:
+                      try:
+                          return float(row[k])
+                      except ValueError:
+                          pass
+              return None
+
+          def bench_label(name):
+              m = re.match(r"([^<]+)<([^>]+)>", name)
+              if m:
+                  return m.group(1).strip(), m.group(2).strip()
+              return name, ""
+
+          def main():
+              results_dir = Path(sys.argv[1] if len(sys.argv) > 1 else "sweep_results")
+              if not results_dir.is_dir():
+                  print(f"directory not found: {results_dir}", file=sys.stderr)
+                  sys.exit(1)
+
+              by_compiler_bench = defaultdict(lambda: defaultdict(list))
+
+              for csv_path in sorted(results_dir.glob("*.csv")):
+                  m = CONFIG_RE.search(csv_path.name)
+                  if not m:
+                      continue
+                  compiler = m.group("compiler")
+                  tape_max = int(m.group("max"))
+                  tape_step = int(m.group("step"))
+
+                  rows = parse_bench_csv(csv_path)
+                  for row in rows:
+                      name = row.get("name", "")
+                      bench, impl = bench_label(name)
+                      if "jsonifier" not in impl.lower():
+                          continue
+                      bps = extract_bytes_per_sec(row)
+                      if bps is None:
+                          continue
+                      by_compiler_bench[compiler][bench].append(
+                          (tape_max, tape_step, bps)
+                      )
+
+              for compiler in sorted(by_compiler_bench.keys()):
+                  print()
+                  print(f"========== {compiler} ==========")
+                  for bench in sorted(by_compiler_bench[compiler].keys()):
+                      configs = by_compiler_bench[compiler][bench]
+                      configs.sort(key=lambda x: -x[2])
+                      print()
+                      print(f"  {bench}")
+                      print(f"    {'max':>4} {'step':>4}   {'GB/s':>8}   {'vs best':>8}")
+                      best = configs[0][2]
+                      for tm, ts, bps in configs:
+                          gbs = bps / 1e9
+                          rel = (bps / best - 1.0) * 100.0
+                          marker = " <- BEST" if (tm, ts, bps) == configs[0] else ""
+                          print(f"    {tm:>4} {ts:>4}   {gbs:>8.3f}   {rel:>+7.2f}%{marker}")
+
+          if __name__ == "__main__":
+              main()
+          PYEOF
+          chmod +x analyze_sweep.py
+
+      - name: Print sweep results
+        run: |
+          echo "========================================"
+          echo "Sweep Results: ${{ matrix.config.name }}"
+          echo "========================================"
+          python3 analyze_sweep.py sweep_results

@@ -1,0 +1,42 @@
+2026-06-27T19:12:57-04:00
+Running C:\Users\Chris\source\repos\simdjson\build-sweep-msvc\msvc-max16-step4\benchmark\Release\bench_ondemand.exe
+Run on (32 X 3187 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x16)
+  L1 Instruction 32 KiB (x16)
+  L2 Unified 2048 KiB (x16)
+  L3 Unified 36864 KiB (x1)
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"best_bytes_per_sec","best_docs_per_sec","best_items_per_sec","bytes","docs_per_sec","items"
+"partial_tweets<simdjson_ondemand>/manual_time",2508,278617,292813,ns,2.2666e+09,358915,"[BEST: throughput=  2.57 GB/s doc_throughput=  4070 docs/s items=       100 avg_time=    278617 ns]",,,2.57027e+09,4070,407000,631515,3589.15,100
+"partial_tweets<simdjson_dom>/manual_time",4630,143361,151863,ns,4.40507e+09,697539,"[BEST: throughput=  5.05 GB/s doc_throughput=  7993 docs/s items=       100 avg_time=    143361 ns]",,,5.04808e+09,7993.61,799361,631515,6975.39,100
+"partial_tweets<yyjson>/manual_time",2723,212339,229526,ns,2.97409e+09,470945,"[BEST: throughput=  4.46 GB/s doc_throughput=  7067 docs/s items=       100 avg_time=    212338 ns]",,,4.463e+09,7067.14,706714,631515,4709.45,100
+"partial_tweets<rapidjson>/manual_time",312,2.48888e+06,2.35377e+06,ns,2.53735e+08,40178.7,"[BEST: throughput=  0.29 GB/s doc_throughput=   465 docs/s items=       100 avg_time=   2488880 ns]",,,2.93728e+08,465.116,46511.6,631515,401.787,100
+"partial_tweets<nlohmann_json>/manual_time",57,1.0406e+07,1.04167e+07,ns,6.06878e+07,9609.88,"[BEST: throughput=  0.08 GB/s doc_throughput=   123 docs/s items=       100 avg_time=  10405961 ns]",,,7.80515e+07,123.594,12359.4,631515,96.0988,100
+"distinct_user_id<simdjson_ondemand>/manual_time",2360,293511,317797,ns,2.15159e+09,391808,"[BEST: throughput=  2.41 GB/s doc_throughput=  3818 docs/s items=       115 avg_time=    293511 ns]",,,2.41128e+09,3818.25,439099,631515,3407.02,115
+"distinct_user_id<simdjson_ondemand_json_pointer>/manual_time",3060,239265,250204,ns,2.6394e+09,480639,"[BEST: throughput=  3.03 GB/s doc_throughput=  4796 docs/s items=       115 avg_time=    239264 ns]",,,3.02885e+09,4796.16,551559,631515,4179.47,115
+"distinct_user_id<simdjson_dom>/manual_time",2538,310600,320134,ns,2.03321e+09,370251,"[BEST: throughput=  2.49 GB/s doc_throughput=  3946 docs/s items=       115 avg_time=    310600 ns]",,,2.49217e+09,3946.33,453828,631515,3219.57,115
+"distinct_user_id<simdjson_dom_json_pointer>/manual_time",2200,328216,348011,ns,1.92409e+09,350379,"[BEST: throughput=  2.42 GB/s doc_throughput=  3829 docs/s items=       115 avg_time=    328215 ns]",,,2.41867e+09,3829.95,440444,631515,3046.78,115
+"distinct_user_id<yyjson>/manual_time",2175,288846,294540,ns,2.18634e+09,398137,"[BEST: throughput=  2.55 GB/s doc_throughput=  4030 docs/s items=       115 avg_time=    288845 ns]",,,2.54541e+09,4030.63,463523,631515,3462.06,115
+"distinct_user_id<rapidjson>/manual_time",297,2.33472e+06,2.31481e+06,ns,2.70488e+08,49256.4,"[BEST: throughput=  0.30 GB/s doc_throughput=   481 docs/s items=       115 avg_time=   2334722 ns]",,,3.04022e+08,481.417,55363,631515,428.316,115
+"distinct_user_id<nlohmann_json>/manual_time",81,8.54963e+06,8.48765e+06,ns,7.38646e+07,13450.9,"[BEST: throughput=  0.08 GB/s doc_throughput=   131 docs/s items=       115 avg_time=   8549633 ns]",,,8.31992e+07,131.745,15150.7,631515,116.964,115
+"find_tweet<simdjson_ondemand>/manual_time",4608,144465,176324,ns,4.3714e+09,6922.08,"[BEST: throughput=  4.67 GB/s doc_throughput=  7390 docs/s items=         1 avg_time=    144465 ns]",,,4.66752e+09,7390.98,7390.98,631515,6922.08,1
+"find_tweet<simdjson_dom>/manual_time",2493,257702,294575,ns,2.45056e+09,3880.45,"[BEST: throughput=  2.68 GB/s doc_throughput=  4240 docs/s items=         1 avg_time=    257702 ns]",,,2.67818e+09,4240.88,4240.88,631515,3880.45,1
+"find_tweet<yyjson>/manual_time",2649,261654,294923,ns,2.41355e+09,3821.83,"[BEST: throughput=  2.67 GB/s doc_throughput=  4230 docs/s items=         1 avg_time=    261654 ns]",,,2.67138e+09,4230.12,4230.12,631515,3821.83,1
+"find_tweet<rapidjson>/manual_time",312,2.2729e+06,2.30369e+06,ns,2.77846e+08,439.967,"[BEST: throughput=  0.32 GB/s doc_throughput=   502 docs/s items=         1 avg_time=   2272898 ns]",,,3.17504e+08,502.765,502.765,631515,439.967,1
+"find_tweet<nlohmann_json>/manual_time",,,,,,,,true,"result incorrect: ""RT @shiawaseomamori: 一に止まると書いて、正しいという意味だなんて、この年になるまで知りませんでした。 人は生きていると、前へ前へという気持ちばかり急いて、どんどん大切なものを置き去りにしていくものでしょう。本当に正しいことというのは、一番初めの場所にあるの…"" ... reference: RT @shiawaseomamori: 一に止まると書いて、正しいという意味だなんて、この年になるまで知りませんでした。 人は生きていると、前へ前へという気持ちばかり急いて、どんどん大切なものを置き去りにしていくものでしょう。本当に正しいことというのは、一番初めの場所にあるの…"
+"top_tweet<simdjson_ondemand>/manual_time",1708,408926,439110,ns,1.54433e+09,2445.43,"[BEST: throughput=  1.62 GB/s doc_throughput=  2568 docs/s items=         1 avg_time=    408925 ns]",,,1.62218e+09,2568.71,2568.71,631515,2445.43,1
+"top_tweet<simdjson_ondemand_forward_only>/manual_time",1683,413266,427065,ns,1.52811e+09,2419.75,"[BEST: throughput=  1.61 GB/s doc_throughput=  2545 docs/s items=         1 avg_time=    413265 ns]",,,1.60773e+09,2545.82,2545.82,631515,2419.75,1
+"top_tweet<simdjson_dom>/manual_time",2366,258753,264159,ns,2.44061e+09,3864.69,"[BEST: throughput=  2.60 GB/s doc_throughput=  4120 docs/s items=         1 avg_time=    258753 ns]",,,2.60204e+09,4120.31,4120.31,631515,3864.69,1
+"top_tweet<yyjson>/manual_time",2606,267179,287797,ns,2.36364e+09,3742.8,"[BEST: throughput=  2.57 GB/s doc_throughput=  4076 docs/s items=         1 avg_time=    267179 ns]",,,2.57446e+09,4076.64,4076.64,631515,3742.8,1
+"top_tweet<rapidjson>/manual_time",306,2.27766e+06,2.34886e+06,ns,2.77265e+08,439.048,"[BEST: throughput=  0.30 GB/s doc_throughput=   477 docs/s items=         1 avg_time=   2277657 ns]",,,3.01626e+08,477.623,477.623,631515,439.048,1
+"top_tweet<nlohmann_json>/manual_time",,,,,,,,true,"result incorrect: retweet_count: 58
+screen_name: ""anime_toshiden1""
+text: ""RT @shiawaseomamori: 一に止まると書いて、正しいという意味だなんて、この年になるまで知りませんでした。 人は生きていると、前へ前へという気持ちばかり急いて、どんどん大切なものを置き去りにしていくものでしょう。本当に正しいことというのは、一番初めの場所にあるの…""
+ ... reference: retweet_count: 58
+screen_name: anime_toshiden1
+text: RT @shiawaseomamori: 一に止まると書いて、正しいという意味だなんて、この年になるまで知りませんでした。 人は生きていると、前へ前へという気持ちばかり急いて、どんどん大切なものを置き去りにしていくものでしょう。本当に正しいことというのは、一番初めの場所にあるの…
+"
+"kostya<simdjson_ondemand>/manual_time",9,8.01105e+07,9.72222e+07,ns,1.71393e+09,6.54456e+06,"[BEST: throughput=  1.75 GB/s doc_throughput=    12 docs/s items=    524288 avg_time=  80110511 ns]",,,1.75219e+09,12.7614,6.69062e+06,1.37304e+08,12.4828,524288
+"kostya<simdjson_dom>/manual_time",7,1.08488e+08,1.25e+08,ns,1.26561e+09,4.83267e+06,"[BEST: throughput=  1.31 GB/s doc_throughput=     9 docs/s items=    524288 avg_time= 108488328 ns]",,,1.30985e+09,9.53976,5.00158e+06,1.37304e+08,9.21758,524288
+"kostya<yyjson>/manual_time",5,1.47481e+08,1.6875e+08,ns,9.30998e+08,3.55496e+06,"[BEST: throughput=  0.96 GB/s doc_throughput=     7 docs/s items=    524288 avg_time= 147480559 ns]",,,9.646e+08,7.02528,3.68327e+06,1.37304e+08,6.78055,524288
+"kostya<rapidjson>/manual_time",2,4.07474e+08,4.21875e+08,ns,3.36964e+08,1.28668e+06,"[BEST: throughput=  0.34 GB/s doc_throughput=     2 docs/s items=    524288 avg_time= 407473650 ns]",,,3.40252e+08,2.47809,1.29923e+06,1.37304e+08,2.45415,524288
