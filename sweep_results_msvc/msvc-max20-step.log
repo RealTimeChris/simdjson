@@ -1,0 +1,16 @@
+2026-06-27T18:48:09-04:00
+Running C:\Users\Chris\source\repos\simdjson\build-sweep-msvc\msvc-max20-step\benchmark\Release\bench_ondemand.exe
+Run on (32 X 3187 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x16)
+  L1 Instruction 32 KiB (x16)
+  L2 Unified 2048 KiB (x16)
+  L3 Unified 36864 KiB (x1)
+simdjson::dom implementation:      haswell
+simdjson::ondemand implementation (stage 1): haswell
+simdjson::ondemand implementation (stage 2): fallback
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"best_bytes_per_sec","best_docs_per_sec","best_items_per_sec","bytes","docs_per_sec","items"
+"top_tweet<simdjson_ondemand>/manual_time",12069,57709.7,66026.6,ns,1.0943e+10,17328.1,"[BEST: throughput= 12.46 GB/s doc_throughput= 19723 docs/s items=         1 avg_time=     57709 ns]",,,1.24559e+10,19723.9,19723.9,631515,17328.1,1
+"top_tweet<simdjson_ondemand_forward_only>/manual_time",12589,57739.3,65781.6,ns,1.09374e+10,17319.2,"[BEST: throughput= 12.36 GB/s doc_throughput= 19569 docs/s items=         1 avg_time=     57739 ns]",,,1.23584e+10,19569.5,19569.5,631515,17319.2,1
+"top_tweet<simdjson_dom>/manual_time",5386,129070,139250,ns,4.89283e+09,7747.76,"[BEST: throughput=  5.56 GB/s doc_throughput=  8802 docs/s items=         1 avg_time=    129069 ns]",,,5.55911e+09,8802.82,8802.82,631515,7747.76,1
+"top_tweet<jsonifier_off_duty>/manual_time",10000,87258.7,101562,ns,7.23727e+09,11460.2,"[BEST: throughput= 15.44 GB/s doc_throughput= 24449 docs/s items=         1 avg_time=     87258 ns]",,,1.54405e+10,24449.9,24449.9,631515,11460.2,1

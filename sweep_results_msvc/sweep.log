@@ -1,0 +1,51 @@
+========================================== 
+Jsonifier Tape Sweep [msvc] 
+Repo:    C:\Users\Chris\source\repos\simdjson 
+Filter:  twitter_full|kostya|partial_tweets|large_random|distinct_user_id|find_tweet|top_tweet 
+Target:  benchmark\Release\bench_ondemand.exe 
+Jobs:    32 
+========================================== 
+ 
+--- msvc-max16-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max16-step.csv 
+ 
+--- msvc-max2-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max2-step.csv 
+ 
+--- msvc-max16-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max16-step.csv 
+ 
+--- msvc-max4-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max4-step.csv 
+ 
+--- msvc-max16-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max16-step.csv 
+ 
+--- msvc-max8-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max8-step.csv 
+ 
+--- msvc-max20-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max20-step.csv 
+ 
+--- msvc-max2-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max2-step.csv 
+ 
+--- msvc-max20-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max20-step.csv 
+ 
+--- msvc-max4-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max4-step.csv 
+ 
+--- msvc-max24-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max24-step.csv 
+ 
+--- msvc-max2-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max2-step.csv 
+ 
+--- msvc-max24-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max24-step.csv 
+ 
+--- msvc-max4-step --- 
+  OK -> C:\Users\Chris\source\repos\simdjson\sweep_results_msvc\msvc-max16-step4.csv
+
+--- msvc-max16-step8 ---

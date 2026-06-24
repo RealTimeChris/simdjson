@@ -146,6 +146,17 @@ int main() {}
           "${sajson_SOURCE_DIR}/include")
   target_compile_definitions(sajson INTERFACE SIMDJSON_COMPETITION_SAJSON)
 
+  include(FetchContent)
+
+  FetchContent_Declare(
+  Jsonifier
+  GIT_REPOSITORY https://github.com/realtimechris/Jsonifier.git
+  GIT_TAG iterate-only
+  GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(Jsonifier)
+target_compile_definitions(Jsonifier INTERFACE SIMDJSON_COMPETITION_JSONIFIER)
+
   CPMAddPackage(
       NAME ujson4c
       URL https://github.com/esnme/ujson4c/archive/e14f3fd5207fe30d1bdea723f260609e69d1abfa.zip

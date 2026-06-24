@@ -1,0 +1,31 @@
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/Chris/source/repos/simdjson/build-sweep-msvc/msvc-max4-step/_deps/simdjson-data-src/jsonexamples/generated/CMakeLists.txt
+  Building Custom Rule C:/Users/Chris/source/repos/simdjson/CMakeLists.txt
+  Building Custom Rule C:/Users/Chris/source/repos/simdjson/build-sweep-msvc/msvc-max4-step/_deps/google_benchmarks-src/src/CMakeLists.txt
+  Building Custom Rule C:/Users/Chris/source/repos/simdjson/dependencies/CMakeLists.txt
+  cmake_pch.cxx
+  benchmark.cc
+  yyjson.c
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\bit(11): warning STL4038: The contents of <bit> are available only with C++20 or later. [C:\Users\Chris\source\repos\simdjson\build-sweep-msvc\msvc-max4-step\simdjson.vcxproj]
+  simdjson.cpp
+  benchmark_api_internal.cc
+  benchmark_name.cc
+  benchmark_register.cc
+  benchmark_runner.cc
+  check.cc
+  colorprint.cc
+  commandlineflags.cc
+  complexity.cc
+  console_reporter.cc
+  counter.cc
+  csv_reporter.cc
+  json_reporter.cc
+  perf_counters.cc
+  reporter.cc
+  statistics.cc
+  string_util.cc
+  sysinfo.cc
+  timers.cc
+  benchmark.vcxproj -> C:\Users\Chris\source\repos\simdjson\build-sweep-msvc\msvc-max4-step\_deps\google_benchmarks-build\src\Release\benchmark.lib

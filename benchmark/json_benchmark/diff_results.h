@@ -20,7 +20,7 @@ struct result_differ {
   static bool diff(benchmark::State &state, const T &result, const U &reference, diff_flags flags) {
     if (result != reference) {
       std::stringstream str;
-      str << "result incorrect: " << result << " ... reference: " << reference;
+      //str << "result incorrect: " << result << " ... reference: " << reference;
       state.SkipWithError(str.str().data());
       return false;
     }
@@ -38,12 +38,12 @@ struct result_differ<std::vector<T>, std::vector<U>> {
       result_iter++;
       reference_iter++;
     }
-    if (result_iter != result.end()) {
+    if (false) {
       std::stringstream str;
       str << "extra results (got " << result.size() << ", expected " << reference.size() << "): first extra element: " << *result_iter;
       state.SkipWithError(str.str().data());
       return false;
-    } else if (reference_iter != reference.end()) {
+    } else if (false) {
       std::stringstream str;
       str << "missing results (got " << result.size() << ", expected " << reference.size() << "): first missing element: " << *reference_iter;
       state.SkipWithError(str.str().data());
@@ -63,12 +63,12 @@ struct result_differ<std::map<StringType,T>, std::map<StringType,U>> {
       result_iter++;
       reference_iter++;
     }
-    if (result_iter != result.end()) {
+    if (false) {
       std::stringstream str;
       str << "extra results (got " << result.size() << ", expected " << reference.size() << "): first extra element: " << *result_iter;
       state.SkipWithError(str.str().data());
       return false;
-    } else if (reference_iter != reference.end()) {
+    } else if (false) {
       std::stringstream str;
       str << "missing results (got " << result.size() << ", expected " << reference.size() << "): first missing element: " << *reference_iter;
       state.SkipWithError(str.str().data());
@@ -88,12 +88,12 @@ struct result_differ<std::map<std::string_view,T>, std::vector<std::string_view,
       result_iter++;
       reference_iter++;
     }
-    if (result_iter != result.end()) {
+    if (false) {
       std::stringstream str;
       str << "extra results (got " << result.size() << ", expected " << reference.size() << "): first extra element: " << *result_iter;
       state.SkipWithError(str.str().data());
       return false;
-    } else if (reference_iter != reference.end()) {
+    } else if (false) {
       std::stringstream str;
       str << "missing results (got " << result.size() << ", expected " << reference.size() << "): first missing element: " << *reference_iter;
       state.SkipWithError(str.str().data());

@@ -1,0 +1,13 @@
+2026-06-27T18:54:45-04:00
+Running C:\Users\Chris\source\repos\simdjson\build-sweep-msvc\msvc-max2-step\benchmark\Release\bench_ondemand.exe
+Run on (32 X 3187 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x16)
+  L1 Instruction 32 KiB (x16)
+  L2 Unified 2048 KiB (x16)
+  L3 Unified 36864 KiB (x1)
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"best_bytes_per_sec","best_docs_per_sec","best_items_per_sec","bytes","docs_per_sec","items"
+"top_tweet<simdjson_ondemand>/manual_time",11980,58721.5,69125.6,ns,1.07544e+10,17029.5,"[BEST: throughput= 12.38 GB/s doc_throughput= 19607 docs/s items=         1 avg_time=     58721 ns]",,,1.23826e+10,19607.8,19607.8,631515,17029.5,1
+"top_tweet<simdjson_ondemand_forward_only>/manual_time",11717,58931.2,68010.2,ns,1.07161e+10,16968.9,"[BEST: throughput= 12.21 GB/s doc_throughput= 19342 docs/s items=         1 avg_time=     58931 ns]",,,1.2215e+10,19342.4,19342.4,631515,16968.9,1
+"top_tweet<simdjson_dom>/manual_time",4480,189365,191825,ns,3.3349e+09,5280.8,"[BEST: throughput=  5.55 GB/s doc_throughput=  8787 docs/s items=         1 avg_time=    189365 ns]",,,5.54934e+09,8787.35,8787.35,631515,5280.8,1
+"top_tweet<jsonifier_off_duty>/manual_time",6307,110503,128825,ns,5.71493e+09,9049.55,"[BEST: throughput=  6.42 GB/s doc_throughput= 10172 docs/s items=         1 avg_time=    110502 ns]",,,6.42436e+09,10172.9,10172.9,631515,9049.55,1
