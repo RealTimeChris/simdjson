@@ -3,7 +3,7 @@
 #include "json_benchmark/file_runner.h"
 #include <map>
 #include <string>
-
+#include <jsonifier>
 
 namespace amazon_cellphones {
 
