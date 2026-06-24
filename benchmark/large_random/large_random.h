@@ -64,10 +64,10 @@ static const simdjson::padded_string &get_built_json_array() {
   return json;
 }
 
-struct simdjson_dom;
+struct simdjson_ondemand;
 
 template<typename T> static void large_random(benchmark::State &state) {
-  run_json_benchmark<runner<T>, runner<simdjson_dom>>(state);
+  run_json_benchmark<runner<T>, runner<simdjson_ondemand>>(state);
 }
 
 } // namespace large_random

@@ -37,10 +37,10 @@ struct runner : public file_runner<I> {
   }
 };
 
-struct simdjson_dom;
+struct simdjson_ondemand;
 
 template<typename I> simdjson_inline static void partial_tweets(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_dom>>(state);
+  run_json_benchmark<runner<I>, runner<simdjson_ondemand>>(state);
 }
 
 } // namespace partial_tweets

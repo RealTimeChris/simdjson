@@ -1,0 +1,136 @@
+name: bench_ondemand
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  bench:
+    name: ${{ matrix.config.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - os: ubuntu-latest
+            compiler: clang
+            name: "Linux Clang"
+            key: linux-clang
+          - os: ubuntu-latest
+            compiler: gcc
+            name: "Linux GCC"
+            key: linux-gcc
+          - os: macos-latest
+            compiler: clang
+            name: "macOS Clang"
+            key: macos-clang
+          - os: macos-latest
+            compiler: gcc
+            name: "macOS GCC"
+            key: macos-gcc
+          - os: windows-latest
+            compiler: msvc
+            name: "Windows MSVC"
+            key: windows-msvc
+
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+      - name: Checkout simdjson fork
+        uses: actions/checkout@v6
+
+      - name: Setup Clang (Linux)
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.compiler == 'clang'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod u+x llvm.sh
+          DEV_VERSION=$(awk -F'[][]' '/LLVM_VERSION_PATTERNS/ {print $2}' llvm.sh | sort -n | tail -n 1)
+          sudo ./llvm.sh $DEV_VERSION
+          echo "CXX_BIN=/usr/bin/clang++-$DEV_VERSION" >> $GITHUB_ENV
+          echo "C_BIN=/usr/bin/clang-$DEV_VERSION" >> $GITHUB_ENV
+
+      - name: Setup GCC (Linux)
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.compiler == 'gcc'
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update
+          DEV_VERSION=$(apt-cache search '^g\+\+-[0-9]+$' | awk '{print $1}' | sort -V | tail -n 1 | sed 's/g++-//')
+          sudo apt-get install -y gcc-$DEV_VERSION g++-$DEV_VERSION
+          echo "CXX_BIN=/usr/bin/g++-$DEV_VERSION" >> $GITHUB_ENV
+          echo "C_BIN=/usr/bin/gcc-$DEV_VERSION" >> $GITHUB_ENV
+
+      - name: Setup Clang (macOS)
+        if: matrix.config.os == 'macos-latest' && matrix.config.compiler == 'clang'
+        run: |
+          brew install llvm
+          echo "CXX_BIN=$(brew --prefix llvm)/bin/clang++" >> $GITHUB_ENV
+          echo "C_BIN=$(brew --prefix llvm)/bin/clang" >> $GITHUB_ENV
+
+      - name: Setup GCC (macOS)
+        if: matrix.config.os == 'macos-latest' && matrix.config.compiler == 'gcc'
+        run: |
+          brew install gcc
+          GCC_VERSION=$(brew list --versions gcc | awk '{print $2}' | cut -d. -f1)
+          echo "CXX_BIN=g++-$GCC_VERSION" >> $GITHUB_ENV
+          echo "C_BIN=gcc-$GCC_VERSION" >> $GITHUB_ENV
+
+      - name: Setup MSVC (Windows)
+        if: matrix.config.compiler == 'msvc'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Verify compilers (Unix)
+        if: matrix.config.compiler != 'msvc'
+        run: |
+          which $C_BIN
+          which $CXX_BIN
+          $C_BIN --version
+          $CXX_BIN --version
+
+      - name: Verify compilers (Windows)
+        if: matrix.config.compiler == 'msvc'
+        shell: cmd
+        run: cl
+
+      - name: Configure (Unix)
+        if: matrix.config.compiler != 'msvc'
+        run: |
+          cmake \
+            -S . \
+            -B Build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER="${C_BIN}" \
+            -DCMAKE_CXX_COMPILER="${CXX_BIN}" \
+            -DSIMDJSON_DEVELOPER_MODE=ON
+
+      - name: Configure (Windows)
+        if: matrix.config.compiler == 'msvc'
+        run: cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release -DSIMDJSON_DEVELOPER_MODE=ON
+
+      - name: Build bench_ondemand (Linux)
+        if: matrix.config.os == 'ubuntu-latest'
+        run: cmake --build Build -j "$(nproc)" --target bench_ondemand --config Release
+
+      - name: Build bench_ondemand (macOS)
+        if: matrix.config.os == 'macos-latest'
+        run: cmake --build Build -j "$(sysctl -n hw.ncpu)" --target bench_ondemand --config Release
+
+      - name: Build bench_ondemand (Windows)
+        if: matrix.config.os == 'windows-latest'
+        run: cmake --build Build -j "$env:NUMBER_OF_PROCESSORS" --target bench_ondemand --config Release
+
+      - name: Run bench_ondemand (Unix)
+        if: matrix.config.compiler != 'msvc'
+        run: |
+          echo "========================================"
+          echo "bench_ondemand: ${{ matrix.config.name }}"
+          echo "========================================"
+          ./Build/benchmark/bench_ondemand
+
+      - name: Run bench_ondemand (Windows)
+        if: matrix.config.compiler == 'msvc'
+        run: |
+          echo "========================================"
+          echo "bench_ondemand: ${{ matrix.config.name }}"
+          echo "========================================"
+          .\Build\benchmark\Release\bench_ondemand.exe

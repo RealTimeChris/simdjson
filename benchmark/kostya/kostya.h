@@ -77,10 +77,10 @@ static const simdjson::padded_string &get_built_json_array() {
   return json;
 }
 
-struct simdjson_dom;
+struct simdjson_ondemand;
 
 template<typename I> simdjson_inline static void kostya(benchmark::State &state) {
-  run_json_benchmark<runner<I>, runner<simdjson_dom>>(state);
+  run_json_benchmark<runner<I>, runner<simdjson_ondemand>>(state);
 }
 
 } // namespace kostya
