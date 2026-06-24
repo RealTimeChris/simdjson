@@ -1,6 +1,6 @@
 add_subdirectory(dom)
 
-
+set(CMAKE_CXX_STANDARD 20)
 include_directories( . )
 link_libraries(simdjson-windows-headers test-data)
 link_libraries(simdjson)
@@ -19,6 +19,7 @@ if (TARGET benchmark::benchmark)
   add_executable(bench_stream_formats bench_stream_formats.cpp)
   if(SIMDJSON_EXCEPTIONS)
     add_executable(bench_ondemand bench_ondemand.cpp)
+    target_link_libraries(bench_ondemand PRIVATE Jsonifier::Jsonifier)
     if(TARGET yyjson)
       target_link_libraries(bench_ondemand PRIVATE yyjson)
     endif()

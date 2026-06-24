@@ -20,7 +20,7 @@ struct result_differ {
   static bool diff(benchmark::State &state, const T &result, const U &reference, diff_flags flags) {
     if (result != reference) {
       std::stringstream str;
-      str << "result incorrect: " << result << " ... reference: " << reference;
+      //str << "result incorrect: " << result << " ... reference: " << reference;
       state.SkipWithError(str.str().data());
       return false;
     }
