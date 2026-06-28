@@ -1,0 +1,71 @@
+name: bench_ondemand (iterate-only)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  bench:
+    name: ${{ matrix.config.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - os: macos-latest
+            compiler: clang
+            name: "macOS Clang"
+            key: macos-clang
+          - os: macos-latest
+            compiler: gcc
+            name: "macOS GCC"
+            key: macos-gcc
+
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+      - name: Checkout simdjson fork
+        uses: actions/checkout@v6
+
+      - name: Setup Clang (macOS)
+        if: matrix.config.compiler == 'clang'
+        run: |
+          brew install llvm
+          echo "CXX_BIN=$(brew --prefix llvm)/bin/clang++" >> $GITHUB_ENV
+          echo "C_BIN=$(brew --prefix llvm)/bin/clang" >> $GITHUB_ENV
+
+      - name: Setup GCC (macOS)
+        if: matrix.config.compiler == 'gcc'
+        run: |
+          brew install gcc
+          GCC_VERSION=$(brew list --versions gcc | awk '{print $2}' | cut -d. -f1)
+          echo "CXX_BIN=g++-$GCC_VERSION" >> $GITHUB_ENV
+          echo "C_BIN=gcc-$GCC_VERSION" >> $GITHUB_ENV
+
+      - name: Verify compilers
+        run: |
+          which $C_BIN
+          which $CXX_BIN
+          $C_BIN --version
+          $CXX_BIN --version
+
+      - name: Configure
+        run: |
+          cmake \
+            -S . \
+            -B Build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER="${C_BIN}" \
+            -DCMAKE_CXX_COMPILER="${CXX_BIN}" \
+            -DSIMDJSON_DEVELOPER_MODE=ON
+
+      - name: Build bench_ondemand
+        run: cmake --build Build -j "$(sysctl -n hw.ncpu)" --target bench_ondemand
+
+      - name: Run bench_ondemand
+        run: |
+          echo "========================================"
+          echo "bench_ondemand: ${{ matrix.config.name }}"
+          echo "========================================"
+          ./Build/benchmark/bench_ondemand
