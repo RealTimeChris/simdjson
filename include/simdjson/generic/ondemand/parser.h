@@ -114,6 +114,8 @@ public:
    *         - UNESCAPED_CHARS if a string contains control characters that must be escaped
    *         - UNCLOSED_STRING if there is an unclosed string in the document.
    */
+  template<typename comparison_type> simdjson_warn_unused void
+  iterate_for_comparison(comparison_type&, padded_string_view json) & noexcept;
   simdjson_warn_unused simdjson_result<document> iterate(padded_string_view json) & noexcept;
 #ifdef SIMDJSON_EXPERIMENTAL_ALLOW_INCOMPLETE_JSON
   simdjson_warn_unused simdjson_result<document> iterate_allow_incomplete_json(padded_string_view json) & noexcept;
