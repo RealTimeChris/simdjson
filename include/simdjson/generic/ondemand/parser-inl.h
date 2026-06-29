@@ -122,6 +122,30 @@ simdjson_warn_unused simdjson_inline simdjson_result<document> parser::iterate(c
   const padded_string &json = result.value_unsafe();
   return iterate(json);
 }
+template<typename comparison_type>
+simdjson_warn_unused simdjson_inline void
+parser::iterate_for_comparison(
+    comparison_type&comparison_context, padded_string_view json) & noexcept {
+  if (!json.has_sufficient_padding()) {
+    return ;
+  }
+
+  json.remove_utf8_bom();
+
+  // Allocate if needed
+  if (capacity() < json.length()) {
+    allocate(json.length(), max_depth());
+  }
+
+  // Run stage 1.
+  
+      implementation->stage1(reinterpret_cast<const uint8_t *>(json.data()),
+                         json.length(), stage1_mode::regular);
+  comparison_context.indices.resize(implementation->n_structural_indexes);
+  std::copy_n(implementation->structural_indexes.get(),
+              comparison_context.indices.size(),
+              comparison_context.indices.data());
+}
 
 simdjson_warn_unused simdjson_inline simdjson_result<json_iterator> parser::iterate_raw(padded_string_view json) & noexcept {
   if (!json.has_sufficient_padding()) { return INSUFFICIENT_PADDING; }
